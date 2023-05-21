@@ -1,0 +1,46 @@
+#!/bin/bash -l
+#SBATCH --job-name=abaTest
+#SBATCH --error=%j_N2.err
+#SBATCH --output=%j_N2.out
+#SBATCH --nodes=2
+#SBATCH --ntasks=80
+#SBATCH --time=00:15:00
+#SBATCH --partition=test
+#SBATCH --account=project_2007935
+
+unset SLURM_GTIDS
+module purge
+module load abaqus/2022
+
+cd $PWD
+
+abq2022 job=e1.inp fetch
+
+# env-file ++++++++++++++++++++++++++++++++++++
+
+if [[ -f abaqus_v6.env ]]; then
+    mv abaqus_v6.env abaqus_v6.env_previous
+fi
+
+# FOR ABAQUS RUNS ON > 1 NODE, MPI IMPLEMENTATION  IS IMPI !
+echo "mp_mpi_implementation = IMPI" >> abaqus_v6.env
+echo "mp_rsh_command = 'ssh -n -l %U %H %C'" >> abaqus_v6.env
+
+NODE_LIST=$(scontrol show hostname ${SLURM_NODELIST} | sort -u)
+
+mp_host_list="["
+for host in ${NODE_LIST}; do
+    mp_host_list="${mp_host_list}['$host', ${SLURM_CPUS_ON_NODE}],"
+done
+
+mp_host_list=$(echo ${mp_host_list} | sed -e "s/,$/]/")
+
+echo "mp_host_list=${mp_host_list}"  >> abaqus_v6.env
+
+# env-file ++++++++++++++++++++++++++++++++++++
+
+mkdir tmp_$SLURM_JOB_ID
+
+abq2022 job=e1 cpus=$SLURM_NTASKS scratch=tmp_$SLURM_JOB_ID -verbose standard_parallel=all mp_mode=mpi interactive
+
+
