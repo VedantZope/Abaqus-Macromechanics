@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import modules.sim as sim
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 from scipy.interpolate import CubicSpline

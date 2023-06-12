@@ -9,8 +9,8 @@ import copy
 
 ############################################################
 #                                                          #
-#          AUTOMATED MASS RVE GENERATION SOFTWARE          #
-#   Tools required: Dream3D and Finnish Supercomputer CSC  #
+#        ABAQUS HARDENING LAW PARAMETER CALIBRATION        #
+#   Tools required: Abaqus and Finnish Supercomputer CSC   #
 #                                                          #
 ############################################################
 
@@ -26,19 +26,14 @@ def main_config():
 
     globalConfig = pd.read_excel("configs/global_config.xlsx", nrows= 1, engine="openpyxl")
     globalConfig = globalConfig.T.to_dict()[0]
-    #print(globalConfig)
+
     material = globalConfig["material"]
-    
-    numberOfRVE = globalConfig["numberOfRVE"]
-
-    simulationIO = globalConfig["simulationIO"]
-
-    skipSimulationRVEGeneration = globalConfig["skipSimulationRVEGeneration"]
+    optimizerName = globalConfig["optimizerName"]
 
     # The project path folder
     projectPath = os.getcwd()
     # The logging path
-    logPath = f"log/{material}.txt"
+    logPath = f"log/{material}_{optimizerName}.txt"
 
     # The results path
     resultPath = f"results/{material}"
@@ -52,43 +47,9 @@ def main_config():
     # The target path
     targetPath = f"targets/{material}"
 
-    ###############################
-    # Group of RVE configurations #
-    ###############################
-
-    RVEgroups = pd.read_excel("configs/RVE_groups.xlsx", engine="openpyxl")
- 
-    # Properties are column names of the RVE groups
-    properties = list(RVEgroups.columns)
-    #print(properties)
-    #time.sleep(180)
-    # Convert the DataFrame to a Python dictionary based on RVE group
-    RVEgroups = RVEgroups.set_index('Group').to_dict(orient='index')
-    RVEgroupsUnparsed = copy.deepcopy(RVEgroups)
-    
-    # Delete the details about NumFeatures
-    # for groupIndex in RVEgroupsUnparsed:
-    #     del RVEgroupsUnparsed[groupIndex]['NumFeaturesReference']
-    #     del RVEgroupsUnparsed[groupIndex]['NumFeaturesType']
-    #     del RVEgroupsUnparsed[groupIndex]['NumFeaturesEstimation']
-    #print(RVEgroupsUnparsed)
-
-    #print(RVEgroups)
-    #time.sleep(180)
-    for groupIndex in RVEgroups:
-        RVEgroups[groupIndex]['Dimensions'] = parseDimensions(RVEgroups[groupIndex]['Dimensions'])
-        RVEgroups[groupIndex]['Resolution'] = parseResolution(RVEgroups[groupIndex]['Resolution'])
-        RVEgroups[groupIndex]['Origin'] = parseOrigin(RVEgroups[groupIndex]['Origin'])
-
-    # print(RVEgroupsUnparsed)    
-    # # Print the dictionary
-    # print(RVEgroups)
-    # sleep(180)
-
     #########################################################
     # Creating necessary directories for the configurations #
     #########################################################
-
 
     def checkCreate(path):
         if not os.path.exists(path):
@@ -133,12 +94,7 @@ def main_config():
         'targetPath': targetPath,
         'templatePath': templatePath,
         'material': material,
-        'numberOfRVE': numberOfRVE,
-        'simulationIO': simulationIO,
-        'skipSimulationRVEGeneration': skipSimulationRVEGeneration,
-        'RVEgroupsUnparsed': RVEgroupsUnparsed,
-        'RVEgroups': RVEgroups,
-        'properties': properties
+        'optimizerName': optimizerName
     }
 
   
@@ -146,17 +102,14 @@ def main_config():
     #  Printing the configurations to the console #
     ###############################################
 
-    printLog(f"\nWelcome to the RVE generation software\n\n", logPath)
+    printLog(f"\nWelcome to the Abaqus parameter calibration project\n\n", logPath)
     printLog(f"The configurations you have chosen: \n", logPath)
     
     logTable = PrettyTable()
 
     logTable.field_names = ["Global Configs", "User choice"]
     logTable.add_row(["Material", material])
-    logTable.add_row(["Number of group settings", len(RVEgroups)])
-    logTable.add_row(["Number of RVEs each group", numberOfRVE])
-    logTable.add_row(["Total number of RVE sims", len(RVEgroups) * numberOfRVE])
-    logTable.add_row(["Simulation IO", simulationIO])
+    logTable.add_row(["Optimizer", optimizerName])
     printLog(logTable.get_string() + "\n", logPath)
 
     printLog("Generating necessary directories\n", logPath)
