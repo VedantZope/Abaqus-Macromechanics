@@ -11,3 +11,8 @@ def printLog(message, logPath):
         logFile.writelines(message)
     print(message)
 
+def parseBoundsBO(paramInfo):
+    paramBounds = {}
+    for param in paramInfo:
+        paramBounds[param] = (paramInfo[param]['lowerBound'], paramInfo[param]['upperBound'])
+    return paramBounds

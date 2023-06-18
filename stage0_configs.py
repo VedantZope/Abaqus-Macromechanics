@@ -5,6 +5,7 @@ import numpy as np
 from time import sleep
 from prettytable import PrettyTable
 from modules.helper import *
+from modules.hardeningLaws import *
 import copy
 
 ############################################################
@@ -24,28 +25,55 @@ def main_config():
     # Global configurations #
     #########################
 
-    globalConfig = pd.read_excel("configs/global_config.xlsx", nrows= 1, engine="openpyxl")
+    globalConfig = pd.read_excel("configs/global_config.xlsx", nrows=1, engine="openpyxl")
     globalConfig = globalConfig.T.to_dict()[0]
-
+    optimizeStrategy = globalConfig["optimizeStrategy"]
     material = globalConfig["material"]
     optimizerName = globalConfig["optimizerName"]
+    hardeningLaw = globalConfig["hardeningLaw"]
+    deviationPercent = globalConfig["deviationPercent"]
+    geometry = globalConfig["geometry"]
+    
+    ##################################
+    # Parameter bound configurations #
+    ##################################
+
+    paramConfig = pd.read_excel(f"configs/{hardeningLaw}_paramInfo.xlsx", engine="openpyxl")
+    paramConfig.set_index("parameter", inplace=True)
+    paramConfig = paramConfig.T.to_dict()
+    for param in paramConfig:
+        paramConfig[param]['exponent'] = float(paramConfig[param]['exponent'])
+        exponent = paramConfig[param]['exponent']
+        paramConfig[param]['lowerBound'] = paramConfig[param]['lowerBound'] * exponent
+        paramConfig[param]['upperBound'] = paramConfig[param]['upperBound'] * exponent
+    
+    #########################
+    # Abaqus configurations #
+    #########################
+    abaqusConfig = pd.read_excel("configs/abaqus_config.xlsx", nrows=1, engine="openpyxl")
+    abaqusConfig = abaqusConfig.T.to_dict()[0]
+    strainStart = float(abaqusConfig["strainStart"])
+    strainEnd = float(abaqusConfig["strainEnd"])
+    strainStep = float(abaqusConfig["strainStep"])
+
+    #print(paramConfig)
 
     # The project path folder
     projectPath = os.getcwd()
     # The logging path
-    logPath = f"log/{material}_{optimizerName}.txt"
+    logPath = f"log/{material}_{geometry}_{optimizerName}.txt"
 
     # The results path
-    resultPath = f"results/{material}"
+    resultPath = f"results/{material}/{geometry}"
 
     # The simulations path
-    simPath = f"simulations/{material}"
+    simPath = f"simulations/{material}/{geometry}"
 
     # The templates path
-    templatePath = f"templates/{material}"
+    templatePath = f"templates/{material}/{geometry}"
 
     # The target path
-    targetPath = f"targets/{material}"
+    targetPath = f"targets/{material}/{geometry}"
 
     #########################################################
     # Creating necessary directories for the configurations #
@@ -65,22 +93,26 @@ def main_config():
     checkCreate("results")
     path = f"results/{material}"
     checkCreate(path)
-    
+    checkCreate(f"{path}/{geometry}")
+
     # For simulations
     checkCreate("simulations")
     path = f"simulations/{material}"
     checkCreate(path)
+    checkCreate(f"{path}/{geometry}")
 
     # For templates
     checkCreate("templates")
     path = f"templates/{material}"
     checkCreate(path)
-    checkCreate(f"{path}/postProc")
+    checkCreate(f"{path}/{geometry}")
+    checkCreate(f"{path}/{geometry}/postProc")
 
     # For targets
     checkCreate("targets")
     path = f"targets/{material}"
     checkCreate(path)
+    checkCreate(f"{path}/{geometry}")
 
     ###########################
     # Information declaration #
@@ -93,8 +125,16 @@ def main_config():
         'simPath': simPath,
         'targetPath': targetPath,
         'templatePath': templatePath,
+        'optimizeStrategy': optimizeStrategy,
         'material': material,
-        'optimizerName': optimizerName
+        'optimizerName': optimizerName,
+        'hardeningLaw': hardeningLaw,
+        'paramConfig': paramConfig,
+        'geometry': geometry,
+        'deviationPercent': deviationPercent,
+        'strainStart': strainStart,
+        'strainEnd': strainEnd,
+        'strainStep': strainStep,
     }
 
   

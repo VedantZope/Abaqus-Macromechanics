@@ -25,8 +25,8 @@ class BO():
         # maximize parameters
         self.verbose = 1 # 0 for no output, 1 for some output printing
         self.random_state = 123 # random seed
-        self.init_points = 200 # number of initial points to sample randomly for Bayesian optimization
-        self.iterations = 200 # number of iterations to run Bayesian optimization
+        self.init_points = 0 # number of initial points to sample randomly for Bayesian optimization
+        self.iterations = 1 # number of iterations to run Bayesian optimization
         
         # Acquisition function        
         # Low kappa means more exploitation for UCB

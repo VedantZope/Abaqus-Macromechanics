@@ -24,3 +24,81 @@ The configurations you have chosen:
 Generating necessary directories
 The path to your main project folder is
 C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++----------------+-------------+
+| Global Configs | User choice |
++----------------+-------------+
+|    Material    |    DP1000   |
+|   Optimizer    |      BO     |
++----------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++----------------+-------------+
+| Global Configs | User choice |
++----------------+-------------+
+|    Material    |    DP1000   |
+|   Optimizer    |      BO     |
++----------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++----------------+-------------+
+| Global Configs | User choice |
++----------------+-------------+
+|    Material    |    DP1000   |
+|   Optimizer    |      BO     |
++----------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++----------------+-------------+
+| Global Configs | User choice |
++----------------+-------------+
+|    Material    |    DP1000   |
+|   Optimizer    |      BO     |
++----------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++----------------+-------------+
+| Global Configs | User choice |
++----------------+-------------+
+|    Material    |    DP1000   |
+|   Optimizer    |      BO     |
++----------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++----------------+-------------+
+| Global Configs | User choice |
++----------------+-------------+
+|    Material    |    DP1000   |
+|   Optimizer    |      BO     |
++----------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project

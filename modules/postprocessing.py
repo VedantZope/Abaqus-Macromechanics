@@ -16,6 +16,7 @@ session.Viewport(name='Viewport: 1', origin=(0.0, 0.0), width=351.333312988281,
     height=172.66667175293)
 session.viewports['Viewport: 1'].makeCurrent()
 session.viewports['Viewport: 1'].maximize()
+
 from viewerModules import *
 from driverUtils import executeOnCaeStartup
 #==========================Initialise a working director===============================
