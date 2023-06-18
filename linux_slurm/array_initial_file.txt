@@ -1,0 +1,2 @@
+/scratch/project_2007935/project_test/simulations/DP1000_room/NBDR50/1
+/scratch/project_2007935/project_test/simulations/DP1000_room/NBDR50/2

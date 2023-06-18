@@ -6,13 +6,55 @@ import os
 import matplotlib.pyplot as mp
 import sys
 import shutil
-
+import random
 
 
 def SIM(info):
     def __init__(self, info):
         self.info = info
+   
+    def latin_hypercube_sampling(self):
+        paramConfig = self.info["paramConfig"]
+        numberOfInitialSims = self.info["numberOfInitialSims"]
+        linspaceValues = {}
+        for param in paramConfig:
+            linspaceValues[param] = np.linspace(
+                start=paramConfig[param]["lowerBound"], 
+                stop=paramConfig[param]["upperBound"], 
+                num = self.info["initialSimsSpacing"])
+            linspaceValues[param] = linspaceValues[param].tolist()   
+        points = []
+        for _ in range(numberOfInitialSims):
+            while True:
+                candidateParam = {}
+                for param in linspaceValues:
+                    random.shuffle(linspaceValues[param])
+                    candidateParam[param] = linspaceValues[param].pop()
+                if candidateParam not in points:
+                    break
+            points.append(candidateParam)
 
+        return points
+
+    def run_initial_simulations(self):
+        projectPath = info['projectPath']
+        logPath = info['logPath']
+        resultPath = info['resultPath']
+        simPath = info['simPath']
+        targetPath = info['targetPath']
+        templatePath = info['templatePath'] 
+        material = info['material']
+        optimizeStrategy = info['optimizeStrategy']
+        optimizerName = info['optimizerName']
+        hardeningLaw = info['hardeningLaw']
+        paramConfig = info['paramConfig']
+        geometry = info['geometry']
+        deviationPercent = info['deviationPercent']
+        runInitialSims = info['runInitialSims']
+        numberOfInitialSims = info['numberOfInitialSims']
+        strainStart = info['strainStart']
+        strainEnd = info['strainEnd']
+        strainStep = info['strainStep']
 
 
     def run_simulation(self):

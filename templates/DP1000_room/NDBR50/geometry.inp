@@ -59222,7 +59222,7 @@
 ** 
 ** MATERIALS
 ** 
-*INCLUDE, INPUT=Material_DP1000_Mises.inp
+*INCLUDE, INPUT=material.inp
 ** 
 ** BOUNDARY CONDITIONS
 ** 

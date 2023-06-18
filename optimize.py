@@ -26,14 +26,21 @@ def main_optimize():
     targetPath = info['targetPath']
     templatePath = info['templatePath'] 
     material = info['material']
+    optimizeStrategy = info['optimizeStrategy']
     optimizerName = info['optimizerName']
     hardeningLaw = info['hardeningLaw']
     paramConfig = info['paramConfig']
     geometry = info['geometry']
+    deviationPercent = info['deviationPercent']
+    runInitialSims = info['runInitialSims']
+    numberOfInitialSims = info['numberOfInitialSims']
     strainStart = info['strainStart']
     strainEnd = info['strainEnd']
     strainStep = info['strainStep']
 
+    sim = SIM(info)
+    if runInitialSims == "yes":
+        sim.run_initial_simulations()
     # Read the CSV file into a DataFrame (ground truth)
     df = pd.read_csv(f'{targetPath}/{geometry}/Force-Displacement.csv')
     expDisp = df['Disp/mm'].to_numpy()
@@ -47,7 +54,7 @@ def main_optimize():
     info['param_bounds'] = param_bounds
     #print(param_bounds)
     time.sleep(80)
-    sim = SIM(info)
+    
    
     
     # Note: BO in Bayes-Opt tries to maximize, so you should use the negative of the loss function.

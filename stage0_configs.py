@@ -33,6 +33,9 @@ def main_config():
     hardeningLaw = globalConfig["hardeningLaw"]
     deviationPercent = globalConfig["deviationPercent"]
     geometry = globalConfig["geometry"]
+    runInitialSims = globalConfig["runInitialSims"]
+    numberOfInitialSims = globalConfig["numberOfInitialSims"]
+    initialSimsSpacing = globalConfig["initialSimsSpacing"]
     
     ##################################
     # Parameter bound configurations #
@@ -94,19 +97,22 @@ def main_config():
     path = f"results/{material}"
     checkCreate(path)
     checkCreate(f"{path}/{geometry}")
+    checkCreate(f"{path}/{geometry}/initial")
+    checkCreate(f"{path}/{geometry}/iteration")
 
     # For simulations
     checkCreate("simulations")
     path = f"simulations/{material}"
     checkCreate(path)
     checkCreate(f"{path}/{geometry}")
+    checkCreate(f"{path}/{geometry}/initial")
+    checkCreate(f"{path}/{geometry}/iteration")
 
     # For templates
     checkCreate("templates")
     path = f"templates/{material}"
     checkCreate(path)
     checkCreate(f"{path}/{geometry}")
-    checkCreate(f"{path}/{geometry}/postProc")
 
     # For targets
     checkCreate("targets")
@@ -126,6 +132,9 @@ def main_config():
         'targetPath': targetPath,
         'templatePath': templatePath,
         'optimizeStrategy': optimizeStrategy,
+        'runInitialSims': runInitialSims,
+        'numberOfInitialSims': numberOfInitialSims,
+        'initialSimsSpacing': initialSimsSpacing,
         'material': material,
         'optimizerName': optimizerName,
         'hardeningLaw': hardeningLaw,
@@ -148,8 +157,15 @@ def main_config():
     logTable = PrettyTable()
 
     logTable.field_names = ["Global Configs", "User choice"]
+    logTable.add_row(["Optimize Strategy", optimizeStrategy])
     logTable.add_row(["Material", material])
     logTable.add_row(["Optimizer", optimizerName])
+    logTable.add_row(["Hardening Law", hardeningLaw])
+    logTable.add_row(["Geometry", geometry])
+    logTable.add_row(["Deviation Percent", deviationPercent])
+    logTable.add_row(["Run Initial Sims", runInitialSims])
+    logTable.add_row(["Number of Initial Sims", numberOfInitialSims])
+
     printLog(logTable.get_string() + "\n", logPath)
 
     printLog("Generating necessary directories\n", logPath)
