@@ -1,0 +1,57 @@
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+|   Optimize Strategy    |     SOO     |
+|        Material        | DP1000_room |
+|       Optimizer        |      BO     |
+|     Hardening Law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|   Deviation Percent    |      5      |
+|    Run Initial Sims    |     yes     |
+| Number of Initial Sims |      2      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+|   Optimize Strategy    |     SOO     |
+|        Material        | DP1000_room |
+|       Optimizer        |      BO     |
+|     Hardening Law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|   Deviation Percent    |      5      |
+|    Run Initial Sims    |     yes     |
+| Number of Initial Sims |      2      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+|   Optimize Strategy    |     SOO     |
+|        Material        | DP1000_room |
+|       Optimizer        |      BO     |
+|     Hardening Law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|   Deviation Percent    |      5      |
+|    Run Initial Sims    |     yes     |
+| Number of Initial Sims |      2      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project

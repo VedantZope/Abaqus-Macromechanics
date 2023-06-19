@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from time import sleep
 from prettytable import PrettyTable
+from stage0_initialize_directory import *
 from modules.helper import *
 from modules.hardeningLaws import *
 import copy
@@ -36,6 +37,8 @@ def main_config():
     runInitialSims = globalConfig["runInitialSims"]
     numberOfInitialSims = globalConfig["numberOfInitialSims"]
     initialSimsSpacing = globalConfig["initialSimsSpacing"]
+
+    projectPath, logPath, resultPath, simPath, templatePath, targetPath = initialize_directory(optimizeStrategy, material, geometry, hardeningLaw)
     
     ##################################
     # Parameter bound configurations #
@@ -58,67 +61,9 @@ def main_config():
     strainStart = float(abaqusConfig["strainStart"])
     strainEnd = float(abaqusConfig["strainEnd"])
     strainStep = float(abaqusConfig["strainStep"])
+    truePlasticStrain = np.arange(strainStart, strainEnd + 1e-10, strainStep)
 
     #print(paramConfig)
-
-    # The project path folder
-    projectPath = os.getcwd()
-    # The logging path
-    logPath = f"log/{material}_{geometry}_{optimizerName}.txt"
-
-    # The results path
-    resultPath = f"results/{material}/{geometry}"
-
-    # The simulations path
-    simPath = f"simulations/{material}/{geometry}"
-
-    # The templates path
-    templatePath = f"templates/{material}/{geometry}"
-
-    # The target path
-    targetPath = f"targets/{material}/{geometry}"
-
-    #########################################################
-    # Creating necessary directories for the configurations #
-    #########################################################
-
-    def checkCreate(path):
-        if not os.path.exists(path):
-            os.mkdir(path)
-
-    # For configs
-    checkCreate("configs")
-
-    # For log
-    checkCreate("log")
-
-    # For results 
-    checkCreate("results")
-    path = f"results/{material}"
-    checkCreate(path)
-    checkCreate(f"{path}/{geometry}")
-    checkCreate(f"{path}/{geometry}/initial")
-    checkCreate(f"{path}/{geometry}/iteration")
-
-    # For simulations
-    checkCreate("simulations")
-    path = f"simulations/{material}"
-    checkCreate(path)
-    checkCreate(f"{path}/{geometry}")
-    checkCreate(f"{path}/{geometry}/initial")
-    checkCreate(f"{path}/{geometry}/iteration")
-
-    # For templates
-    checkCreate("templates")
-    path = f"templates/{material}"
-    checkCreate(path)
-    checkCreate(f"{path}/{geometry}")
-
-    # For targets
-    checkCreate("targets")
-    path = f"targets/{material}"
-    checkCreate(path)
-    checkCreate(f"{path}/{geometry}")
 
     ###########################
     # Information declaration #
@@ -144,6 +89,7 @@ def main_config():
         'strainStart': strainStart,
         'strainEnd': strainEnd,
         'strainStep': strainStep,
+        'truePlasticStrain': truePlasticStrain,
     }
 
   

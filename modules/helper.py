@@ -16,3 +16,6 @@ def parseBoundsBO(paramInfo):
     for param in paramInfo:
         paramBounds[param] = (paramInfo[param]['lowerBound'], paramInfo[param]['upperBound'])
     return paramBounds
+
+def is_directory_empty(directory_path):
+    return len(os.listdir(directory_path)) == 0

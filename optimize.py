@@ -37,10 +37,18 @@ def main_optimize():
     strainStart = info['strainStart']
     strainEnd = info['strainEnd']
     strainStep = info['strainStep']
-
     sim = SIM(info)
-    if runInitialSims == "yes":
-        sim.run_initial_simulations()
+    if not os.path.exists(f"{resultPath}/initial/common/force-displacement-curvesList.npy"):
+        print("There are no initial simulations. Please run the initial simulations first.")
+        if optimizeStrategy == "SOO":
+            sim.SOO_run_initial_simulations()
+        elif optimizeStrategy == "MOO":
+            sim.MOO_run_initial_simulations()
+    else: 
+        print("Initial simulations already exist. Skipping this step.")
+        
+        
+        
     # Read the CSV file into a DataFrame (ground truth)
     df = pd.read_csv(f'{targetPath}/{geometry}/Force-Displacement.csv')
     expDisp = df['Disp/mm'].to_numpy()
@@ -55,14 +63,14 @@ def main_optimize():
     #print(param_bounds)
     time.sleep(80)
     
-   
+
     
     # Note: BO in Bayes-Opt tries to maximize, so you should use the negative of the loss function.
     def lossFunction(**solution):
         #print(solution)
         
-         # Adding a jitter to the ending strain to include the last point
-        truePlasticStrain = np.arange(strainStart, strainEnd + 1e-10, strainStep)
+        # Adding a jitter to the ending strain to include the last point
+        
         if hardeningLaw == "Swift":
             c1, c2, c3 = solution["c1"], solution["c2"], solution["c3"]
             trueStress = Swift(c1, c2, c3, truePlasticStrain)
@@ -72,7 +80,7 @@ def main_optimize():
         
         #===========creating the material input data usin 3 params swift equation============
         
-        sim_Disp,sim_Force = sim.run_iteration_simulation(trueStress, trueStrain)
+        sim_Disp,sim_Force = sim.run_iteration_simulation(trueStress, truePlasticStrain)
         sim_Disp = np.array(sim_Disp)
         sim_Force = np.array(sim_Force)
         # Sort simulated data by displacement (if not sorted already)

@@ -4,12 +4,13 @@ import numpy as np
 import subprocess
 import os
 import matplotlib.pyplot as mp
+from modules.hardeningLaws import *
 import sys
 import shutil
 import random
+import time
 
-
-def SIM(info):
+class SIM():
     def __init__(self, info):
         self.info = info
    
@@ -36,26 +37,51 @@ def SIM(info):
 
         return points
 
-    def run_initial_simulations(self):
-        projectPath = info['projectPath']
-        logPath = info['logPath']
-        resultPath = info['resultPath']
-        simPath = info['simPath']
-        targetPath = info['targetPath']
-        templatePath = info['templatePath'] 
-        material = info['material']
-        optimizeStrategy = info['optimizeStrategy']
-        optimizerName = info['optimizerName']
-        hardeningLaw = info['hardeningLaw']
-        paramConfig = info['paramConfig']
-        geometry = info['geometry']
-        deviationPercent = info['deviationPercent']
-        runInitialSims = info['runInitialSims']
-        numberOfInitialSims = info['numberOfInitialSims']
-        strainStart = info['strainStart']
-        strainEnd = info['strainEnd']
-        strainStep = info['strainStep']
+    def SOO_run_initial_simulations(self):
+        projectPath = self.info['projectPath']
+        logPath = self.info['logPath']
 
+        resultPath = self.info['resultPath']
+        simPath = self.info['simPath']
+        targetPath = self.info['targetPath']
+        templatePath = self.info['templatePath'] 
+        material = self.info['material']
+        optimizeStrategy = self.info['optimizeStrategy']
+        optimizerName = self.info['optimizerName']
+        hardeningLaw = self.info['hardeningLaw']
+        paramConfig = self.info['paramConfig']
+        geometry = self.info['geometry']
+        deviationPercent = self.info['deviationPercent']
+        runInitialSims = self.info['runInitialSims']
+        numberOfInitialSims = self.info['numberOfInitialSims']
+        strainStart = self.info['strainStart']
+        strainEnd = self.info['strainEnd']
+        strainStep = self.info['strainStep']
+        truePlasticStrain = self.info['truePlasticStrain']
+
+        initial_params = self.latin_hypercube_sampling()
+        #print(initial_params)
+        np.save(f"{resultPath}/initial/common/initial_params.npy", initial_params)
+        if hardeningLaw == "Swift":
+            flowCurves = {}
+            for paramDict in initial_params:
+                
+                c1, c2, c3 = paramDict['c1'], paramDict['c2'], paramDict['c3']
+                flowCurve = Swift(c1, c2, c3, truePlasticStrain)
+                flowCurves.append(flowCurve)
+                print(flowCurve)
+            np.save(f"{resultPath}/initial/common/flowCurves.npy", flowCurves)
+        print(flowCurves)
+
+
+        
+
+
+        print("Hello")
+        time.sleep(30)
+
+    def MOO_run_initial_simulations(self):
+        pass
 
     def run_simulation(self):
         # Run the simulation
