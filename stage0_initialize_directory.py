@@ -81,9 +81,9 @@ def initialize_directory(optimizeStrategy, material, geometry, hardeningLaw):
         # The simulations path
         simPath = f"SOO_simulations/{material}_{hardeningLaw}/{geometry}"
         # The templates path
-        templatePath = f"templates/{material}_{hardeningLaw}/{geometry}"
+        templatePath = f"templates/{material}/{geometry}"
         # The target path
-        targetPath = f"targets/{material}_{hardeningLaw}/{geometry}"
+        targetPath = f"targets/{material}/{geometry}"
     elif optimizeStrategy == "MOO":
         # The logging path
         logPath = f"MOO_log/{material}_{hardeningLaw}.txt"

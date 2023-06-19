@@ -62,25 +62,79 @@ class SIM():
         initial_params = self.latin_hypercube_sampling()
         #print(initial_params)
         np.save(f"{resultPath}/initial/common/initial_params.npy", initial_params)
-        if hardeningLaw == "Swift":
-            flowCurves = {}
-            for paramDict in initial_params:
-                paramTuple = tuple(paramDict.items())
+        
+        # Initializing the flow curves and force-displacement curves
+        # The structure of flow curve: dict of (hardening law params typle) -> {stress: stressArray , strain: strainArray}
+        # The structure of force-displacement curve: dict of (hardening law params typle) -> {force: forceArray , displacement: displacementArray}
+        
+        flowCurves = {}
+        FDCurves = {}
+        for paramDict in initial_params:
+            paramTuple = tuple(paramDict.items())
+            if hardeningLaw == "Swift":
                 c1, c2, c3 = paramDict['c1'], paramDict['c2'], paramDict['c3']
                 flowCurve = Swift(c1, c2, c3, truePlasticStrain)
-                flowCurves[paramTuple] = flowCurve
-            np.save(f"{resultPath}/initial/common/flowCurves.npy", flowCurves)
+            if hardeningLaw == "SwiftVoce":
+                c1, c2, c3, c4, c5, c6, c7 = paramDict['c1'], paramDict['c2'], paramDict['c3'], paramDict['c4'], paramDict['c5'], paramDict['c6'], paramDict['c7']
+                flowCurve = SwiftVoce(c1, c2, c3, c4, c5, c6, c7, truePlasticStrain)
+            FDCurves[paramTuple] = {}
+            flowCurves[paramTuple] = {}
+            flowCurves[paramTuple]['stress'] = flowCurve
+            flowCurves[paramTuple]['strain'] = truePlasticStrain
+        np.save(f"{resultPath}/initial/common/flowCurves.npy", flowCurves)
         print(flowCurves)
 
-
-        
-
+        # Copying the template folder to the simulation folder for the number of simulations
+        for index in range(1, numberOfInitialSims + 1):
+            # Create the simulation folder if not exists, else delete the folder and create a new one
+            if os.path.exists(f"{simPath}/initial/{index}"):
+                shutil.rmtree(f"{simPath}/initial/{index}")
+            shutil.copytree(templatePath, f"{simPath}/initial/{index}")
+            self.replace_flowCurve_
 
         print("Hello")
         time.sleep(30)
 
+    def replace_flowCurve_material_inp(self, filePath, truePlasticStrain):
+        with open(filePath, 'r') as material_inp:
+            material_inp_content = material_inp.readlines()
+
+        # Locate the section containing the stress-strain data
+        start_line = None
+        end_line = None
+        for i, line in enumerate(material_inp_content):
+            if '*Plastic' in line:
+                start_line = i + 1
+            elif '*Density' in line:
+                end_line = i
+                break
+
+        if start_line is None or end_line is None:
+            raise ValueError('Could not find the stress-strain data section')
+
+        stress_strain_lines = material_inp_content[start_line:end_line]
+        stress_strain_data = []
+        for line in stress_strain_lines:
+            data = line.split(',')  # Adjust delimiter based on your file format
+            stress_strain_data.append((float(data[0]), float(data[1])))
+
+        # Step 4: Modify the stress-strain data
+        new_stress_strain_data = zip(trueStress, trueStrain)
+
+        # Step 5: Update the .inp file
+        new_lines = []
+        new_lines.extend(material_inp_content[:start_line])
+        new_lines.extend([f'{stress},{strain}\n' for stress, strain in new_stress_strain_data])
+        new_lines.extend(material_inp_content[end_line:])
+
+        # Step 6: Write the updated .inp file
+        with open('Material_DP1000_Mises.inp', 'w') as file:
+            file.writelines(new_lines)
+
     def MOO_run_initial_simulations(self):
         pass
+    
+
 
     def run_simulation(self):
         # Run the simulation
@@ -112,42 +166,6 @@ class SIM():
         #===================updating the material.inp file====================
         material_inp_file_path = f"{geometry}/DP1000_Mises.inp"
         batch_file_path = f"submit-postprocess.bat"
-
-        with open(inp_file_path, 'r') as inp_file:
-            inp_content = inp_file.readlines()
-
-        # Locate the section containing the stress-strain data
-        start_line = None
-        end_line = None
-        for i, line in enumerate(inp_content):
-            if '*Plastic' in line:
-                start_line = i + 1
-            elif '*Density' in line:
-                end_line = i
-                break
-
-        if start_line is None or end_line is None:
-            raise ValueError('Could not find the stress-strain data section')
-
-        stress_strain_lines = inp_content[start_line:end_line]
-        stress_strain_data = []
-        for line in stress_strain_lines:
-            data = line.split(',')  # Adjust delimiter based on your file format
-            stress_strain_data.append((float(data[0]), float(data[1])))
-
-        # Step 4: Modify the stress-strain data
-        new_stress_strain_data = zip(trueStress, trueStrain)
-
-        # Step 5: Update the .inp file
-        new_lines = []
-        new_lines.extend(inp_content[:start_line])
-        new_lines.extend([f'{stress},{strain}\n' for stress, strain in new_stress_strain_data])
-        new_lines.extend(inp_content[end_line:])
-
-        # Step 6: Write the updated .inp file
-        with open('Material_DP1000_Mises.inp', 'w') as file:
-            file.writelines(new_lines)
-
 
         #=================execute the simulation and post processs its results=================
         #run a batch file with command: 
