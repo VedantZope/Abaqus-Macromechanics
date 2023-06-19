@@ -61,6 +61,7 @@ def main_config():
     strainStart = float(abaqusConfig["strainStart"])
     strainEnd = float(abaqusConfig["strainEnd"])
     strainStep = float(abaqusConfig["strainStep"])
+    
     truePlasticStrain = np.arange(strainStart, strainEnd + 1e-10, strainStep)
 
     #print(paramConfig)

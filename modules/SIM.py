@@ -65,11 +65,10 @@ class SIM():
         if hardeningLaw == "Swift":
             flowCurves = {}
             for paramDict in initial_params:
-                
+                paramTuple = tuple(paramDict.items())
                 c1, c2, c3 = paramDict['c1'], paramDict['c2'], paramDict['c3']
                 flowCurve = Swift(c1, c2, c3, truePlasticStrain)
-                flowCurves.append(flowCurve)
-                print(flowCurve)
+                flowCurves[paramTuple] = flowCurve
             np.save(f"{resultPath}/initial/common/flowCurves.npy", flowCurves)
         print(flowCurves)
 
