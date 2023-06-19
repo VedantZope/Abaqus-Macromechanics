@@ -3,7 +3,5 @@ pandas
 matplotlib
 scikit-learn
 bayesian-optimization
-pyabaqus
-abqpy
 prettytable
 ```

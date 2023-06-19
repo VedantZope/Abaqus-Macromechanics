@@ -56,13 +56,26 @@ def main_config():
     #########################
     # Abaqus configurations #
     #########################
-    abaqusConfig = pd.read_excel("configs/abaqus_config.xlsx", nrows=1, engine="openpyxl")
-    abaqusConfig = abaqusConfig.T.to_dict()[0]
-    strainStart = float(abaqusConfig["strainStart"])
-    strainEnd = float(abaqusConfig["strainEnd"])
-    strainStep = float(abaqusConfig["strainStep"])
-    
-    truePlasticStrain = np.arange(strainStart, strainEnd + 1e-10, strainStep)
+    abaqusConfig = pd.read_excel("abaqus_config.xlsx",engine="openpyxl")
+    ranges_and_increments = []
+
+    # Iterate over each row in the DataFrame
+    for index, row in abaqusConfig.iterrows():
+        # Append a tuple containing the strainStart, strainEnd, and strainStep to the list
+        ranges_and_increments.append((row['strainStart'], row['strainEnd'], row['strainStep']))
+        
+    truePlasticStrain = np.array([])
+
+    # Iterate through each range and increment
+    for i, (start, end, step) in enumerate(ranges_and_increments):
+        # Skip the start value for all ranges after the first one
+        if i > 0:
+            start += step
+        # Create numpy array for range
+        strain_range = np.arange(start, end + step, step)
+        # Append strain_range to strain_array
+        truePlasticStrain = np.concatenate((truePlasticStrain, strain_range))
+
 
     #print(paramConfig)
 
