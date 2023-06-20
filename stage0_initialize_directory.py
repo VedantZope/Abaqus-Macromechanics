@@ -9,14 +9,14 @@ def checkCreate(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def initialize_directory(optimizeStrategy, material, geometry, hardeningLaw):
+def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex):
 
     if optimizeStrategy == "SOO":
         # For log
-        checkCreate("SOO_log")
+        checkCreate("log")
 
         # For results 
-        path = f"SOO_results/{material}_{hardeningLaw}/{geometry}"
+        path = f"SOO_results/{material}_{hardeningLaw}/{geometry}/curve{curveIndex}"
         checkCreate(path)
         checkCreate(f"{path}/initial")
         checkCreate(f"{path}/initial/common")
@@ -24,23 +24,23 @@ def initialize_directory(optimizeStrategy, material, geometry, hardeningLaw):
         checkCreate(f"{path}/iteration/common")
 
         # For simulations
-        path = f"SOO_simulations/{material}_{hardeningLaw}/{geometry}"
+        path = f"SOO_simulations/{material}_{hardeningLaw}/{geometry}/curve{curveIndex}"
         checkCreate(path)
         checkCreate(f"{path}/initial")
         checkCreate(f"{path}/iteration")
+
+        # For targets
+        path = f"targets/{material}/{geometry}/curve{curveIndex}"
+        checkCreate(path)
 
         # For templates
         path = f"templates/{material}/{geometry}"
         checkCreate(path)
 
-        # For targets
-        path = f"targets/{material}/{geometry}"
-        checkCreate(path)
-    
     elif optimizeStrategy == "MOO":
         geometryList = geometry
         # For log
-        checkCreate("MOO_log")
+        checkCreate("log")
 
         # For results 
         path = f"MOO_results/{material}_{hardeningLaw}"
@@ -75,18 +75,18 @@ def initialize_directory(optimizeStrategy, material, geometry, hardeningLaw):
     projectPath = os.getcwd()
     if optimizeStrategy == "SOO":
         # The logging path
-        logPath = f"SOO_log/{material}_{hardeningLaw}_{geometry}.txt"
+        logPath = f"log/SOO_{material}_{hardeningLaw}_{geometry}_curve{curveIndex}.txt"
         # The results path
-        resultPath = f"SOO_results/{material}_{hardeningLaw}/{geometry}"
+        resultPath = f"SOO_results/{material}_{hardeningLaw}/{geometry}/curve{curveIndex}"
         # The simulations path
-        simPath = f"SOO_simulations/{material}_{hardeningLaw}/{geometry}"
-        # The templates path
-        templatePath = f"templates/{material}_{hardeningLaw}/{geometry}"
+        simPath = f"SOO_simulations/{material}_{hardeningLaw}/{geometry}/curve{curveIndex}"
         # The target path
-        targetPath = f"targets/{material}_{hardeningLaw}/{geometry}"
+        targetPath = f"targets/{material}/{geometry}/curve{curveIndex}"
+        # The templates path
+        templatePath = f"templates/{material}/{geometry}"
     elif optimizeStrategy == "MOO":
         # The logging path
-        logPath = f"MOO_log/{material}_{hardeningLaw}.txt"
+        logPath = f"log/MOO_{material}_{hardeningLaw}.txt"
         # The results path
         resultPath = f"MOO_results/{material}"
         # The simulations path

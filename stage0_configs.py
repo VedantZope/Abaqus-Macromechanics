@@ -34,11 +34,11 @@ def main_config():
     hardeningLaw = globalConfig["hardeningLaw"]
     deviationPercent = globalConfig["deviationPercent"]
     geometry = globalConfig["geometry"]
-    runInitialSims = globalConfig["runInitialSims"]
+    curveIndex = globalConfig["curveIndex"]
     numberOfInitialSims = globalConfig["numberOfInitialSims"]
     initialSimsSpacing = globalConfig["initialSimsSpacing"]
 
-    projectPath, logPath, resultPath, simPath, templatePath, targetPath = initialize_directory(optimizeStrategy, material, geometry, hardeningLaw)
+    projectPath, logPath, resultPath, simPath, templatePath, targetPath = initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
     
     ##################################
     # Parameter bound configurations #
@@ -56,7 +56,7 @@ def main_config():
     #########################
     # Abaqus configurations #
     #########################
-    abaqusConfig = pd.read_excel("abaqus_config.xlsx",engine="openpyxl")
+    abaqusConfig = pd.read_excel("configs/abaqus_config.xlsx",engine="openpyxl")
     ranges_and_increments = []
 
     # Iterate over each row in the DataFrame
@@ -73,10 +73,12 @@ def main_config():
             start += step
         # Create numpy array for range
         strain_range = np.arange(start, end + step, step)
+        strain_range = np.around(strain_range, decimals=6)
         # Append strain_range to strain_array
         truePlasticStrain = np.concatenate((truePlasticStrain, strain_range))
-
-
+        
+    #print(truePlasticStrain)
+    #time.sleep(30)
     #print(paramConfig)
 
     ###########################
@@ -91,18 +93,15 @@ def main_config():
         'targetPath': targetPath,
         'templatePath': templatePath,
         'optimizeStrategy': optimizeStrategy,
-        'runInitialSims': runInitialSims,
         'numberOfInitialSims': numberOfInitialSims,
         'initialSimsSpacing': initialSimsSpacing,
         'material': material,
-        'optimizerName': optimizerName,
         'hardeningLaw': hardeningLaw,
-        'paramConfig': paramConfig,
         'geometry': geometry,
+        'curveIndex': curveIndex,
+        'optimizerName': optimizerName,
+        'paramConfig': paramConfig,
         'deviationPercent': deviationPercent,
-        'strainStart': strainStart,
-        'strainEnd': strainEnd,
-        'strainStep': strainStep,
         'truePlasticStrain': truePlasticStrain,
     }
 
@@ -117,14 +116,15 @@ def main_config():
     logTable = PrettyTable()
 
     logTable.field_names = ["Global Configs", "User choice"]
-    logTable.add_row(["Optimize Strategy", optimizeStrategy])
+    logTable.add_row(["Number of initial sims", numberOfInitialSims])
+    logTable.add_row(["Initial sims spacing", initialSimsSpacing])
+    logTable.add_row(["Optimize strategy", optimizeStrategy])
     logTable.add_row(["Material", material])
-    logTable.add_row(["Optimizer", optimizerName])
-    logTable.add_row(["Hardening Law", hardeningLaw])
+    logTable.add_row(["Hardening law", hardeningLaw])
     logTable.add_row(["Geometry", geometry])
-    logTable.add_row(["Deviation Percent", deviationPercent])
-    logTable.add_row(["Run Initial Sims", runInitialSims])
-    logTable.add_row(["Number of Initial Sims", numberOfInitialSims])
+    logTable.add_row(["Curve index", curveIndex])
+    logTable.add_row(["Optimizer name", optimizerName])
+    logTable.add_row(["Deviation percent", deviationPercent])
 
     printLog(logTable.get_string() + "\n", logPath)
 

@@ -32,23 +32,21 @@ def main_optimize():
     paramConfig = info['paramConfig']
     geometry = info['geometry']
     deviationPercent = info['deviationPercent']
-    runInitialSims = info['runInitialSims']
     numberOfInitialSims = info['numberOfInitialSims']
-    strainStart = info['strainStart']
-    strainEnd = info['strainEnd']
-    strainStep = info['strainStep']
+
     sim = SIM(info)
-    if not os.path.exists(f"{resultPath}/initial/common/force-displacement-curvesList.npy"):
-        print("There are no initial simulations. Please run the initial simulations first.")
+    if not os.path.exists(f"{resultPath}/initial/common/FD_Curves.npy"):
+        printLog("There are no initial simulations. Program starts running the initial simulations.", logPath)
         if optimizeStrategy == "SOO":
             sim.SOO_run_initial_simulations()
         elif optimizeStrategy == "MOO":
             sim.MOO_run_initial_simulations()
     else: 
-        print("Initial simulations already exist. Skipping this step.")
+        printLog("Initial simulations already exist", logPath)
+        numberOfInitialSims = len(np.load(f"{resultPath}/initial/common/FD_Curves.npy").tolist())
+        printLog(f"Number of initial simulations: {numberOfInitialSims} FD curves", logPath)
         
-        
-        
+    time.sleep(180)
     # Read the CSV file into a DataFrame (ground truth)
     df = pd.read_csv(f'{targetPath}/{geometry}/Force-Displacement.csv')
     expDisp = df['Disp/mm'].to_numpy()
