@@ -40,7 +40,7 @@ session.viewports['Viewport: 1'].odbDisplay.display.setValues(plotState=(
 session.viewports['Viewport: 1'].odbDisplay.commonOptions.setValues(
     visibleEdges=FEATURE)
 session.viewports['Viewport: 1'].view.fitView()
-session.printToFile(fileName=os.path.join(working_directory,"deformed"), format=TIFF, canvasObjects=(
+session.printToFile(fileName=os.path.join(working_directory,"Deformed_Specimen"), format=TIFF, canvasObjects=(
     session.viewports['Viewport: 1'], ))
 #working directory
 odb = session.odbs[working_directory+r"\geometry.odb"]
@@ -63,11 +63,11 @@ c1 = session.Curve(xyData=xy3)
 chart.setValues(curvesToPlot=(c1, ), )
 session.charts[chartName].autoColor(lines=True, symbols=True)
 session.viewports['Viewport: 1'].setValues(displayedObject=xyp)
-session.printToFile(fileName=os.path.join(working_directory,"F-D Curve"), format=TIFF, canvasObjects=(
+session.printToFile(fileName=os.path.join(working_directory,"FD_Curve_Plot"), format=TIFF, canvasObjects=(
     session.viewports['Viewport: 1'], ))
 session.xyDataObjects.changeKey(fromName='ADD_RF:RF2', toName='Force')
 session.xyDataObjects.changeKey(fromName='U:U2 PI: MODEL N: 30837', 
     toName='Displacement')
 x0 = session.xyDataObjects['Displacement']
 x1 = session.xyDataObjects['Force']
-session.writeXYReport(fileName=os.path.join(working_directory,"F-D Data.txt"), appendMode=OFF, xyData=(x0, x1))
+session.writeXYReport(fileName=os.path.join(working_directory,"FD_Curve.txt"), appendMode=OFF, xyData=(x0, x1))

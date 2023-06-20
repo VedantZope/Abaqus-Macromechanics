@@ -4,6 +4,7 @@ import subprocess
 import os
 import matplotlib.pyplot as mp
 from modules.hardeningLaws import *
+from modules.helper import *
 import sys
 import shutil
 import random
@@ -37,6 +38,12 @@ class SIM():
         return points
 
     def SOO_run_initial_simulations(self):
+        indexParamsDict = self.SOO_preprocess_simulations_initial()
+        self.SOO_write_paths_initial()
+        self.SOO_submit_array_jobs_initial()
+        self.SOO_postprocess_results_initial(indexParamsDict)
+
+    def SOO_preprocess_simulations_initial(self):
         projectPath = self.info['projectPath']
         logPath = self.info['logPath']
 
@@ -51,23 +58,18 @@ class SIM():
         paramConfig = self.info['paramConfig']
         geometry = self.info['geometry']
         deviationPercent = self.info['deviationPercent']
-        runInitialSims = self.info['runInitialSims']
         numberOfInitialSims = self.info['numberOfInitialSims']
-        strainStart = self.info['strainStart']
-        strainEnd = self.info['strainEnd']
-        strainStep = self.info['strainStep']
         truePlasticStrain = self.info['truePlasticStrain']
 
         initial_params = self.latin_hypercube_sampling()
         #print(initial_params)
         np.save(f"{resultPath}/initial/common/initial_params.npy", initial_params)
-        
+        initial_params = np.load(f"{resultPath}/initial/common/initial_params.npy", allow_pickle=True).tolist()
         # Initializing the flow curves and force-displacement curves
         # The structure of flow curve: dict of (hardening law params typle) -> {stress: stressArray , strain: strainArray}
-        # The structure of force-displacement curve: dict of (hardening law params typle) -> {force: forceArray , displacement: displacementArray}
         
         flowCurves = {}
-        FDCurves = {}
+        
         for paramDict in initial_params:
             paramTuple = tuple(paramDict.items())
             if hardeningLaw == "Swift":
@@ -76,28 +78,35 @@ class SIM():
             if hardeningLaw == "SwiftVoce":
                 c1, c2, c3, c4, c5, c6, c7 = paramDict['c1'], paramDict['c2'], paramDict['c3'], paramDict['c4'], paramDict['c5'], paramDict['c6'], paramDict['c7']
                 flowCurve = SwiftVoce(c1, c2, c3, c4, c5, c6, c7, truePlasticStrain)
-            FDCurves[paramTuple] = {}
             flowCurves[paramTuple] = {}
-            flowCurves[paramTuple]['stress'] = flowCurve
             flowCurves[paramTuple]['strain'] = truePlasticStrain
+            flowCurves[paramTuple]['stress'] = flowCurve
         np.save(f"{resultPath}/initial/common/flowCurves.npy", flowCurves)
-        print(flowCurves)
+        #print(flowCurves)
 
+        indexParamsDict = {} # Map simulation folder index to the corresponding hardening law parameters
+        for index, paramDict in enumerate(initial_params):
+            indexParamsDict[str(index+1)] = tuple(paramDict.items())
+        
+        #print(simulationDict)
         # Copying the template folder to the simulation folder for the number of simulations
         for index in range(1, numberOfInitialSims + 1):
             # Create the simulation folder if not exists, else delete the folder and create a new one
             if os.path.exists(f"{simPath}/initial/{index}"):
                 shutil.rmtree(f"{simPath}/initial/{index}")
             shutil.copytree(templatePath, f"{simPath}/initial/{index}")
-            self.replace_flowCurve_
-
-        print("Hello")
-        time.sleep(30)
-
-    def replace_flowCurve_material_inp(self, filePath, truePlasticStrain):
+            paramTuple = indexParamsDict[str(index)]
+            truePlasticStrain = flowCurves[paramTuple]['strain']
+            trueStress = flowCurves[paramTuple]['stress']
+            self.replace_flowCurve_material_inp(f"{simPath}/initial/{index}/material.inp", truePlasticStrain, trueStress)
+        
+        return indexParamsDict
+    
+    def replace_flowCurve_material_inp(self, filePath, truePlasticStrain, trueStress):
+        #print(truePlasticStrain)
         with open(filePath, 'r') as material_inp:
             material_inp_content = material_inp.readlines()
-
+        #print(material_inp_content)
         # Locate the section containing the stress-strain data
         start_line = None
         end_line = None
@@ -111,15 +120,10 @@ class SIM():
         if start_line is None or end_line is None:
             raise ValueError('Could not find the stress-strain data section')
 
-        stress_strain_lines = material_inp_content[start_line:end_line]
-        stress_strain_data = []
-        for line in stress_strain_lines:
-            data = line.split(',')  # Adjust delimiter based on your file format
-            stress_strain_data.append((float(data[0]), float(data[1])))
-
         # Step 4: Modify the stress-strain data
-        new_stress_strain_data = zip(trueStress, trueStrain)
-
+        new_stress_strain_data = zip(trueStress, truePlasticStrain)
+        # for strain in truePlasticStrain:
+        #     print(str(round(strain, 5)))
         # Step 5: Update the .inp file
         new_lines = []
         new_lines.extend(material_inp_content[:start_line])
@@ -127,82 +131,66 @@ class SIM():
         new_lines.extend(material_inp_content[end_line:])
 
         # Step 6: Write the updated .inp file
-        with open('Material_DP1000_Mises.inp', 'w') as file:
+        with open(filePath, 'w') as file:
             file.writelines(new_lines)
+
+    def SOO_write_paths_initial(self):
+        numberOfInitialSims = self.info['numberOfInitialSims']
+        projectPath = self.info['projectPath']
+        simPath = self.info['simPath']
+        with open("linux_slurm/array_initial_file.txt", 'w') as filename:
+            for index in range(1, numberOfInitialSims + 1):
+                filename.write(f"{projectPath}/{simPath}/initial/{index}\n")
+    
+    def SOO_submit_array_jobs_initial(self):
+        logPath = self.info['logPath']        
+        numberOfInitialSims = self.info['numberOfInitialSims']
+        printLog("Initial simulation preprocessing stage starts", logPath)
+        printLog(f"Number of jobs required: {numberOfInitialSims}", logPath)
+        subprocess.run(f"sbatch --wait --array=1-{numberOfInitialSims} linux_slurm/puhti_abaqus_array.sh", shell=True)
+        printLog("Initial simulation postprocessing stage finished", logPath)
+    
+    def SOO_postprocess_results_initial(self, indexParamsDict):
+        numberOfInitialSims = self.info['numberOfInitialSims']
+        simPath = self.info['simPath']
+        resultPath = self.info['resultPath']
+        logPath = self.info['logPath']
+        
+        # The structure of force-displacement curve: dict of (hardening law params typle) -> {force: forceArray , displacement: displacementArray}
+
+        FD_Curves = {}
+        for index in range(1, numberOfInitialSims + 1):
+            if not os.path.exists(f"{resultPath}/initial/{index}"):
+                os.mkdir(f"{resultPath}/initial/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/FD_Curve.txt", f"{resultPath}/initial/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/FD_Curve_Plot.tif", f"{resultPath}/initial/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/Deformed_Specimen.tif", f"{resultPath}/initial/{index}")
+            paramsTuple = indexParamsDict[str(index)]
+            df, X, displacement, force = self.read_FD_Curve(f"{simPath}/initial/{index}/FD_Curve.txt")
+            FD_Curves[paramsTuple] = {}
+            FD_Curves[paramsTuple]['X'] = X
+            FD_Curves[paramsTuple]['displacement'] = displacement
+            FD_Curves[paramsTuple]['force'] = force
+            # Save df as csv file
+            df.to_csv(f"{resultPath}/initial/{index}/FD_Curve.csv", index=False)
+            
+        # Returning force-displacement curve data
+        np.save(f"{resultPath}/initial/common/FD_Curves.npy", FD_Curves)
+        printLog("Saving successfully all simulation results", logPath)
+
+    def read_FD_Curve(self, filePath):
+        output_data=np.loadtxt(filePath, skiprows=2)
+        # column 1 is time step
+        # column 2 is displacement
+        # column 3 is force
+        columns=['X', 'Displacement', 'Force']
+        df = pd.DataFrame(data=output_data, columns=columns)
+        X = df.iloc[:, 0].tolist()
+        displacement = df.iloc[:, 1].tolist()
+        force = df.iloc[:, 2].tolist()
+        return df, X, displacement, force
 
     def MOO_run_initial_simulations(self):
         pass
-    
-
-
-    def run_simulation(self):
-        # Run the simulation
-        process = subprocess.Popen([batch_file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-
-        # Read and print the output line by line in real-time
-        for line in iter(process.stdout.readline, ''):
-            print("Output:", line, end='')
-
-        # Read and print the error messages line by line in real-time
-        for line in iter(process.stderr.readline, ''):
-            print("Error:", line, end='')
-
-        # Wait for the process to finish
-        process.wait()
-
-        # Get the final return code
-        return_code = process.returncode
-
-        # Print the return code
-        print("Return code:", return_code)
-
-    def run_iteration_simulation(self, trueStress, truePlasticStrain):
-        # Copy template folder to simulation folder
-        simPath = info['simulationPath']
-        templatePath = info['templatePath']
-        shutil.copytree(templatePath/{}, simPath)
-        
-        #===================updating the material.inp file====================
-        material_inp_file_path = f"{geometry}/DP1000_Mises.inp"
-        batch_file_path = f"submit-postprocess.bat"
-
-        #=================execute the simulation and post processs its results=================
-        #run a batch file with command: 
-        #(abaqus job=jobname.inp interactive cpus=6
-        #abaqus cae noGUI=postprocess.py)
-
-        self.run_simulation()
-
-
-        # Open the output file in read mode
-        with open(f"{working_directory}/texts/F-D_data.txt", 'r') as file:
-            # Read all the lines from the file
-            lines = file.readlines()
-
-        # Remove the first two rows
-        new_lines = lines[2:]
-
-        # Open the file in write mode to overwrite the contents
-        with open(f"{working_directory}/texts/output.txt", 'w') as file:
-            # Write the modified lines back to the file
-            file.writelines(new_lines)
-
-        output_data=np.loadtxt(f"{working_directory}/texts/output.txt")
-        #column 1 is time
-        #column 2 is disp
-        #column 3 is force
-
-
-        output_data = pd.DataFrame(data=output_data)
-        columns=['X', 'Displacement', 'Force']
-
-
-        x_new = output_data.iloc[:, 1].tolist()
-        y_new = output_data.iloc[:, 2].tolist()
-        
-        # Returning force-displacement curve data
-        return x_new, y_new
-
-
 
 

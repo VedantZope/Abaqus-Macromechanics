@@ -1,2 +1,2 @@
-/scratch/project_2007935/project_test/simulations/DP1000_room/NBDR50/1
-/scratch/project_2007935/project_test/simulations/DP1000_room/NBDR50/2
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift/NDBR50/curve1/initial/1
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift/NDBR50/curve1/initial/2
