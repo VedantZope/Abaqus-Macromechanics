@@ -3,13 +3,17 @@ import pandas as pd
 
 from sklearn.metrics import mean_squared_error
 from scipy.interpolate import CubicSpline
+from scipy.interpolate import interp1d
 from modules.SIM import *
 from modules.hardeningLaws import *
 from modules.helper import *
 from modules.stoploss import *
 from optimizers.BO import *
 from stage0_configs import * 
-
+from math import *
+import json
+from datetime import datetime
+import os
 
 def main_optimize():
 
@@ -33,6 +37,20 @@ def main_optimize():
     geometry = info['geometry']
     deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
+    
+
+    # Read the CSV target curve file into a DataFrame (ground truth)
+    df = pd.read_csv(f'{targetPath}/FD_Curve.csv')
+    expDisplacement = df['displacement/mm'].to_numpy()
+    expForce = df['force/N'].to_numpy()
+    targetCurve = {}
+    targetCurve['displacement'] = expDisplacement
+    #targetCurve['force'] = smoothing_force(expForce)
+    maxTargetDisplacement = ceil(max(expDisplacement) * 10) / 10
+    info['targetCurve'] = targetCurve
+    info['maxTargetDisplacement'] = maxTargetDisplacement
+    #print(maxTargetDisplacement)
+    #time.sleep(30)
 
     sim = SIM(info)
     if not os.path.exists(f"{resultPath}/initial/common/FD_Curves.npy"):
@@ -43,67 +61,39 @@ def main_optimize():
             sim.MOO_run_initial_simulations()
     else: 
         printLog("Initial simulations already exist", logPath)
-        numberOfInitialSims = len(np.load(f"{resultPath}/initial/common/FD_Curves.npy").tolist())
+        numberOfInitialSims = len(np.load(f"{resultPath}/initial/common/FD_Curves.npy", allow_pickle=True).tolist())
         printLog(f"Number of initial simulations: {numberOfInitialSims} FD curves", logPath)
-        
-    time.sleep(180)
-    # Read the CSV file into a DataFrame (ground truth)
-    df = pd.read_csv(f'{targetPath}/{geometry}/Force-Displacement.csv')
-    expDisp = df['Disp/mm'].to_numpy()
-    expForce = df['Force/kN'].to_numpy()
-    info['expDisp'] = expDisp
-    info['expForce'] = expForce
+    
+    FD_Curves = np.load(f"{resultPath}/initial/common/FD_Curves.npy", allow_pickle=True).tolist()
+    #print(FD_Curves)
+    flowCurves = np.load(f"{resultPath}/initial/common/flowCurves.npy", allow_pickle=True).tolist()
+    #print(flowCurves)
+    #time.sleep(180)
 
     # Continuous searching space
     if optimizerName == "BO":
         param_bounds = parseBoundsBO(info['paramConfig'])
     info['param_bounds'] = param_bounds
     #print(param_bounds)
-    time.sleep(80)
+
+    FD_Curves = interpolating_FD_Curves(FD_Curves, targetCurve)
+    #print(FD_Curves)
+    #time.sleep(180)
     
-
+    SOO_write_BO_json_log(FD_Curves, targetCurve)
+    print("Hello")
+    time.sleep(180)
     
-    # Note: BO in Bayes-Opt tries to maximize, so you should use the negative of the loss function.
-    def lossFunction(**solution):
-        #print(solution)
-        
-        # Adding a jitter to the ending strain to include the last point
-        
-        if hardeningLaw == "Swift":
-            c1, c2, c3 = solution["c1"], solution["c2"], solution["c3"]
-            trueStress = Swift(c1, c2, c3, truePlasticStrain)
-        elif hardeningLaw == "SwiftVoce":
-            c1, c2, c3, c4, c5, c6, c7 = solution["c1"], solution["c2"], solution["c3"], solution["c4"], solution["c5"], solution["c6"]
-            trueStress = SwiftVoce(c1, c2, c3, c4, c5, c6, c7, truePlasticStrain)
-        
-        #===========creating the material input data usin 3 params swift equation============
-        
-        sim_Disp,sim_Force = sim.run_iteration_simulation(trueStress, truePlasticStrain)
-        sim_Disp = np.array(sim_Disp)
-        sim_Force = np.array(sim_Force)
-        # Sort simulated data by displacement (if not sorted already)
-        sort_indices = np.argsort(sim_Disp)
-        sim_Disp = sim_Disp[sort_indices]
-        sim_Force = sim_Force[sort_indices]
-
-        # Create a cubic spline interpolation function
-        cubic_spline = CubicSpline(sim_Disp, sim_Force)
-
-        # Evaluate the interpolated function at the x values of the experimental data
-        interpolated_simForce = cubic_spline(expDisp)
-
-        # Calculate RMSE
-        rmse = np.sqrt(mean_squared_error(expForce, interpolated_simForce))
-        return -rmse
-    
-    while not stopFD():
+    while not stopFD(targetCurve['force'], list(FD_Curves.values())[-1]['force'], deviationPercent):
         BO_instance = BO()
-        BO_instance.initializeOptimizer(lossFunction, param_bounds)
-        BO_instance.run()
-        solution_dict, solution_tuple, best_solution_loss = BO_instance.outputResult()
+        BO_instance.initializeOptimizerWithoutLossFunction(param_bounds)
+        next_param = BO_instance.suggest()
+        print(next_param)
+        time.sleep(180)
+        #solution_dict, solution_tuple, best_solution_loss = BO_instance.outputResult()
 
-        for param in solution_dict:
-            print(f"{param}: {solution_dict[param]}")
+        #for param in solution_dict:
+        #    print(f"{param}: {solution_dict[param]}")
 
     # plt.plot(expt_Disp,expt_Force)
     # plt.plot(sim_Disp,sim_Force)

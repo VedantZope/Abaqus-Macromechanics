@@ -38,29 +38,27 @@ def main_config():
     numberOfInitialSims = globalConfig["numberOfInitialSims"]
     initialSimsSpacing = globalConfig["initialSimsSpacing"]
 
-    projectPath, logPath, resultPath, simPath, templatePath, targetPath = initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
+    projectPath, logPath, paramInfoPath, resultPath, simPath, templatePath, targetPath = initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
     
     ##################################
     # Parameter bound configurations #
     ##################################
 
-    paramConfig = pd.read_excel(f"configs/{hardeningLaw}_paramInfo.xlsx", engine="openpyxl")
+    paramConfig = pd.read_excel(f"{paramInfoPath}/paramInfo.xlsx", engine="openpyxl")
     paramConfig.set_index("parameter", inplace=True)
     paramConfig = paramConfig.T.to_dict()
     for param in paramConfig:
         paramConfig[param]['exponent'] = float(paramConfig[param]['exponent'])
-        exponent = paramConfig[param]['exponent']
-        paramConfig[param]['lowerBound'] = paramConfig[param]['lowerBound'] * exponent
-        paramConfig[param]['upperBound'] = paramConfig[param]['upperBound'] * exponent
-    
+
+
     #########################
     # Abaqus configurations #
     #########################
-    abaqusConfig = pd.read_excel("configs/abaqus_config.xlsx",engine="openpyxl")
+    truePlasticStrainConfig = pd.read_excel("configs/truePlasticStrain_config.xlsx",engine="openpyxl")
     ranges_and_increments = []
 
     # Iterate over each row in the DataFrame
-    for index, row in abaqusConfig.iterrows():
+    for index, row in truePlasticStrainConfig.iterrows():
         # Append a tuple containing the strainStart, strainEnd, and strainStep to the list
         ranges_and_increments.append((row['strainStart'], row['strainEnd'], row['strainStep']))
         
@@ -78,7 +76,7 @@ def main_config():
         truePlasticStrain = np.concatenate((truePlasticStrain, strain_range))
         
     #print(truePlasticStrain)
-    #time.sleep(30)
+    #time.sleep(180)
     #print(paramConfig)
 
     ###########################
@@ -88,6 +86,7 @@ def main_config():
     info = {
         'projectPath': projectPath,
         'logPath': logPath,
+        'paramInfoPath': paramInfoPath,
         'resultPath': resultPath,
         'simPath': simPath,
         'targetPath': targetPath,

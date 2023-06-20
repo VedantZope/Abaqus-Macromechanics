@@ -20,8 +20,8 @@ class SIM():
         linspaceValues = {}
         for param in paramConfig:
             linspaceValues[param] = np.linspace(
-                start=paramConfig[param]["lowerBound"], 
-                stop=paramConfig[param]["upperBound"], 
+                start=paramConfig[param]["lowerBound"] * paramConfig[param]["exponent"], 
+                stop=paramConfig[param]["upperBound"] * paramConfig[param]["exponent"], 
                 num = self.info["initialSimsSpacing"])
             linspaceValues[param] = linspaceValues[param].tolist()   
         points = []
@@ -60,6 +60,7 @@ class SIM():
         deviationPercent = self.info['deviationPercent']
         numberOfInitialSims = self.info['numberOfInitialSims']
         truePlasticStrain = self.info['truePlasticStrain']
+        maxTargetDisplacement = self.info['maxTargetDisplacement']
 
         initial_params = self.latin_hypercube_sampling()
         #print(initial_params)
@@ -71,16 +72,11 @@ class SIM():
         flowCurves = {}
         
         for paramDict in initial_params:
-            paramTuple = tuple(paramDict.items())
-            if hardeningLaw == "Swift":
-                c1, c2, c3 = paramDict['c1'], paramDict['c2'], paramDict['c3']
-                flowCurve = Swift(c1, c2, c3, truePlasticStrain)
-            if hardeningLaw == "SwiftVoce":
-                c1, c2, c3, c4, c5, c6, c7 = paramDict['c1'], paramDict['c2'], paramDict['c3'], paramDict['c4'], paramDict['c5'], paramDict['c6'], paramDict['c7']
-                flowCurve = SwiftVoce(c1, c2, c3, c4, c5, c6, c7, truePlasticStrain)
-            flowCurves[paramTuple] = {}
-            flowCurves[paramTuple]['strain'] = truePlasticStrain
-            flowCurves[paramTuple]['stress'] = flowCurve
+            paramsTuple = tuple(paramDict.items())
+            trueStress = calculate_flowCurve(paramDict, hardeningLaw, truePlasticStrain)
+            flowCurves[paramsTuple] = {}
+            flowCurves[paramsTuple]['strain'] = truePlasticStrain
+            flowCurves[paramsTuple]['stress'] = trueStress
         np.save(f"{resultPath}/initial/common/flowCurves.npy", flowCurves)
         #print(flowCurves)
 
@@ -95,45 +91,16 @@ class SIM():
             if os.path.exists(f"{simPath}/initial/{index}"):
                 shutil.rmtree(f"{simPath}/initial/{index}")
             shutil.copytree(templatePath, f"{simPath}/initial/{index}")
-            paramTuple = indexParamsDict[str(index)]
-            truePlasticStrain = flowCurves[paramTuple]['strain']
-            trueStress = flowCurves[paramTuple]['stress']
+            paramsTuple = indexParamsDict[str(index)]
+            truePlasticStrain = flowCurves[paramsTuple]['strain']
+            trueStress = flowCurves[paramsTuple]['stress']
             self.replace_flowCurve_material_inp(f"{simPath}/initial/{index}/material.inp", truePlasticStrain, trueStress)
-        
+            self.replace_maxDisp_geometry_inp(f"{simPath}/initial/{index}/geometry.inp", maxTargetDisplacement)
+            self.replace_materialName_geometry_inp(f"{simPath}/initial/{index}/geometry.inp", "material.inp")
+            self.create_parameter_file(f"{simPath}/initial/{index}", dict(paramsTuple))
+            self.create_flowCurve_file(f"{simPath}/initial/{index}", truePlasticStrain, trueStress)
         return indexParamsDict
-    
-    def replace_flowCurve_material_inp(self, filePath, truePlasticStrain, trueStress):
-        #print(truePlasticStrain)
-        with open(filePath, 'r') as material_inp:
-            material_inp_content = material_inp.readlines()
-        #print(material_inp_content)
-        # Locate the section containing the stress-strain data
-        start_line = None
-        end_line = None
-        for i, line in enumerate(material_inp_content):
-            if '*Plastic' in line:
-                start_line = i + 1
-            elif '*Density' in line:
-                end_line = i
-                break
-
-        if start_line is None or end_line is None:
-            raise ValueError('Could not find the stress-strain data section')
-
-        # Step 4: Modify the stress-strain data
-        new_stress_strain_data = zip(trueStress, truePlasticStrain)
-        # for strain in truePlasticStrain:
-        #     print(str(round(strain, 5)))
-        # Step 5: Update the .inp file
-        new_lines = []
-        new_lines.extend(material_inp_content[:start_line])
-        new_lines.extend([f'{stress},{strain}\n' for stress, strain in new_stress_strain_data])
-        new_lines.extend(material_inp_content[end_line:])
-
-        # Step 6: Write the updated .inp file
-        with open(filePath, 'w') as file:
-            file.writelines(new_lines)
-
+     
     def SOO_write_paths_initial(self):
         numberOfInitialSims = self.info['numberOfInitialSims']
         projectPath = self.info['projectPath']
@@ -165,14 +132,17 @@ class SIM():
             shutil.copy(f"{simPath}/initial/{index}/FD_Curve.txt", f"{resultPath}/initial/{index}")
             shutil.copy(f"{simPath}/initial/{index}/FD_Curve_Plot.tif", f"{resultPath}/initial/{index}")
             shutil.copy(f"{simPath}/initial/{index}/Deformed_Specimen.tif", f"{resultPath}/initial/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/parameters.xlsx", f"{resultPath}/initial/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/parameters.csv", f"{resultPath}/initial/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/flowCurve.xlsx", f"{resultPath}/initial/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/flowCurve.csv", f"{resultPath}/initial/{index}")
+                        
             paramsTuple = indexParamsDict[str(index)]
-            df, X, displacement, force = self.read_FD_Curve(f"{simPath}/initial/{index}/FD_Curve.txt")
+            displacement, force = self.read_FD_Curve(f"{simPath}/initial/{index}/FD_Curve.txt")
             FD_Curves[paramsTuple] = {}
-            FD_Curves[paramsTuple]['X'] = X
             FD_Curves[paramsTuple]['displacement'] = displacement
             FD_Curves[paramsTuple]['force'] = force
-            # Save df as csv file
-            df.to_csv(f"{resultPath}/initial/{index}/FD_Curve.csv", index=False)
+            self.create_FD_Curve_file(f"{resultPath}/initial/{index}", displacement, force)
             
         # Returning force-displacement curve data
         np.save(f"{resultPath}/initial/common/FD_Curves.npy", FD_Curves)
@@ -185,12 +155,111 @@ class SIM():
         # column 3 is force
         columns=['X', 'Displacement', 'Force']
         df = pd.DataFrame(data=output_data, columns=columns)
-        X = df.iloc[:, 0].tolist()
         displacement = df.iloc[:, 1].tolist()
         force = df.iloc[:, 2].tolist()
-        return df, X, displacement, force
+        return displacement, force
 
     def MOO_run_initial_simulations(self):
         pass
 
+    def create_parameter_file(self, filePath, paramsDict):
+        columns = ["Parameter", "Value"]
+        df = pd.DataFrame(columns=columns)
+        for key, value in paramsDict.items():
+            df.loc[len(df.index)] = [key, value]
+        df.to_excel(f"{filePath}/parameters.xlsx", index=False)
+        df.to_csv(f"{filePath}/parameters.csv", index=False)
 
+    def create_flowCurve_file(self, filePath, truePlasticStrain, trueStress):
+        columns = ["strain,-", "stress,MPa", "stress,Pa"]
+        df = pd.DataFrame(columns=columns)
+        for i in range(len(truePlasticStrain)):
+            df.loc[len(df.index)] = [truePlasticStrain[i], trueStress[i], trueStress[i]*1e6]
+        df.to_excel(f"{filePath}/flowCurve.xlsx", index=False)
+        df.to_csv(f"{filePath}/flowCurve.csv", index=False)
+    
+    def create_FD_Curve_file(self, filePath, displacement, force):
+        columns = ["displacement,mm", "force,kN", "force,N"]
+        df = pd.DataFrame(columns=columns)
+        for i in range(len(displacement)):
+            df.loc[len(df.index)] = [displacement[i], force[i] * 1e-3, force[i]]
+        df.to_excel(f"{filePath}/FD_Curve.xlsx", index=False)
+        df.to_csv(f"{filePath}/FD_Curve.csv", index=False)
+
+    def replace_flowCurve_material_inp(self, filePath, truePlasticStrain, trueStress):
+        with open(filePath, 'r') as material_inp:
+            material_inp_content = material_inp.readlines()
+        # Locate the section containing the stress-strain data
+        start_line = None
+        end_line = None
+        for i, line in enumerate(material_inp_content):
+            if '*Plastic' in line:
+                start_line = i + 1
+            elif '*Density' in line:
+                end_line = i
+                break
+
+        if start_line is None or end_line is None:
+            raise ValueError('Could not find the stress-strain data section')
+
+        # Modify the stress-strain data
+        new_stress_strain_data = zip(trueStress, truePlasticStrain)
+        # Update the .inp file
+        new_lines = []
+        new_lines.extend(material_inp_content[:start_line])
+        new_lines.extend([f'{stress},{strain}\n' for stress, strain in new_stress_strain_data])
+        new_lines.extend(material_inp_content[end_line:])
+
+        # Write the updated material.inp file
+        with open(filePath, 'w') as file:
+            file.writelines(new_lines)
+
+    def replace_maxDisp_geometry_inp(self, filePath, maxTargetDisplacement):
+        with open(filePath, 'r') as geometry_inp:
+            geometry_inp_content = geometry_inp.readlines()
+        start_line = None
+        end_line = None
+        for i, line in enumerate(geometry_inp_content[-60:]):
+            if line.startswith('*Boundary, amplitude'):
+                original_index = len(geometry_inp_content) - 60 + i
+                start_line = original_index + 1
+                end_line = original_index + 2
+                break
+
+        if start_line is None or end_line is None:
+            raise ValueError('Could not find the *Boundary, amplitude displacement section')
+
+        new_disp_data = f"Disp, 2, 2, {maxTargetDisplacement}\n"
+
+        new_lines = []
+        new_lines.extend(geometry_inp_content[:start_line])
+        new_lines.extend([new_disp_data])
+        new_lines.extend(geometry_inp_content[end_line:])
+
+        with open(filePath, 'w') as file:
+            file.writelines(new_lines)
+
+    def replace_materialName_geometry_inp(self, filePath, materialName):
+        with open(filePath, 'r') as geometry_inp:
+            geometry_inp_content = geometry_inp.readlines()
+        start_line = None
+        end_line = None
+        for i, line in enumerate(geometry_inp_content[-60:]):
+            if line.startswith('*INCLUDE, INPUT='):
+                original_index = len(geometry_inp_content) - 60 + i
+                start_line = original_index
+                end_line = original_index + 1
+                break
+
+        if start_line is None or end_line is None:
+            raise ValueError('Could not find the **INCLUDE, INPUT= section')
+
+        new_material_data = f"*INCLUDE, INPUT={materialName}\n"
+
+        new_lines = []
+        new_lines.extend(geometry_inp_content[:start_line])
+        new_lines.extend([new_material_data])
+        new_lines.extend(geometry_inp_content[end_line:])
+
+        with open(filePath, 'w') as file:
+            file.writelines(new_lines)

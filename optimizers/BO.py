@@ -9,7 +9,8 @@ from bayes_opt.logger import JSONLogger
 from bayes_opt.event import Events
 from bayes_opt.util import load_logs
 from sklearn.gaussian_process.kernels import RBF, Matern # you can try to import other kernels from sklearn as well
-
+import os
+from modules.helper import *
 
 class BO():
     
@@ -17,11 +18,12 @@ class BO():
     # OPTIMIZER CLASS INITIALIZATION #
     ##################################
 
-    def __init__(self):        
+    def __init__(self, info):        
         #############################
         # Optimizer hyperparameters #
         #############################
-        
+        self.info = info
+
         # maximize parameters
         self.verbose = 1 # 0 for no output, 1 for some output printing
         self.random_state = 123 # random seed
@@ -38,42 +40,89 @@ class BO():
         #self.acquisitionFunction = UtilityFunction(kind='ei', kappa=2.576, xi=0, kappa_decay=1, kappa_decay_delay=0)
         
         # Gaussian process kernel parameters
-        self.GP_kernel = RBF(length_scale=1.0, length_scale_bounds=(1e-3, 1e3)) # RBF kernel
-        #self.GP_kernel = Matern(nu=2.5) # Matern kernel
+        #self.GP_kernel = RBF(length_scale=1.0, length_scale_bounds=(1e-3, 1e3)) # RBF kernel
+        self.GP_kernel = Matern(nu=2.5) # Matern kernel
         self.alpha = 1e-6
         self.normalize_y=True
         self.n_restarts_optimizer=5
+        self.logger = JSONLogger(path="bayesopt_log/logs.log", reset=False)
         
     ##########################
     # OPTIMIZATION FUNCTIONS #
     ##########################
-
-    def initializeOptimizer(self, lossFunction, param_bounds):
+    
+    def initializeOptimizerWithLossFunction(self, lossFunction, param_bounds, loadingProgress = True):
         self.param_bounds = param_bounds
-        BO_bounds = param_bounds
+        self.lossFunction = lossFunction
+        self.loadingProgress = loadingProgress
         bo_instance = BayesianOptimization(
             f = lossFunction,
-            pbounds = BO_bounds, 
+            pbounds = param_bounds, 
             verbose = self.verbose,
             random_state = self.random_state,
             bounds_transformer = None,
-            allow_duplicate_points = False
+            allow_duplicate_points = False,
         )
         bo_instance.set_gp_params(
             kernel=self.GP_kernel,
             alpha=self.alpha,
             normalize_y=self.normalize_y,
             n_restarts_optimizer=self.n_restarts_optimizer,
-            random_state=self.random_state,
+            random_state=self.random_state
         )
         self.optimizer = bo_instance
-
+        if loadingProgress == False:
+            self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
+        else:
+            if os.path.exists("./bayesopt_log/logs.log.json"):
+                #self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
+                load_logs(self.optimizer, logs=["./bayesopt_log/logs.log.json"]);
+                print("New optimizer is now aware of {} points.".format(len(self.optimizer.space)))
+                self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
+            
+    def initializeOptimizerWithoutLossFunction(self, param_bounds, loadingProgress = True):
+        self.param_bounds = param_bounds
+        self.loadingProgress = loadingProgress
+        bo_instance = BayesianOptimization(
+            f = None,
+            pbounds = param_bounds, 
+            verbose = self.verbose,
+            random_state = self.random_state,
+            bounds_transformer = None,
+            allow_duplicate_points = False,
+        )
+        bo_instance.set_gp_params(
+            kernel=self.GP_kernel,
+            alpha=self.alpha,
+            normalize_y=self.normalize_y,
+            n_restarts_optimizer=self.n_restarts_optimizer,
+            random_state=self.random_state
+        )
+        self.optimizer = bo_instance
+        if loadingProgress == False:
+            self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
+        else:
+            projectPath = self.info["projectPath"]
+            logPath = self.info["logPath"]
+            if os.path.exists(f"{projectPath}/logs.json"):
+                #self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
+                #load_logs(self.optimizer, logs=["./bayesopt_log/logs.log.json"]);
+                load_logs(self.optimizer, logs=[f"{projectPath}/logs.json"]);
+                print("New optimizer is now aware of {} points.".format(len(self.optimizer.space)))
+                self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
+        
+        
     def run(self):
         self.optimizer.maximize(
-            init_points = self.init_points, 
+            init_points = self.init_points if self.loadingProgress == False else 0, 
             n_iter = self.iterations,   
-            acquisition_function=self.acquisitionFunction, 
+            acquisition_function=self.acquisitionFunction
         )
+    
+    # Only use this function when you initialize without loss function
+    def suggest(self):
+        next_point = self.optimizer.suggest(self.acquisitionFunction)
+        return next_point
         
     def outputResult(self):
         solution_dict = self.optimizer.max["params"]

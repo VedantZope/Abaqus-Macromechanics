@@ -1,2 +1,10 @@
-C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift/NDBR50/curve1/initial/1
-C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift/NDBR50/curve1/initial/2
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/1
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/2
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/3
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/4
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/5
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/6
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/7
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/8
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/9
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/SOO_simulations/DP1000_room_Swift_NDBR50_curve2/initial/10

@@ -14,9 +14,13 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
     if optimizeStrategy == "SOO":
         # For log
         checkCreate("log")
+        
+        # For paramInfo
+        path = f"SOO_paramInfo/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
+        checkCreate(path)
 
         # For results 
-        path = f"SOO_results/{material}_{hardeningLaw}/{geometry}/curve{curveIndex}"
+        path = f"SOO_results/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
         checkCreate(path)
         checkCreate(f"{path}/initial")
         checkCreate(f"{path}/initial/common")
@@ -24,17 +28,17 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
         checkCreate(f"{path}/iteration/common")
 
         # For simulations
-        path = f"SOO_simulations/{material}_{hardeningLaw}/{geometry}/curve{curveIndex}"
+        path = f"SOO_simulations/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
         checkCreate(path)
         checkCreate(f"{path}/initial")
         checkCreate(f"{path}/iteration")
 
         # For targets
-        path = f"targets/{material}/{geometry}/curve{curveIndex}"
+        path = f"SOO_targets/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
         checkCreate(path)
 
         # For templates
-        path = f"templates/{material}/{geometry}"
+        path = f"templates/{material}_{geometry}"
         checkCreate(path)
 
     elif optimizeStrategy == "MOO":
@@ -52,7 +56,7 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
             checkCreate(f"{path}/{geometry}/iteration/common")
 
         # For simulations
-        path = f"SOO_simulations/{material}_{hardeningLaw}"
+        path = f"MOO_simulations/{material}_{hardeningLaw}"
         checkCreate(path)
         for geometry in geometryList:
             checkCreate(f"{path}/{geometry}/initial")
@@ -65,28 +69,31 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
             checkCreate(f"{path}/{geometry}")
 
         # For targets
-        path = f"targets/{material}"
+        path = f"MOO_targets/{material}"
         checkCreate(path)
         for geometry in geometryList:
             checkCreate(f"{path}/{geometry}")
-
 
     # The project path folder
     projectPath = os.getcwd()
     if optimizeStrategy == "SOO":
         # The logging path
         logPath = f"log/SOO_{material}_{hardeningLaw}_{geometry}_curve{curveIndex}.txt"
+        # The paramInfo path
+        paramInfoPath = f"SOO_paramInfo/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
         # The results path
-        resultPath = f"SOO_results/{material}_{hardeningLaw}/{geometry}/curve{curveIndex}"
+        resultPath = f"SOO_results/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
         # The simulations path
-        simPath = f"SOO_simulations/{material}_{hardeningLaw}/{geometry}/curve{curveIndex}"
+        simPath = f"SOO_simulations/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
         # The target path
-        targetPath = f"targets/{material}/{geometry}/curve{curveIndex}"
+        targetPath = f"SOO_targets/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
         # The templates path
-        templatePath = f"templates/{material}/{geometry}"
+        templatePath = f"templates/{material}_{geometry}"
     elif optimizeStrategy == "MOO":
         # The logging path
         logPath = f"log/MOO_{material}_{hardeningLaw}.txt"
+        # The paramInfo path
+        paramInfoPath = f"MOO_paramInfo/{material}_{hardeningLaw}"
         # The results path
         resultPath = f"MOO_results/{material}"
         # The simulations path
@@ -94,6 +101,6 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
         # The templates path
         templatePath = f"templates/{material}"
         # The target path
-        targetPath = f"targets/{material}"
+        targetPath = f"MOO_targets/{material}"
 
-    return projectPath, logPath, resultPath, simPath, templatePath, targetPath
+    return projectPath, logPath, paramInfoPath, resultPath, simPath, templatePath, targetPath
