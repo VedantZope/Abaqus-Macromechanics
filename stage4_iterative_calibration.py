@@ -57,7 +57,9 @@ def main_iterative_calibration(info):
     initial_original_flowCurves = info['initial_original_flowCurves']
     iteration_original_flowCurves = info['iteration_original_flowCurves']
     combined_original_flowCurves = info['combined_original_flowCurves']
-
+    
+    sim = SIM(info)
+    
     while not stopFD(targetCurve['force'], list(combined_interpolated_FD_Curves.values())[-1]['force'], deviationPercent):
         SOO_write_BO_json_log(combined_interpolated_FD_Curves, targetCurve, paramConfig)
         BO_instance = BO(info)

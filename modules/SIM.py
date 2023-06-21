@@ -47,7 +47,8 @@ class SIM():
         self.SOO_preprocess_simulations_iteration(paramsDict)
         self.SOO_write_paths_iteration()
         self.SOO_submit_array_jobs_iteration()
-        self.SOO_postprocess_results_iteration(paramsDict)
+        parameters, FD_Curves, flowCurves = self.SOO_postprocess_results_iteration(paramsDict)
+        return parameters, FD_Curves, flowCurves
 
     def SOO_preprocess_simulations_initial(self):
         resultPath = self.info['resultPath']
