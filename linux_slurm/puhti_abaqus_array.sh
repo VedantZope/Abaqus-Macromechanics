@@ -18,7 +18,7 @@ module purge
 module load abaqus/2022	
 
 ### Change to the work directory
-fullpath=$(sed -n ${SLURM_ARRAY_TASK_ID}p linux_slurm/array_initial_file.txt) 
+fullpath=$(sed -n ${SLURM_ARRAY_TASK_ID}p linux_slurm/array_file.txt) 
 cd ${fullpath}
 
 CPUS_TOTAL=$(( $SLURM_NTASKS*$SLURM_CPUS_PER_TASK ))
