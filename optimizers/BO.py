@@ -51,9 +51,8 @@ class BO():
     # OPTIMIZATION FUNCTIONS #
     ##########################
     
-    def initializeOptimizerWithLossFunction(self, lossFunction, param_bounds, loadingProgress = True):
+    def initializeOptimizer(self, lossFunction, param_bounds, loadingProgress = True):
         self.param_bounds = param_bounds
-        self.lossFunction = lossFunction
         self.loadingProgress = loadingProgress
         bo_instance = BayesianOptimization(
             f = lossFunction,
@@ -74,41 +73,13 @@ class BO():
         if loadingProgress == False:
             self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
         else:
-            if os.path.exists("./bayesopt_log/logs.log.json"):
-                #self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
-                load_logs(self.optimizer, logs=["./bayesopt_log/logs.log.json"]);
-                print("New optimizer is now aware of {} points.".format(len(self.optimizer.space)))
-                self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
-            
-    def initializeOptimizerWithoutLossFunction(self, param_bounds, loadingProgress = True):
-        self.param_bounds = param_bounds
-        self.loadingProgress = loadingProgress
-        bo_instance = BayesianOptimization(
-            f = None,
-            pbounds = param_bounds, 
-            verbose = self.verbose,
-            random_state = self.random_state,
-            bounds_transformer = None,
-            allow_duplicate_points = False,
-        )
-        bo_instance.set_gp_params(
-            kernel=self.GP_kernel,
-            alpha=self.alpha,
-            normalize_y=self.normalize_y,
-            n_restarts_optimizer=self.n_restarts_optimizer,
-            random_state=self.random_state
-        )
-        self.optimizer = bo_instance
-        if loadingProgress == False:
-            self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
-        else:
             projectPath = self.info["projectPath"]
             logPath = self.info["logPath"]
-            if os.path.exists(f"{projectPath}/logs.json"):
+            if os.path.exists(f"{projectPath}/optimizers/logs.json"):
                 #self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
                 #load_logs(self.optimizer, logs=["./bayesopt_log/logs.log.json"]);
-                load_logs(self.optimizer, logs=[f"{projectPath}/logs.json"]);
-                print("New optimizer is now aware of {} points.".format(len(self.optimizer.space)))
+                load_logs(self.optimizer, logs=[f"{projectPath}/optimizers/logs.json"]);
+                printLog("BO optimizer is now aware of {} points.".format(len(self.optimizer.space)), logPath)
                 self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
         
         

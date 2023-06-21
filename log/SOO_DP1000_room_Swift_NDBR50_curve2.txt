@@ -658,3 +658,758 @@ The configurations you have chosen:
 Generating necessary directories
 The path to your main project folder is
 c:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.BO optimizer is now aware of 20 points.
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curves
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e     | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e     | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO+-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
++-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
++-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e0    | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+
+BO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
++-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e0    | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+
+BO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
++-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e0    | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+
+BO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
++-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e0    | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+
+BO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
++-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e0    | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+
+BO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
++-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e0    | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+
+BO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
++-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e0    | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesThere are no iteration simulations. Program starts running the iteration simulations
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesThere are no iteration simulations. Program starts running the iteration simulations
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+Initial simulations already existNumber of initial simulations: 20 FD curvesThere are no iteration simulations. Program starts running the iteration simulationsBO optimizer is now aware of 20 points.The next candidate Swift parameters predicted by BO
++-----------+--------------------+
+| Parameter |       Value        |
++-----------+--------------------+
+|     K     |      2.0 MPa       |
+|     e0    | 5.035151463652086  |
+|     n     | 0.7750404010412819 |
++-----------+--------------------+

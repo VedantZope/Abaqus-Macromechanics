@@ -7,7 +7,7 @@ def Swift(c1,c2,c3, truePlasticStrain):
     return trueStress
 
 def Voce(c5,c6,c7,truePlasticStrain):
-    trueStress = c5 * (c6 - c5) * np.exp(-c7 * truePlasticStrain)
+    trueStress = c5 + c6 * (1- np.exp(-c7 * truePlasticStrain))
     return trueStress
 
 def SwiftVoce(c1,c2,c3,c4,c5,c6,c7,truePlasticStrain):
