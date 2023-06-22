@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error
 from scipy.interpolate import CubicSpline
 from scipy.interpolate import interp1d
-from modules.SIM import *
+from modules.SOO_SIM import *
 from modules.hardeningLaws import *
 from modules.helper import *
 from modules.stoploss import *
@@ -62,7 +62,7 @@ def main_prepare_simCurves(info):
     combined_original_FD_Curves.update(iteration_original_FD_Curves)
     combined_original_flowCurves = copy.deepcopy(initial_original_flowCurves)
     combined_original_flowCurves.update(iteration_original_flowCurves)
-    
+
     initial_interpolated_FD_Curves = interpolating_FD_Curves(initial_original_FD_Curves, targetCurve)
     iteration_interpolated_FD_Curves = interpolating_FD_Curves(iteration_original_FD_Curves, targetCurve)
     combined_interpolated_FD_Curves = interpolating_FD_Curves(combined_original_FD_Curves, targetCurve)

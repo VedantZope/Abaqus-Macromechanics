@@ -229,3 +229,9 @@ def replace_materialName_geometry_inp(filePath, materialName):
 
     with open(filePath, 'w') as file:
         file.writelines(new_lines)
+
+def rescale_paramsDict(paramsDict, paramConfig):
+    rescaled_paramsDict = {}
+    for param, value in paramsDict.items():
+        rescaled_paramsDict[param] = value * paramConfig[param]['exponent']
+    return rescaled_paramsDict

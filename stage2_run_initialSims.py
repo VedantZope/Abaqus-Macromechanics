@@ -4,7 +4,8 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error
 from scipy.interpolate import CubicSpline
 from scipy.interpolate import interp1d
-from modules.SIM import *
+from modules.SOO_SIM import *
+from modules.MOO_SIM import *
 from modules.hardeningLaws import *
 from modules.helper import *
 from modules.stoploss import *
@@ -37,14 +38,17 @@ def main_run_initialSims(info):
     geometry = info['geometry']
     deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
+
+    if optimizeStrategy == "SOO":
+        sim = SOO_SIM(info)
+        
+    elif optimizeStrategy == "MOO":
+        sim.run_initial_simulations()
+
     
-    sim = SIM(info)
     if not os.path.exists(f"{resultPath}/initial/common/FD_Curves.npy"):
         printLog("There are no initial simulations. Program starts running the initial simulations", logPath)
-        if optimizeStrategy == "SOO":
-            sim.SOO_run_initial_simulations()
-        elif optimizeStrategy == "MOO":
-            sim.MOO_run_initial_simulations()
+        sim.run_initial_simulations()
     else: 
         printLog("Initial simulations already exist", logPath)
         numberOfInitialSims = len(np.load(f"{resultPath}/initial/common/FD_Curves.npy", allow_pickle=True).tolist())
