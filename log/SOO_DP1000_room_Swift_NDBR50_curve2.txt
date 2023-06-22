@@ -1453,3 +1453,43 @@ The configurations you have chosen:
 Generating necessary directories
 The path to your main project folder is
 c:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+\\home.org.aalto.fi\zopev1\data\Desktop\Abaqus-Macromechanics-Project
+
+Welcome to the Abaqus parameter calibration project
+
+The configurations you have chosen: 
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |      20     |
+|  Initial sims spacing  |     1000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |    Swift    |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+Generating necessary directories
+The path to your main project folder is
+\\home.org.aalto.fi\zopev1\data\Desktop\Abaqus-Macromechanics-Project
