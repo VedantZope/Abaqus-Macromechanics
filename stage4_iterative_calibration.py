@@ -96,6 +96,11 @@ def main_iterative_calibration(info):
         combined_original_flowCurves.update(new_flowCurves)
         iteration_original_flowCurves.update(new_flowCurves)
 
+        printLog("Finish saving new iteration data", logPath)
+        simForce = list(new_FD_Curves.values())[0]['force']
+        loss_newIteration = lossFD(targetCurve['displacement'], targetCurve['force'], simForce)
+        printLog(f"The loss of the new iteration is {round(loss_newIteration, 3)}", logPath)
+
         # Saving the iteration data
         np.save(f"{resultPath}/iteration/common/FD_Curves.npy", iteration_original_FD_Curves)
         np.save(f"{resultPath}/iteration/common/flowCurves.npy", iteration_original_flowCurves)

@@ -13,7 +13,7 @@ from modules.stoploss import *
 
 def printLog(message, logPath):
     with open(logPath, 'a+') as logFile:
-        logFile.writelines(message)
+        logFile.writelines(message + "\n")
     print(message)
 
 def parseBoundsBO(paramInfo):
@@ -80,7 +80,7 @@ def SOO_write_BO_json_log(FD_Curves, targetCurve, paramConfig):
         # Construct the dictionary
         line = {}
         # Note: BO in Bayes-Opt tries to maximize, so you should use the negative of the loss function.
-        line["target"] = -lossFD(targetCurve["force"], dispforce["force"])
+        line["target"] = -lossFD(targetCurve["displacement"], targetCurve["force"], dispforce["force"])
         line["params"] = dict(paramsTuple)
         for param in paramConfig:
             line["params"][param] = line["params"][param]/paramConfig[param]["exponent"] 
