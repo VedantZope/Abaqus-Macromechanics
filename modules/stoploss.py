@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import time 
 
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
@@ -8,6 +9,12 @@ from scipy.interpolate import interp1d
 
 # def dummy_lossFD(targetDisplacement, targetForce, simForce):
 #     return np.sqrt(np.mean((targetForce - simForce)**2))
+
+##################################################################
+# Numerical area integration of the difference between           # 
+# the target and simulated force-displacement curves             #
+# The area is bounded by the two curves and two vertical x axis  #
+##################################################################
 
 def lossFD_hardening(targetDisplacement, targetForce, simForce):
     target_yielding_index = calculate_yielding_index(targetDisplacement, targetForce)
@@ -73,6 +80,11 @@ def lossFD_yielding(targetDisplacement, targetForce, simForce):
     sim_yielding_index = calculate_yielding_index(targetDisplacement, simForce)
     target_yielding_force = targetForce[target_yielding_index]
     sim_yielding_force = simForce[sim_yielding_index]
+    #print(target_yielding_index)
+    #print(sim_yielding_index)
+    #print(target_yielding_force)
+    #print(sim_yielding_force)
+    #time.sleep(5)
     return np.abs(target_yielding_force - sim_yielding_force)
 
 ###########################
