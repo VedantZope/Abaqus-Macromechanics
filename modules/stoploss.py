@@ -5,8 +5,8 @@ from scipy.integrate import simpson
 # import interp1d
 from scipy.interpolate import interp1d
 
-def lossFD(targetDisplacement, targetForce, simForce):
-    return np.sqrt(np.mean((targetForce - simForce)**2))
+# def lossFD(targetDisplacement, targetForce, simForce):
+#     return np.sqrt(np.mean((targetForce - simForce)**2))
 
 def lossFD(targetDisplacement, targetForce, simForce):
     # Implementing numerical integration of the area bounded by the two curves and two vertical x axis
@@ -62,7 +62,8 @@ def lossFD(targetDisplacement, targetForce, simForce):
             bounded_area += area_upper - area_lower
         return bounded_area
 
-
+def loss_FD_yielding(targetDisplacement, targetForce, simForce):
+    
 def stopFD(targetForce, simForce, deviationPercent):
     targetForceUpper = targetForce * (1 + 0.01 * deviationPercent)
     targetForceLower = targetForce * (1 - 0.01 * deviationPercent)

@@ -35,17 +35,24 @@ class BO():
         # High kappa means more exploration for UCB
         # Low xi means more exploitation for EI and POI
         # High xi means more exploration for EI and POI
-        self.acquisitionFunction = UtilityFunction(kind='ucb', kappa=2.576, xi=0, kappa_decay=1, kappa_decay_delay=0)
-        #self.acquisitionFunction = UtilityFunction(kind='poi', kappa=2.576, xi=0, kappa_decay=1, kappa_decay_delay=0)
-        #self.acquisitionFunction = UtilityFunction(kind='ei', kappa=2.576, xi=0, kappa_decay=1, kappa_decay_delay=0)
-        
+
+        #self.acquisitionFunction = UtilityFunction(kind='ucb', kappa=2.576, kappa_decay=1, kappa_decay_delay=0)
+        #self.acquisitionFunction = UtilityFunction(kind='ucb', kappa=10, kappa_decay=1, kappa_decay_delay=0)
+        #self.acquisitionFunction = UtilityFunction(kind='ei', xi=0)
+        self.acquisitionFunction = UtilityFunction(kind='ei', xi=0.1)
+        #self.acquisitionFunction = UtilityFunction(kind='poi', xi=0.001)
+        #self.acquisitionFunction = UtilityFunction(kind='poi', xi=0.1)
+
         # Gaussian process kernel parameters
-        #self.GP_kernel = RBF(length_scale=1.0, length_scale_bounds=(1e-3, 1e3)) # RBF kernel
-        self.GP_kernel = Matern(nu=2.5) # Matern kernel
-        self.alpha = 1e-6
+        self.GP_kernel = RBF(length_scale=10, length_scale_bounds=(1e-3, 1e3)) # RBF kernel
+        #self.GP_kernel = Matern(nu=2.5) # Matern kernel
+        # Noise variance regularization hyperparameter: control the Gaussian noise
+        #self.alpha = 1e-6
+        self.alpha = 0.5
         self.normalize_y=True
         self.n_restarts_optimizer=5
         self.logger = JSONLogger(path="bayesopt_log/logs.log", reset=False)
+
         
     ##########################
     # OPTIMIZATION FUNCTIONS #
