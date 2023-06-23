@@ -2034,3 +2034,446 @@ Running iteration 4 for DP1000_room_Swift_NDBR50_curve2The next candidate Swift 
 |     n     |  0.08922326201700546   |
 +-----------+------------------------+
 Start running iteration simulationIteration simulation preprocessing stage startsNumber of jobs required: 1Iteration simulation postprocessing stage finished
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 20 FD curves
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 20 FD curves
+Iteration simulations exist
+Number of iteration simulations: 3 FD curves
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 20 FD curves
+Iteration simulations exist
+Number of iteration simulations: 3 FD curves
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 20 FD curves
+Iteration simulations exist
+Number of iteration simulations: 3 FD curves
+The yielding parameters are ['K']
+The hardening parameters are ['e0', 'n']
+
+############################################################
+
+Starting yielding parameter calibration stage
+
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 20 FD curves
+Iteration simulations exist
+Number of iteration simulations: 3 FD curves
+The yielding parameters are ['K']
+The hardening parameters are ['e0', 'n']
+
+############################################################
+
+Starting yielding parameter calibration stage
+
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 20 FD curves
+Iteration simulations exist
+Number of iteration simulations: 3 FD curves
+The yielding parameters are ['K']
+The hardening parameters are ['e0', 'n']
+
+############################################################
+
+Starting yielding parameter calibration stage
+
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 20 FD curves
+Iteration simulations exist
+Number of iteration simulations: 3 FD curves
+The yielding parameters are ['K']
+The hardening parameters are ['e0', 'n']
+
+############################################################
+
+Starting yielding parameter calibration stage
+
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 20 FD curves
+Iteration simulations exist
+Number of iteration simulations: 3 FD curves
+The yielding parameters are ['K']
+The hardening parameters are ['e0', 'n']
+
+############################################################
+
+Starting yielding parameter calibration stage
+
+BO optimizer is now aware of 23 points.
+
+############################################################
+
+Running iteration 4 for DP1000_room_Swift_NDBR50_curve2
+The next candidate Swift parameters predicted by BO
+
++-----------+---------------------------------+
+| Parameter |              Value              |
++-----------+---------------------------------+
+|     K     | 1306.4717196032175 MPa (target) |
+|     e0    |               5.0               |
+|     n     |               1.2               |
++-----------+---------------------------------+
+
+Start running iteration simulation
+Iteration simulation preprocessing stage starts
+Number of jobs required: 1
+Iteration simulation postprocessing stage finished
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++-----------------------------+-------------+
+|        Global Configs       | User choice |
++-----------------------------+-------------+
+|    Number of initial sims   |      30     |
+|     Initial sims spacing    |     1000    |
+|      Optimize strategy      |     SOO     |
+|           Material          | DP1000_room |
+|        Hardening law        |    Swift    |
+|           Geometry          |    NDBR50   |
+|         Curve index         |      2      |
+|        Optimizer name       |      BO     |
+|  Yielding deviation percent |      1      |
+| Hardening deviation percent |      2      |
++-----------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 20 FD curves
+Iteration simulations exist
+Number of iteration simulations: 23 FD curves
+The yielding parameters are ['K']
+The hardening parameters are ['e0', 'n']
+
+############################################################
+
+Starting yielding parameter calibration stage
+
+BO optimizer is now aware of 38 points.
+
+############################################################
+
+Running iteration 24 for DP1000_room_Swift_NDBR50_curve2
+The next candidate Swift parameters predicted by BO
+
++-----------+--------------------------------+
+| Parameter |             Value              |
++-----------+--------------------------------+
+|     K     | 1320.245246596222 MPa (target) |
+|     e0    |              5.0               |
+|     n     |              1.2               |
++-----------+--------------------------------+
+
+Start running iteration simulation
+Iteration simulation preprocessing stage starts
+Number of jobs required: 1
+Iteration simulation postprocessing stage finished

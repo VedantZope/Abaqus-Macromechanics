@@ -37,7 +37,6 @@ def main_prepare_simCurves(info):
     hardeningLaw = info['hardeningLaw']
     paramConfig = info['paramConfig']
     geometry = info['geometry']
-    deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
     
     targetCurve = info['targetCurve']

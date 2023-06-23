@@ -1,22 +1,28 @@
 import numpy as np
 import pandas as pd
 
+from sklearn.metrics import r2_score
+from sklearn.linear_model import LinearRegression
 from scipy.integrate import simpson
-# import interp1d
 from scipy.interpolate import interp1d
 
-# def lossFD(targetDisplacement, targetForce, simForce):
+# def dummy_lossFD(targetDisplacement, targetForce, simForce):
 #     return np.sqrt(np.mean((targetForce - simForce)**2))
 
-def lossFD(targetDisplacement, targetForce, simForce):
+def lossFD_hardening(targetDisplacement, targetForce, simForce):
+    target_yielding_index = calculate_yielding_index(targetDisplacement, targetForce)
+    target_plastic_force = targetForce[target_yielding_index:]
+    target_plastic_displacement = targetDisplacement[target_yielding_index:]
+    sim_plastic_force = simForce[target_yielding_index:]
+
     # Implementing numerical integration of the area bounded by the two curves and two vertical x axis
     # Define the x-range boundary
-    x_start = min(targetDisplacement)
-    x_end = max(targetDisplacement)
+    x_start = min(target_plastic_displacement)
+    x_end = max(target_plastic_displacement)
 
     # Interpolate the simulated force-displacement curve
-    sim_FD_func = interp1d(targetDisplacement, simForce, fill_value="extrapolate")
-    target_FD_func = interp1d(targetDisplacement, targetForce, fill_value="extrapolate")
+    sim_FD_func = interp1d(target_plastic_displacement, sim_plastic_force, fill_value="extrapolate")
+    target_FD_func = interp1d(target_plastic_displacement, target_plastic_force, fill_value="extrapolate")
 
     # Evaluate the two curves at various points within the x-range boundary
     x_values = np.linspace(x_start, x_end, num=1000)
@@ -62,9 +68,52 @@ def lossFD(targetDisplacement, targetForce, simForce):
             bounded_area += area_upper - area_lower
         return bounded_area
 
-def loss_FD_yielding(targetDisplacement, targetForce, simForce):
-    
-def stopFD(targetForce, simForce, deviationPercent):
-    targetForceUpper = targetForce * (1 + 0.01 * deviationPercent)
-    targetForceLower = targetForce * (1 - 0.01 * deviationPercent)
-    return np.all((simForce >= targetForceLower) & (simForce <= targetForceUpper))
+def lossFD_yielding(targetDisplacement, targetForce, simForce):
+    target_yielding_index = calculate_yielding_index(targetDisplacement, targetForce)
+    sim_yielding_index = calculate_yielding_index(targetDisplacement, simForce)
+    target_yielding_force = targetForce[target_yielding_index]
+    sim_yielding_force = simForce[sim_yielding_index]
+    return np.abs(target_yielding_force - sim_yielding_force)
+
+###########################
+# The stopping conditions #
+###########################
+
+def stopFD_yielding(targetDisplacement, targetForce, simForce, deviationPercent):
+    target_yielding_index = calculate_yielding_index(targetDisplacement, targetForce)
+    sim_yielding_index = calculate_yielding_index(targetDisplacement, simForce)
+    target_yielding_force = targetForce[target_yielding_index]
+    sim_yielding_force = simForce[sim_yielding_index]
+    target_yielding_force_upper = target_yielding_force * (1 + 0.01 * deviationPercent)
+    target_yielding_force_lower = target_yielding_force * (1 - 0.01 * deviationPercent)
+    return np.all((sim_yielding_force >= target_yielding_force_lower) & (sim_yielding_force <= target_yielding_force_upper))
+
+def stopFD_hardening(targetDisplacement, targetForce, simForce, deviationPercent):
+    target_yielding_index = calculate_yielding_index(targetDisplacement, targetForce)
+    target_plastic_force = targetForce[target_yielding_index:]
+    sim_plastic_force = simForce[target_yielding_index:]
+    target_plastic_force_upper = target_plastic_force * (1 + 0.01 * deviationPercent)
+    target_plastic_force_lower = target_plastic_force * (1 - 0.01 * deviationPercent)
+    return np.all((sim_plastic_force >= target_plastic_force_lower) & (sim_plastic_force <= target_plastic_force_upper))
+
+##############################
+# Finding the yielding index #
+##############################
+
+def calculate_yielding_index(targetDisplacement, targetForce, r2_threshold=0.998):
+    """
+    This function calculates the end of the elastic (linear) region of the force-displacement curve.
+    """
+    yielding_index = 0
+
+    # Initialize the Linear Regression model
+    linReg = LinearRegression()
+
+    for i in range(2, len(targetDisplacement)):
+        linReg.fit(targetDisplacement[:i].reshape(-1, 1), targetForce[:i]) 
+        simForce = linReg.predict(targetDisplacement[:i].reshape(-1, 1)) 
+        r2 = r2_score(targetForce[:i], simForce) 
+        if r2 < r2_threshold:  # If R^2 is below threshold, mark the end of linear region
+            yielding_index = i - 1
+            break
+    return yielding_index
