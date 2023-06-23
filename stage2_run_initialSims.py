@@ -10,8 +10,8 @@ from modules.hardeningLaws import *
 from modules.helper import *
 from modules.stoploss import *
 from optimizers.BO import *
-import stage0_configs 
-import stage1_prepare_targetCurve 
+from stage0_configs import * 
+from stage1_prepare_targetCurve import *
 from math import *
 import json
 from datetime import datetime
@@ -36,6 +36,7 @@ def main_run_initialSims(info):
     hardeningLaw = info['hardeningLaw']
     paramConfig = info['paramConfig']
     geometry = info['geometry']
+    deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
 
     if optimizeStrategy == "SOO":
@@ -44,6 +45,7 @@ def main_run_initialSims(info):
     elif optimizeStrategy == "MOO":
         sim.run_initial_simulations()
 
+    
     if not os.path.exists(f"{resultPath}/initial/common/FD_Curves.npy"):
         printLog("There are no initial simulations. Program starts running the initial simulations", logPath)
         sim.run_initial_simulations()
@@ -51,7 +53,3 @@ def main_run_initialSims(info):
         printLog("Initial simulations already exist", logPath)
         numberOfInitialSims = len(np.load(f"{resultPath}/initial/common/FD_Curves.npy", allow_pickle=True).tolist())
         printLog(f"Number of initial simulations: {numberOfInitialSims} FD curves", logPath)
-
-if __name__ == "__main__":
-    info = stage0_configs.main_configs()
-    main_run_initialSims(info)

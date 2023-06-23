@@ -1,5 +1,5 @@
 import os
-import pandas as pd
+
 
 #########################################################
 # Creating necessary directories for the configurations #
@@ -104,17 +104,3 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
         targetPath = f"MOO_targets/{material}"
 
     return projectPath, logPath, paramInfoPath, resultPath, simPath, templatePath, targetPath
-
-if __name__ == "__main__":
-    globalConfig = pd.read_excel("configs/global_config.xlsx", nrows=1, engine="openpyxl")
-    globalConfig = globalConfig.T.to_dict()[0]
-    optimizeStrategy = globalConfig["optimizeStrategy"]
-    material = globalConfig["material"]
-    optimizerName = globalConfig["optimizerName"]
-    hardeningLaw = globalConfig["hardeningLaw"]
-    deviationPercent = globalConfig["deviationPercent"]
-    geometry = globalConfig["geometry"]
-    curveIndex = globalConfig["curveIndex"]
-    numberOfInitialSims = globalConfig["numberOfInitialSims"]
-    initialSimsSpacing = globalConfig["initialSimsSpacing"]
-    initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)

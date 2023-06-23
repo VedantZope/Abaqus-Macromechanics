@@ -34,6 +34,7 @@ def main_prepare_targetCurve(info):
     hardeningLaw = info['hardeningLaw']
     paramConfig = info['paramConfig']
     geometry = info['geometry']
+    deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
     
 

@@ -1,0 +1,22 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) csc-tools
+ 
+Abaqus 2022  is now in use 
+ 
+NOTICE.  Abaqus licenses used on CSC's servers are only for 
+students and personnel from Finnish universities and polytechnics. 
+ 
+Checkout succeeded: explicit/6FB273EE1EBC
+	License file: 1761@license1.csc.fi
+	License Server: 1761@license1.csc.fi
+Checkout succeeded: parallel/713860CAACB2
+	License file: 1761@license1.csc.fi
+	License Server: 1761@license1.csc.fi
+Abaqus License Manager checked out the following licenses:
+Abaqus/Explicit checked out 23 tokens from Flexnet server license1.csc.fi.
+<466 out of 600 licenses remain available>.
+Abaqus License Manager checked out the following license:
+"cae" from Flexnet server license1.csc.fi
+<19 out of 20 licenses remain available>.

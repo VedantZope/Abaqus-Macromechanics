@@ -32,8 +32,7 @@ def main_config():
     material = globalConfig["material"]
     optimizerName = globalConfig["optimizerName"]
     hardeningLaw = globalConfig["hardeningLaw"]
-    yielding_deviationPercent = globalConfig["yielding_deviationPercent"]
-    hardening_deviationPercent = globalConfig["hardening_deviationPercent"]
+    deviationPercent = globalConfig["deviationPercent"]
     geometry = globalConfig["geometry"]
     curveIndex = globalConfig["curveIndex"]
     numberOfInitialSims = globalConfig["numberOfInitialSims"]
@@ -48,10 +47,9 @@ def main_config():
     paramConfig = pd.read_excel(f"{paramInfoPath}/paramInfo.xlsx", engine="openpyxl")
     paramConfig.set_index("parameter", inplace=True)
     paramConfig = paramConfig.T.to_dict()
-    template_paramsDict = {}
     for param in paramConfig:
         paramConfig[param]['exponent'] = float(paramConfig[param]['exponent'])
-        template_paramsDict[param] = paramConfig[param]["initial"]
+
 
     #########################
     # Abaqus configurations #
@@ -102,9 +100,7 @@ def main_config():
         'curveIndex': curveIndex,
         'optimizerName': optimizerName,
         'paramConfig': paramConfig,
-        'yielding_deviationPercent': yielding_deviationPercent,
-        'hardening_deviationPercent': hardening_deviationPercent,
-        'template_paramsDict': template_paramsDict,
+        'deviationPercent': deviationPercent,
         'truePlasticStrain': truePlasticStrain,
     }
 
@@ -127,8 +123,7 @@ def main_config():
     logTable.add_row(["Geometry", geometry])
     logTable.add_row(["Curve index", curveIndex])
     logTable.add_row(["Optimizer name", optimizerName])
-    logTable.add_row(["Yielding deviation percent", yielding_deviationPercent])
-    logTable.add_row(["Hardening deviation percent", hardening_deviationPercent])
+    logTable.add_row(["Deviation percent", deviationPercent])
 
     printLog(logTable.get_string() + "\n", logPath)
 

@@ -1,1 +1,0 @@
-working_directory = r'C:\SIMULIA\temp\fully automated\ndb50.odb'

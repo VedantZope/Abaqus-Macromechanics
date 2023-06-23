@@ -61,7 +61,7 @@ def interpolating_FD_Curves(FD_Curves, targetCurve):
         FD_Curves_copy[paramsTuple]["force"] = interpolatingForce(simDisp, simForce, targetDisp)
     return FD_Curves_copy
 
-def SOO_write_BO_json_log(stage, optimize_params, FD_Curves, targetCurve, paramsConfig):
+def SOO_write_BO_json_log(FD_Curves, targetCurve, paramConfig):
     # Write the BO log file
     # Each line of BO logging json file looks like this
     # {"target": <loss value>, "params": {"params1": <value1>, ..., "paramsN": <valueN>}, "datetime": {"datetime": "2023-06-02 18:26:46", "elapsed": 0.0, "delta": 0.0}}
@@ -80,16 +80,10 @@ def SOO_write_BO_json_log(stage, optimize_params, FD_Curves, targetCurve, params
         # Construct the dictionary
         line = {}
         # Note: BO in Bayes-Opt tries to maximize, so you should use the negative of the loss function.
-        if stage == "yielding":
-            line["target"] = -lossFD_yielding(targetCurve["displacement"], targetCurve["force"], dispforce["force"])
-        elif stage == "hardening":
-            line["target"] = -lossFD_hardening(targetCurve["displacement"], targetCurve["force"], dispforce["force"])
-        
-        line["params"] = {}
-        paramsDict = dict(paramsTuple)
-        for param in paramsConfig:
-            if param in optimize_params:
-                line["params"][param] = paramsDict[param]/paramsConfig[param]["exponent"] 
+        line["target"] = -lossFD(targetCurve["displacement"], targetCurve["force"], dispforce["force"])
+        line["params"] = dict(paramsTuple)
+        for param in paramConfig:
+            line["params"][param] = line["params"][param]/paramConfig[param]["exponent"] 
         line["datetime"] = {}
         line["datetime"]["datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         line["datetime"]["elapsed"] = 0.0
@@ -101,16 +95,14 @@ def SOO_write_BO_json_log(stage, optimize_params, FD_Curves, targetCurve, params
             json.dump(line, file)
             file.write("\n")
 
-def prettyPrint(paramsDict, optimize_params_dict, paramConfig, logPath):
+def prettyPrint(parameters, paramConfig, logPath):
     logTable = PrettyTable()
     logTable.field_names = ["Parameter", "Value"]
-    for param in paramsDict:
+    for param in parameters:
         paramName = paramConfig[param]['name']
-        paramValue = paramsDict[param]
+        paramValue = parameters[param]
         paramUnit = paramConfig[param]['unit']
         paramValueUnit = f"{paramValue} {paramUnit}" if paramUnit != "dimensionless" else paramValue
-        if param in optimize_params_dict:
-            paramValueUnit += " (target)"
         #print(paramName)
         #print(paramValueUnit)
         logTable.add_row([paramName, paramValueUnit])
