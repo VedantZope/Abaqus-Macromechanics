@@ -80,11 +80,12 @@ def lossFD_yielding(targetDisplacement, targetForce, simForce):
     sim_yielding_index = calculate_yielding_index(targetDisplacement, simForce)
     target_yielding_force = targetForce[target_yielding_index]
     sim_yielding_force = simForce[sim_yielding_index]
-    #print(target_yielding_index)
-    #print(sim_yielding_index)
-    #print(target_yielding_force)
-    #print(sim_yielding_force)
-    #time.sleep(5)
+    print("##########")
+    print(target_yielding_index)
+    print(sim_yielding_index)
+    print(target_yielding_force)
+    print(sim_yielding_force)
+    time.sleep(2)
     return np.abs(target_yielding_force - sim_yielding_force)
 
 ###########################
@@ -112,7 +113,7 @@ def stopFD_hardening(targetDisplacement, targetForce, simForce, deviationPercent
 # Finding the yielding index #
 ##############################
 
-def calculate_yielding_index(targetDisplacement, targetForce, r2_threshold=0.998):
+def calculate_yielding_index(targetDisplacement, targetForce, r2_threshold=0.95):
     """
     This function calculates the end of the elastic (linear) region of the force-displacement curve.
     """

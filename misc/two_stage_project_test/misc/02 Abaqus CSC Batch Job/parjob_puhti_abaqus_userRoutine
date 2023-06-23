@@ -1,0 +1,24 @@
+#!/bin/bash -l
+#SBATCH --job-name=abaTest
+#SBATCH --error=%j.err
+#SBATCH --output=%j.out
+#SBATCH --nodes=1
+#SBATCH --ntasks=10
+#SBATCH --time=00:15:00
+#SBATCH --partition=test
+#SBATCH --account=project_2007935
+
+# This is an example batch job file for a parallel run
+# of Abaqus with user's own Fortran subroutine
+
+unset SLURM_GTIDS
+module purge
+module load intel-oneapi-compilers/2022.1.0
+module load abaqus/2022
+
+cd $PWD
+
+mkdir tmp_$SLURM_JOB_ID
+
+abq2022 job=Job-1 input=Job-1.inp cpus=$SLURM_NTASKS scratch=tmp_$SLURM_JOB_ID user=<your_fortran_code>.f interactive
+
