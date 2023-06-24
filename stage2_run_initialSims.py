@@ -38,17 +38,22 @@ def main_run_initialSims(info):
     geometry = info['geometry']
     deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
+    generateParams = info['generateParams'] 
 
     if optimizeStrategy == "SOO":
         sim = SOO_SIM(info)
-        
     elif optimizeStrategy == "MOO":
-        sim.run_initial_simulations()
-
+        pass
+    
     
     if not os.path.exists(f"{resultPath}/initial/common/FD_Curves.npy"):
         printLog("There are no initial simulations. Program starts running the initial simulations", logPath)
-        sim.run_initial_simulations()
+        if generateParams == "manual":
+            parameters = np.load(f"{resultPath}/initial/common/parameters.npy", allow_pickle=True).tolist()
+            sim.run_initial_simulations(parameters)
+        elif generateParams == "auto":
+            parameters = sim.latin_hypercube_sampling()
+            sim.run_initial_simulations(parameters)
     else: 
         printLog("Initial simulations already exist", logPath)
         numberOfInitialSims = len(np.load(f"{resultPath}/initial/common/FD_Curves.npy", allow_pickle=True).tolist())

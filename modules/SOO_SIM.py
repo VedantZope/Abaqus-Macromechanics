@@ -37,13 +37,13 @@ class SOO_SIM():
 
         return points
 
-    def run_initial_simulations(self):
-        indexParamsDict = self.preprocess_simulations_initial()
+    def run_initial_simulations(self, parameters):
+        indexParamsDict = self.preprocess_simulations_initial(parameters)
         self.write_paths_initial()
         self.submit_array_jobs_initial()
         self.postprocess_results_initial(indexParamsDict)
 
-    def preprocess_simulations_initial(self):
+    def preprocess_simulations_initial(self, initial_params):
         resultPath = self.info['resultPath']
         simPath = self.info['simPath']
         templatePath = self.info['templatePath'] 
@@ -52,10 +52,10 @@ class SOO_SIM():
         truePlasticStrain = self.info['truePlasticStrain']
         maxTargetDisplacement = self.info['maxTargetDisplacement']
 
-        initial_params = self.latin_hypercube_sampling()
-        #print(initial_params)
-        np.save(f"{resultPath}/initial/common/parameters.npy", initial_params)
-        initial_params = np.load(f"{resultPath}/initial/common/parameters.npy", allow_pickle=True).tolist()
+        # initial_params = self.latin_hypercube_sampling()
+        # #print(initial_params)
+        # np.save(f"{resultPath}/initial/common/parameters.npy", initial_params)
+        # initial_params = np.load(f"{resultPath}/initial/common/parameters.npy", allow_pickle=True).tolist()
         # Initializing the flow curves and force-displacement curves
         # The structure of flow curve: dict of (hardening law params typle) -> {stress: stressArray , strain: strainArray}
         
@@ -84,11 +84,11 @@ class SOO_SIM():
             paramsTuple = indexParamsDict[str(index)]
             truePlasticStrain = flowCurves[paramsTuple]['strain']
             trueStress = flowCurves[paramsTuple]['stress']
-            self.replace_flowCurve_material_inp(f"{simPath}/initial/{index}/material.inp", truePlasticStrain, trueStress)
-            self.replace_maxDisp_geometry_inp(f"{simPath}/initial/{index}/geometry.inp", maxTargetDisplacement)
-            self.replace_materialName_geometry_inp(f"{simPath}/initial/{index}/geometry.inp", "material.inp")
-            self.create_parameter_file(f"{simPath}/initial/{index}", dict(paramsTuple))
-            self.create_flowCurve_file(f"{simPath}/initial/{index}", truePlasticStrain, trueStress)
+            replace_flowCurve_material_inp(f"{simPath}/initial/{index}/material.inp", truePlasticStrain, trueStress)
+            replace_maxDisp_geometry_inp(f"{simPath}/initial/{index}/geometry.inp", maxTargetDisplacement)
+            replace_materialName_geometry_inp(f"{simPath}/initial/{index}/geometry.inp", "material.inp")
+            create_parameter_file(f"{simPath}/initial/{index}", dict(paramsTuple))
+            create_flowCurve_file(f"{simPath}/initial/{index}", truePlasticStrain, trueStress)
         return indexParamsDict
 
     def write_paths_initial(self):

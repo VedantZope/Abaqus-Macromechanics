@@ -101,4 +101,7 @@ def main_iterative_calibration(info):
         # Saving the iteration data
         np.save(f"{resultPath}/iteration/common/FD_Curves.npy", iteration_original_FD_Curves)
         np.save(f"{resultPath}/iteration/common/flowCurves.npy", iteration_original_flowCurves)
+
+        # Saving the combined data
+        np.save(f"{resultPath}/combined/common/FD_Curves.npy", combined_original_FD_Curves)
         

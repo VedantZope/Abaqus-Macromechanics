@@ -35,8 +35,10 @@ def main_config():
     deviationPercent = globalConfig["deviationPercent"]
     geometry = globalConfig["geometry"]
     curveIndex = globalConfig["curveIndex"]
+    generateParams = globalConfig["generateParams"]
     numberOfInitialSims = globalConfig["numberOfInitialSims"]
     initialSimsSpacing = globalConfig["initialSimsSpacing"]
+
 
     projectPath, logPath, paramInfoPath, resultPath, simPath, templatePath, targetPath = initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
     
@@ -93,6 +95,7 @@ def main_config():
         'templatePath': templatePath,
         'optimizeStrategy': optimizeStrategy,
         'numberOfInitialSims': numberOfInitialSims,
+        'generateParams': generateParams,
         'initialSimsSpacing': initialSimsSpacing,
         'material': material,
         'hardeningLaw': hardeningLaw,
