@@ -62,12 +62,10 @@ def main_iterative_calibration(info):
     
     if optimizeStrategy == "SOO":
         sim = SOO_SIM(info)
-    if optimizeStrategy == "MOO":
-        sim = MOO_SIM(info)
     
     while not stopFD(targetCurve['force'], list(combined_interpolated_FD_Curves.values())[-1]['force'], deviationPercent):
-        if optimizeStrategy == "SOO":
-            SOO_write_BO_json_log(combined_interpolated_FD_Curves, targetCurve, paramConfig)
+
+        SOO_write_BO_json_log(combined_interpolated_FD_Curves, targetCurve, paramConfig)
         BO_instance = BO(info)
         BO_instance.initializeOptimizer(lossFunction=None, param_bounds=param_bounds, loadingProgress=True)
         next_paramsDict = BO_instance.suggest()

@@ -41,7 +41,6 @@ def main_optimize():
     hardeningLaw = info['hardeningLaw']
     paramConfig = info['paramConfig']
     geometry = info['geometry']
-    deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
     
     targetCurve, maxTargetDisplacement = stage1_prepare_targetCurve.main_prepare_targetCurve(info)
@@ -60,13 +59,14 @@ def main_optimize():
     info["initial_original_flowCurves"] = flowCurves_dict['initial_original_flowCurves']
     info["iteration_original_flowCurves"] = flowCurves_dict['iteration_original_flowCurves']
     info["combined_original_flowCurves"] = flowCurves_dict['combined_original_flowCurves']
-    
+
     if optimizeStrategy == "SOO":
-        stage4_SOO_iterative_calibration.main_iterative_calibration(info)
+        stage4_SOO_iterative_calibration.main_SOO_iterative_calibration(info)
     elif optimizeStrategy == "MOO":
-        stage4_MOO_iterative_calibration.main_iterative_calibration(info)
+        stage4_MOO_iterative_calibration.main_MOO_iterative_calibration(info)
+
     printLog("Parameter calibration has successfully completed", logPath)
     printLog(f"Please check simulation results in the folder {resultPath}/iteration", logPath)
-
+    
 if __name__ == "__main__":
     main_optimize()
