@@ -211,3 +211,107 @@ The path to your main project folder is
 
 c:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
 
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |     100     |
+|  Initial sims spacing  |    10000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |  SwiftVoce  |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+c:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |     100     |
+|  Initial sims spacing  |    10000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |  SwiftVoce  |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+Initial simulations already exist
+Number of initial simulations: 100 FD curves
+There are no iteration simulations. Program starts running the iteration simulations
+BO optimizer is now aware of 100 points.
+
+############################################################
+
+Running iteration 1 for DP1000_room_SwiftVoce_NDBR50_curve2
+The next candidate SwiftVoce parameters predicted by BO
+
++-----------+------------------------+
+| Parameter |         Value          |
++-----------+------------------------+
+|     W     |   0.4554799321242512   |
+|     K     | 1353.5767882408118 MPa |
+|     e0    |  0.02395108250445547   |
+|     n     |  0.07284401571775523   |
+|  sigma_y  | 983.5072222486721 MPa  |
+| sigma_sat | 631.1748180827316 MPa  |
+|     b     |   959.3432379629738    |
++-----------+------------------------+
+
+Start running iteration simulation
+Iteration simulation preprocessing stage starts
+Number of jobs required: 1
+Iteration simulation postprocessing stage finished
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++------------------------+-------------+
+|     Global Configs     | User choice |
++------------------------+-------------+
+| Number of initial sims |     100     |
+|  Initial sims spacing  |    10000    |
+|   Optimize strategy    |     SOO     |
+|        Material        | DP1000_room |
+|     Hardening law      |  SwiftVoce  |
+|        Geometry        |    NDBR50   |
+|      Curve index       |      2      |
+|     Optimizer name     |      BO     |
+|   Deviation percent    |      5      |
++------------------------+-------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+c:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+

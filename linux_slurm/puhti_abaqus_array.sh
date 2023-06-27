@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=10
 #SBATCH --cpus-per-task=4
-#SBATCH --time=00:30:00
+#SBATCH --time=03:00:00
 #SBATCH --partition=small
 #SBATCH --account=project_2007935
 #SBATCH --mail-type=ALL

@@ -56,7 +56,7 @@ def main_config():
     #########################
     # Abaqus configurations #
     #########################
-    truePlasticStrainConfig = pd.read_excel("configs/truePlasticStrain_config.xlsx",engine="openpyxl")
+    truePlasticStrainConfig = pd.read_excel(f"configs/truePlasticStrain_{hardeningLaw}_config.xlsx",engine="openpyxl")
     ranges_and_increments = []
 
     # Iterate over each row in the DataFrame
@@ -77,7 +77,8 @@ def main_config():
         # Append strain_range to strain_array
         truePlasticStrain = np.concatenate((truePlasticStrain, strain_range))
         
-    #print(truePlasticStrain)
+    #for i in truePlasticStrain:
+    #    print(i)
     #time.sleep(180)
     #print(paramConfig)
 
