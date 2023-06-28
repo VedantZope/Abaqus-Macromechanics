@@ -39,7 +39,6 @@ def main_config():
     numberOfInitialSims = globalConfig["numberOfInitialSims"]
     initialSimsSpacing = globalConfig["initialSimsSpacing"]
 
-
     projectPath, logPath, paramInfoPath, resultPath, simPath, templatePath, targetPath = initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
     
     ##################################

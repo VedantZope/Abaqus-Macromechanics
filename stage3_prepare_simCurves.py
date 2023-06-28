@@ -50,12 +50,14 @@ def main_prepare_simCurves(info):
     if not os.path.exists(f"{resultPath}/iteration/common/FD_Curves.npy"):
         printLog("There are no iteration simulations. Program starts running the iteration simulations", logPath)
         iteration_original_FD_Curves = {}
+        iteration_original_FD_Curves_unsmooth = {}
         iteration_original_flowCurves = {}
     else:
         printLog("Iteration simulations exist", logPath)
         numberOfIterationSims = len(np.load(f"{resultPath}/iteration/common/FD_Curves.npy", allow_pickle=True).tolist())
         printLog(f"Number of iteration simulations: {numberOfIterationSims} FD curves", logPath)
         iteration_original_FD_Curves = np.load(f"{resultPath}/iteration/common/FD_Curves.npy", allow_pickle=True).tolist()
+        iteration_original_FD_Curves_unsmooth = np.load(f"{resultPath}/iteration/common/FD_Curves_unsmooth.npy", allow_pickle=True).tolist()
         iteration_original_flowCurves = np.load(f"{resultPath}/iteration/common/flowCurves.npy", allow_pickle=True).tolist()
 
     combined_original_FD_Curves = copy.deepcopy(initial_original_FD_Curves)
@@ -76,9 +78,13 @@ def main_prepare_simCurves(info):
     FD_Curves_dict['initial_interpolated_FD_Curves'] = initial_interpolated_FD_Curves
     FD_Curves_dict['iteration_interpolated_FD_Curves'] = iteration_interpolated_FD_Curves
     FD_Curves_dict['combined_interpolated_FD_Curves'] = combined_interpolated_FD_Curves
+    FD_Curves_dict['iteration_original_FD_Curves_unsmooth'] = iteration_original_FD_Curves_unsmooth
+    
     flowCurves_dict['initial_original_flowCurves'] = initial_original_flowCurves
     flowCurves_dict['iteration_original_flowCurves'] = iteration_original_flowCurves
     flowCurves_dict['combined_original_flowCurves'] = combined_original_flowCurves
+
+    
 
     return FD_Curves_dict, flowCurves_dict
 

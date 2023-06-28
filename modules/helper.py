@@ -25,18 +25,21 @@ def parseBoundsBO(paramInfo):
 def is_directory_empty(directory_path):
     return len(os.listdir(directory_path)) == 0
 
-def smoothing_force(force):
-    start = 30
-    end = 60
+def smoothing_force(force, startIndex, endIndex, iter=20000):
     smooth_force = copy.deepcopy(force)
-    for i in range(20000):
-        smooth_force = savgol_filter(smooth_force[start:end], 
+    for i in range(iter):
+        smooth_force = savgol_filter(smooth_force[startIndex:endIndex], 
                                     window_length=5, 
                                     polyorder=3,
+                                    mode='interp',
+                                    #mode='nearest',
+                                    #mode='mirror',
+                                    #mode='wrap',
+                                    #mode='constant',
                                     #deriv=0,
-                                    #delta=1
+                                    delta=1
                                     )
-        smooth_force = np.concatenate((force[0:start], smooth_force, force[end:]))
+        smooth_force = np.concatenate((force[0:startIndex], smooth_force, force[endIndex:]))
     return smooth_force
 
 def interpolatingForce(simDisp, simForce, targetDisp):

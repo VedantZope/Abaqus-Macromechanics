@@ -5,7 +5,7 @@ from scipy.integrate import simpson
 # import interp1d
 from scipy.interpolate import interp1d
 
-def lossFD(targetDisplacement, targetForce, simForce):
+def dummy_lossFD(targetDisplacement, targetForce, simForce):
     return np.sqrt(np.mean((targetForce - simForce)**2))
 
 def lossFD(targetDisplacement, targetForce, simForce):

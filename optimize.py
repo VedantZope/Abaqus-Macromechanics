@@ -43,6 +43,7 @@ def main_optimize():
     geometry = info['geometry']
     deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
+
     
     targetCurve, maxTargetDisplacement = stage1_prepare_targetCurve.main_prepare_targetCurve(info)
     info['targetCurve'] = targetCurve
@@ -57,6 +58,7 @@ def main_optimize():
     info["initial_interpolated_FD_Curves"] = FD_Curves_dict['initial_interpolated_FD_Curves']
     info["iteration_interpolated_FD_Curves"] = FD_Curves_dict['iteration_interpolated_FD_Curves']
     info["combined_interpolated_FD_Curves"] = FD_Curves_dict['combined_interpolated_FD_Curves']
+    info['iteration_original_FD_Curves_unsmooth'] = FD_Curves_dict['iteration_original_FD_Curves_unsmooth'] 
     info["initial_original_flowCurves"] = flowCurves_dict['initial_original_flowCurves']
     info["iteration_original_flowCurves"] = flowCurves_dict['iteration_original_flowCurves']
     info["combined_original_flowCurves"] = flowCurves_dict['combined_original_flowCurves']

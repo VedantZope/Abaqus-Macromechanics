@@ -59,6 +59,7 @@ def main_iterative_calibration(info):
     initial_original_flowCurves = info['initial_original_flowCurves']
     iteration_original_flowCurves = info['iteration_original_flowCurves']
     combined_original_flowCurves = info['combined_original_flowCurves']
+    iteration_original_FD_Curves_unsmooth = info['iteration_original_FD_Curves_unsmooth']
     
     if optimizeStrategy == "SOO":
         sim = SOO_SIM(info)
@@ -81,27 +82,32 @@ def main_iterative_calibration(info):
         printLog("Start running iteration simulation", logPath)
         
         new_FD_Curves, new_flowCurves = sim.run_iteration_simulations(next_paramsDict, iterationIndex)
+        new_FD_Curves_unsmooth = copy.deepcopy(new_FD_Curves)
+        new_FD_Curves_smooth = copy.deepcopy(new_FD_Curves)
+        new_params = list(new_FD_Curves.keys())[0]
+        new_FD_Curves_smooth[new_params]['force'] = smoothing_force(new_FD_Curves_unsmooth[new_params]['force'], startIndex=20, endIndex=70, iter=10000)
         
         # Updating the combined FD curves
-        combined_original_FD_Curves.update(new_FD_Curves)
+        combined_original_FD_Curves.update(new_FD_Curves_smooth)
         combined_interpolated_FD_Curves = interpolating_FD_Curves(combined_original_FD_Curves, targetCurve)
         
         # Updating the iteration FD curves
-        iteration_original_FD_Curves.update(new_FD_Curves)
+        iteration_original_FD_Curves.update(new_FD_Curves_smooth)
         iteration_interpolated_FD_Curves = interpolating_FD_Curves(iteration_original_FD_Curves, targetCurve)
+        
+        # Updating the iteration FD curves unsmooth
+        iteration_original_FD_Curves_unsmooth.update(new_FD_Curves_unsmooth)
         
         # Updating the original flow curves
         combined_original_flowCurves.update(new_flowCurves)
         iteration_original_flowCurves.update(new_flowCurves)
 
-        simForce = list(new_FD_Curves.values())[0]['force']
+        simForce = list(new_FD_Curves_smooth.values())[0]['force']
         loss_newIteration = lossFD(targetCurve['displacement'], targetCurve['force'], simForce)
         printLog(f"The loss of the new iteration is {round(loss_newIteration, 3)}", logPath)
 
         # Saving the iteration data
+        np.save(f"{resultPath}/iteration/common/FD_Curves_unsmooth.npy", iteration_original_FD_Curves)
         np.save(f"{resultPath}/iteration/common/FD_Curves.npy", iteration_original_FD_Curves)
         np.save(f"{resultPath}/iteration/common/flowCurves.npy", iteration_original_flowCurves)
-
-        # Saving the combined data
-        np.save(f"{resultPath}/combined/common/FD_Curves.npy", combined_original_FD_Curves)
         

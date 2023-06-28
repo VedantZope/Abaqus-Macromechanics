@@ -42,18 +42,21 @@ class BO():
         #self.acquisitionFunction = UtilityFunction(kind='ei', xi=0)
         #self.acquisitionFunction = UtilityFunction(kind='ei', xi=0.1)
         #self.acquisitionFunction = UtilityFunction(kind='poi', xi=0.001)
-        self.acquisitionFunction = UtilityFunction(kind='poi', xi=0.1)
+        self.acquisitionFunction = UtilityFunction(kind='poi', xi=1)
 
         
         # Gaussian process kernel parameters
-        #self.GP_kernel = RBF(length_scale=10, length_scale_bounds=(1e-3, 1e3)) # RBF kernel
-        self.GP_kernel = Matern(nu=2.5) # Matern kernel
+        self.GP_kernel = RBF(length_scale=1, length_scale_bounds=(1e-3, 1e3)) # RBF kernel
+        #self.GP_kernel = Matern(nu=0.5) # Matern kernel
+        #self.GP_kernel = Matern(nu=1.5) # Matern kernel
+        #self.GP_kernel = Matern(nu=2.5) # Matern kernel
         # Noise variance regularization hyperparameter: control the Gaussian noise
-        self.alpha = 1e-6
-        #self.alpha = 0.5
-        self.normalize_y=False
+        self.alpha = 1e-9
+        #self.alpha = 0
+        #self.alpha = 1e-6
+        self.normalize_y=True
         self.n_restarts_optimizer=5
-        self.logger = JSONLogger(path="bayesopt_log/logs.log", reset=False)
+        self.logger = JSONLogger(path=f"optimizers/logs.json", reset=False)
         
     ##########################
     # OPTIMIZATION FUNCTIONS #
@@ -86,7 +89,7 @@ class BO():
             if os.path.exists(f"{projectPath}/optimizers/logs.json"):
                 #self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
                 #load_logs(self.optimizer, logs=["./bayesopt_log/logs.log.json"]);
-                load_logs(self.optimizer, logs=[f"{projectPath}/optimizers/logs.json"]);
+                load_logs(self.optimizer, logs=[f"optimizers/logs.json"]);
                 printLog("BO optimizer is now aware of {} points.".format(len(self.optimizer.space)), logPath)
                 self.optimizer.subscribe(Events.OPTIMIZATION_STEP, self.logger)
         
