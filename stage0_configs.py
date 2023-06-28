@@ -38,6 +38,7 @@ def main_config():
     generateParams = globalConfig["generateParams"]
     numberOfInitialSims = globalConfig["numberOfInitialSims"]
     initialSimsSpacing = globalConfig["initialSimsSpacing"]
+    SLURM_iteration = globalConfig["SLURM_iteration"]
 
     projectPath, logPath, paramInfoPath, resultPath, simPath, templatePath, targetPath = initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
     
@@ -105,6 +106,7 @@ def main_config():
         'paramConfig': paramConfig,
         'deviationPercent': deviationPercent,
         'truePlasticStrain': truePlasticStrain,
+        'SLURM_iteration': SLURM_iteration
     }
 
   
@@ -118,6 +120,7 @@ def main_config():
     logTable = PrettyTable()
 
     logTable.field_names = ["Global Configs", "User choice"]
+    logTable.add_row(["SLURM iteration", SLURM_iteration])
     logTable.add_row(["Number of initial sims", numberOfInitialSims])
     logTable.add_row(["Initial sims spacing", initialSimsSpacing])
     logTable.add_row(["Optimize strategy", optimizeStrategy])

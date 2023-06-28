@@ -182,10 +182,11 @@ class SOO_SIM():
             filename.write(f"{projectPath}/{simPath}/iteration/{iterationIndex}\n")
 
     def submit_array_jobs_iteration(self):
-        logPath = self.info['logPath']        
+        logPath = self.info['logPath']       
+        SLURM_iteration = self.info['SLURM_iteration'] 
         printLog("Iteration simulation preprocessing stage starts", logPath)
         printLog(f"Number of jobs required: 1", logPath)
-        subprocess.run(f"sbatch --wait linux_slurm/puhti_abaqus_single_test.sh", shell=True)
+        subprocess.run(f"sbatch --wait linux_slurm/puhti_abaqus_{SLURM_iteration}.sh", shell=True)
         printLog("Iteration simulation postprocessing stage finished", logPath)
 
     def postprocess_results_iteration(self, paramsDict, iterationIndex):

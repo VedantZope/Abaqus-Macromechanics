@@ -12,20 +12,19 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=binh.nguyen@aalto.fi
 
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 unset SLURM_GTIDS
 module purge
 module load abaqus/2022	
 
 ### Change to the work directory
-fullpath=$(sed -n ${SLURM_ARRAY_TASK_ID}p linux_slurm/array_file.txt) 
+fullpath=$(sed -n 1p linux_slurm/array_file.txt) 
 cd ${fullpath}
 
 CPUS_TOTAL=$(( $SLURM_NTASKS*$SLURM_CPUS_PER_TASK ))
 
-mkdir tmp_$SLURM_JOB_ID_${SLURM_ARRAY_TASK_ID}
+mkdir tmp_$SLURM_JOB_ID
 
-abq2022 job=geometry.inp input=geometry.inp cpus=$CPUS_TOTAL -verbose 2 standard_parallel=all scratch=tmp_$SLURM_JOB_ID_${SLURM_ARRAY_TASK_ID} interactive
+abq2022 job=geometry.inp input=geometry.inp cpus=$CPUS_TOTAL -verbose 2 standard_parallel=all scratch=tmp_$SLURM_JOB_ID interactive
 
 # run postprocess.py after the simulation completes
 abq2022 cae noGUI=postprocess.py

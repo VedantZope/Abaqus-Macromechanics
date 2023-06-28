@@ -3,11 +3,11 @@
 #SBATCH --job-name=abaqusArray
 #SBATCH --error=%j.err
 #SBATCH --output=%j.out
-#SBATCH --nodes=2
+#SBATCH --nodes=1
 #SBATCH --ntasks=10
-#SBATCH --cpus-per-task=8
-#SBATCH --time=00:15:00
-#SBATCH --partition=test
+#SBATCH --cpus-per-task=4
+#SBATCH --time=03:00:00
+#SBATCH --partition=small
 #SBATCH --account=project_2007935
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=binh.nguyen@aalto.fi
