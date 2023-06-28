@@ -21,7 +21,7 @@ working_directory = os.getcwd()
 executeOnCaeStartup()
 
 # Open output database
-o2 = session.openOdb(name='geometry.odb')
+o2 = session.openOdb(name='ndb50.odb')
 
 # Set the viewport parameters
 session.viewports['Viewport: 1'].setValues(displayedObject=o2)
@@ -31,13 +31,13 @@ session.viewports['Viewport: 1'].view.fitView()
 
 # Print deformed shape to file
 session.printToFile(
-    fileName=os.path.join(working_directory,"Deformed_Specimen"), 
+    fileName=os.path.join(working_directory,"deformed"), 
     format=TIFF, 
     canvasObjects=(session.viewports['Viewport: 1'], )
 )
 
 # Get nodal reaction forces and store them as xy data
-odb = session.odbs[working_directory + r"\geometry.odb"]
+odb = session.odbs[working_directory + r"\ndb50.odb"]
 session.xyDataListFromField(
     odb=odb, 
     outputPosition=NODAL, 
@@ -92,7 +92,7 @@ session.viewports['Viewport: 1'].setValues(displayedObject=xyp)
 
 # Save the force-displacement curve
 session.printToFile(
-    fileName=os.path.join(working_directory,"FD_Curve_Plot"), 
+    fileName=os.path.join(working_directory,"F-D Curve"), 
     format=TIFF, 
     canvasObjects=(session.viewports['Viewport: 1'], )
 )
@@ -101,7 +101,7 @@ session.printToFile(
 x0 = session.xyDataObjects['Displacement']
 x1 = session.xyDataObjects['Force']  # This now refers to the doubled force
 session.writeXYReport(
-    fileName=os.path.join(working_directory,"FD_Curve.txt"), 
+    fileName=os.path.join(working_directory,"F-D Data.txt"), 
     appendMode=OFF, 
     xyData=(x0, x1)
 )

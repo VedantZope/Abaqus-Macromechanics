@@ -104,7 +104,7 @@ class SOO_SIM():
         numberOfInitialSims = self.info['numberOfInitialSims']
         printLog("Initial simulation preprocessing stage starts", logPath)
         printLog(f"Number of jobs required: {numberOfInitialSims}", logPath)
-        subprocess.run(f"sbatch --wait --array=1-{numberOfInitialSims} linux_slurm/puhti_abaqus_array.sh", shell=True)
+        subprocess.run(f"sbatch --wait --array=1-{numberOfInitialSims} linux_slurm/puhti_abaqus_array_small.sh", shell=True)
         printLog("Initial simulation postprocessing stage finished", logPath)
     
     def postprocess_results_initial(self, indexParamsDict):
@@ -185,7 +185,7 @@ class SOO_SIM():
         logPath = self.info['logPath']        
         printLog("Iteration simulation preprocessing stage starts", logPath)
         printLog(f"Number of jobs required: 1", logPath)
-        subprocess.run(f"sbatch --wait --array=1-1 linux_slurm/puhti_abaqus_array.sh", shell=True)
+        subprocess.run(f"sbatch --wait linux_slurm/puhti_abaqus_single_test.sh", shell=True)
         printLog("Iteration simulation postprocessing stage finished", logPath)
 
     def postprocess_results_iteration(self, paramsDict, iterationIndex):

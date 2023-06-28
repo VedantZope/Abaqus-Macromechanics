@@ -62,6 +62,7 @@ def interpolating_FD_Curves(FD_Curves, targetCurve):
         targetDisp = targetCurve["displacement"]
         # Interpolate the force
         FD_Curves_copy[paramsTuple]["force"] = interpolatingForce(simDisp, simForce, targetDisp)
+        FD_Curves_copy[paramsTuple]["displacement"] = targetDisp
     return FD_Curves_copy
 
 def SOO_write_BO_json_log(FD_Curves, targetCurve, paramConfig):

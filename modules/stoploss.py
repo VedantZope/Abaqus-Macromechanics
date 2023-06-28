@@ -9,7 +9,8 @@ def dummy_lossFD(targetDisplacement, targetForce, simForce):
     return np.sqrt(np.mean((targetForce - simForce)**2))
 
 def lossFD(targetDisplacement, targetForce, simForce):
-    # Implementing numerical integration of the area bounded by the two curves and two vertical x axis
+    # Implementing numerical integration of the area bounded by 
+    # the two curves and two vertical x axis
     # Define the x-range boundary
     x_start = min(targetDisplacement)
     x_end = max(targetDisplacement)
