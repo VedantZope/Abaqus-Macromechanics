@@ -13,7 +13,7 @@ from optimizers.BO import *
 import stage0_configs 
 import stage1_prepare_targetCurve
 import stage2_run_initialSims 
-import stage3_prepare_simCurves
+import stage3_MOO_prepare_simCurves
 from math import *
 import json
 from datetime import datetime

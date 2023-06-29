@@ -1,6 +1,6 @@
 #!/bin/bash -l
 # Author: Xuan Binh
-#SBATCH --job-name=Abaqus_Iteration
+#SBATCH --job-name=abaqus_TwoNodesSmall
 #SBATCH --error=%j.err
 #SBATCH --output=%j.out
 #SBATCH --nodes=2

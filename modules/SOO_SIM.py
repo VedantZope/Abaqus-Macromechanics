@@ -117,25 +117,40 @@ class SOO_SIM():
 
         FD_Curves = {}
         for index in range(1, numberOfInitialSims + 1):
-            if not os.path.exists(f"{resultPath}/initial/{index}"):
-                os.mkdir(f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/FD_Curve.txt", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/FD_Curve_Plot.tif", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/Deformed_Specimen.tif", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/parameters.xlsx", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/parameters.csv", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/flowCurve.xlsx", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/flowCurve.csv", f"{resultPath}/initial/{index}")
+            if not os.path.exists(f"{resultPath}/initial/data/{index}"):
+                os.mkdir(f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/FD_Curve.txt", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/FD_Curve_Plot.tif", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/Deformed_Specimen.tif", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/parameters.xlsx", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/parameters.csv", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/flowCurve.xlsx", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/flowCurve.csv", f"{resultPath}/initial/data/{index}")
                         
             paramsTuple = indexParamsDict[str(index)]
             displacement, force = read_FD_Curve(f"{simPath}/initial/{index}/FD_Curve.txt")
             FD_Curves[paramsTuple] = {}
             FD_Curves[paramsTuple]['displacement'] = displacement
             FD_Curves[paramsTuple]['force'] = force
-            create_FD_Curve_file(f"{resultPath}/initial/{index}", displacement, force)
+            create_FD_Curve_file(f"{resultPath}/initial/data/{index}", displacement, force)
             
         # Returning force-displacement curve data
-        np.save(f"{resultPath}/initial/common/FD_Curves.npy", FD_Curves)
+        np.save(f"{resultPath}/initial/common/FD_Curves_unsmooth.npy", FD_Curves)
+        printLog("Starting to apply Savgol smoothing filter on the FD curves", logPath)
+        smoothing_force(force, startIndex=20, endIndex=90, iter=10000)
+
+        FD_Curves_smooth = {}
+
+        for param in FD_Curves:
+            force = FD_Curves[param]['force']
+            smooth_force = smoothing_force(force, 40, 90, 10000)
+            displacement = FD_Curves[param]['displacement']
+            FD_Curves_smooth[param] = {}
+            FD_Curves_smooth[param]['force'] = smooth_force
+            FD_Curves_smooth[param]['displacement'] = displacement
+
+        np.save(f"{resultPath}/initial/common/FD_Curves_smooth.npy", FD_Curves_smooth)
+        printLog("Savgol smoothing of FD curves has finished", logPath)
         printLog("Saving successfully all simulation results", logPath)
 
     def run_iteration_simulations(self, paramsDict, iterationIndex):
@@ -196,15 +211,15 @@ class SOO_SIM():
         
         # The structure of force-displacement curve: dict of (hardening law params typle) -> {force: forceArray , displacement: displacementArray}
 
-        if not os.path.exists(f"{resultPath}/iteration/{iterationIndex}"):
-            os.mkdir(f"{resultPath}/iteration/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/FD_Curve.txt", f"{resultPath}/iteration/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/FD_Curve_Plot.tif", f"{resultPath}/iteration/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/Deformed_Specimen.tif", f"{resultPath}/iteration/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/parameters.xlsx", f"{resultPath}/iteration/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/parameters.csv", f"{resultPath}/iteration/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/flowCurve.xlsx", f"{resultPath}/iteration/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/flowCurve.csv", f"{resultPath}/iteration/{iterationIndex}")
+        if not os.path.exists(f"{resultPath}/iteration/data/{iterationIndex}"):
+            os.mkdir(f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/FD_Curve.txt", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/FD_Curve_Plot.tif", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/Deformed_Specimen.tif", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/parameters.xlsx", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/parameters.csv", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/flowCurve.xlsx", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/flowCurve.csv", f"{resultPath}/iteration/data/{iterationIndex}")
                     
         paramsTuple = tuple(paramsDict.items())
         displacement, force = read_FD_Curve(f"{simPath}/iteration/{iterationIndex}/FD_Curve.txt")
@@ -213,6 +228,6 @@ class SOO_SIM():
         FD_Curves[paramsTuple] = {}
         FD_Curves[paramsTuple]['displacement'] = displacement
         FD_Curves[paramsTuple]['force'] = force
-        create_FD_Curve_file(f"{resultPath}/iteration/{iterationIndex}", displacement, force)
+        create_FD_Curve_file(f"{resultPath}/iteration/data/{iterationIndex}", displacement, force)
         printLog("Saving successfully iteration simulation results", logPath)
         return FD_Curves

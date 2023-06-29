@@ -1,6 +1,6 @@
 #!/bin/bash -l
 # Author: Xuan Binh
-#SBATCH --job-name=abaqusArray
+#SBATCH --job-name=abaqus_OneNodeTest
 #SBATCH --error=%j.err
 #SBATCH --output=%j.out
 #SBATCH --nodes=1

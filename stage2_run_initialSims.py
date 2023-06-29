@@ -46,7 +46,7 @@ def main_run_initialSims(info):
         pass
     
     
-    if not os.path.exists(f"{resultPath}/initial/common/FD_Curves.npy"):
+    if not os.path.exists(f"{resultPath}/initial/common/FD_Curves_unsmooth.npy"):
         printLog("There are no initial simulations. Program starts running the initial simulations", logPath)
         if generateParams == "manual":
             parameters = np.load(f"{resultPath}/initial/common/parameters.npy", allow_pickle=True).tolist()
@@ -56,5 +56,5 @@ def main_run_initialSims(info):
             sim.run_initial_simulations(parameters)
     else: 
         printLog("Initial simulations already exist", logPath)
-        numberOfInitialSims = len(np.load(f"{resultPath}/initial/common/FD_Curves.npy", allow_pickle=True).tolist())
+        numberOfInitialSims = len(np.load(f"{resultPath}/initial/common/FD_Curves_unsmooth.npy", allow_pickle=True).tolist())
         printLog(f"Number of initial simulations: {numberOfInitialSims} FD curves", logPath)

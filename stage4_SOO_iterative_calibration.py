@@ -13,7 +13,7 @@ from optimizers.BO import *
 import stage0_configs 
 import stage1_prepare_targetCurve
 import stage2_run_initialSims 
-import stage3_prepare_simCurves
+import stage3_SOO_prepare_simCurves
 from math import *
 import json
 from datetime import datetime
@@ -50,28 +50,29 @@ def main_iterative_calibration(info):
 
     targetCurve = info['targetCurve']
 
-    initial_original_FD_Curves = info['initial_original_FD_Curves']
-    iteration_original_FD_Curves = info['iteration_original_FD_Curves']
-    combined_original_FD_Curves = info['combined_original_FD_Curves']
-    initial_interpolated_FD_Curves = info['initial_interpolated_FD_Curves']
-    iteration_interpolated_FD_Curves = info['iteration_interpolated_FD_Curves']
-    combined_interpolated_FD_Curves = info['combined_interpolated_FD_Curves']
+    initial_original_FD_Curves_smooth = info['initial_original_FD_Curves_smooth']
+    iteration_original_FD_Curves_smooth = info['iteration_original_FD_Curves_smooth']
+    combined_original_FD_Curves_smooth = info['combined_original_FD_Curves_smooth']
+    initial_interpolated_FD_Curves_smooth = info['initial_interpolated_FD_Curves_smooth']
+    iteration_interpolated_FD_Curves_smooth = info['iteration_interpolated_FD_Curves_smooth']
+    combined_interpolated_FD_Curves_smooth = info['combined_interpolated_FD_Curves_smooth']
+
+    iteration_original_FD_Curves_unsmooth = info['iteration_original_FD_Curves_unsmooth']
+
     initial_original_flowCurves = info['initial_original_flowCurves']
     iteration_original_flowCurves = info['iteration_original_flowCurves']
     combined_original_flowCurves = info['combined_original_flowCurves']
-    iteration_original_FD_Curves_unsmooth = info['iteration_original_FD_Curves_unsmooth']
     
-    if optimizeStrategy == "SOO":
-        sim = SOO_SIM(info)
+    sim = SOO_SIM(info)
     
-    while not stopFD(targetCurve['force'], list(combined_interpolated_FD_Curves.values())[-1]['force'], deviationPercent):
+    while not stopFD(targetCurve['force'], list(combined_interpolated_FD_Curves_smooth.values())[-1]['force'], deviationPercent):
 
-        SOO_write_BO_json_log(combined_interpolated_FD_Curves, targetCurve, paramConfig)
+        SOO_write_BO_json_log(combined_interpolated_FD_Curves_smooth, targetCurve, paramConfig)
         BO_instance = BO(info)
         BO_instance.initializeOptimizer(lossFunction=None, param_bounds=param_bounds, loadingProgress=True)
         next_paramsDict = BO_instance.suggest()
         next_paramsDict = rescale_paramsDict(next_paramsDict, paramConfig)
-        iterationIndex = len(iteration_interpolated_FD_Curves) + 1
+        iterationIndex = len(iteration_interpolated_FD_Curves_smooth) + 1
         
         printLog("\n" + 60 * "#" + "\n", logPath)
         printLog(f"Running iteration {iterationIndex} for {material}_{hardeningLaw}_{geometry}_curve{curveIndex}" , logPath)
@@ -85,15 +86,15 @@ def main_iterative_calibration(info):
         new_FD_Curves_unsmooth = copy.deepcopy(new_FD_Curves)
         new_FD_Curves_smooth = copy.deepcopy(new_FD_Curves)
         new_params = list(new_FD_Curves.keys())[0]
-        new_FD_Curves_smooth[new_params]['force'] = smoothing_force(new_FD_Curves_unsmooth[new_params]['force'], startIndex=20, endIndex=70, iter=10000)
+        new_FD_Curves_smooth[new_params]['force'] = smoothing_force(new_FD_Curves_unsmooth[new_params]['force'], startIndex=20, endIndex=90, iter=20000)
         
-        # Updating the combined FD curves
-        combined_original_FD_Curves.update(new_FD_Curves_smooth)
-        combined_interpolated_FD_Curves = interpolating_FD_Curves(combined_original_FD_Curves, targetCurve)
+        # Updating the combined FD curves smooth
+        combined_original_FD_Curves_smooth.update(new_FD_Curves_smooth)
+        combined_interpolated_FD_Curves_smooth = interpolating_FD_Curves(combined_original_FD_Curves_smooth, targetCurve)
         
-        # Updating the iteration FD curves
-        iteration_original_FD_Curves.update(new_FD_Curves_smooth)
-        iteration_interpolated_FD_Curves = interpolating_FD_Curves(iteration_original_FD_Curves, targetCurve)
+        # Updating the iteration FD curves smooth
+        iteration_original_FD_Curves_smooth.update(new_FD_Curves_smooth)
+        iteration_interpolated_FD_Curves_smooth = interpolating_FD_Curves(iteration_original_FD_Curves_smooth, targetCurve)
         
         # Updating the iteration FD curves unsmooth
         iteration_original_FD_Curves_unsmooth.update(new_FD_Curves_unsmooth)
@@ -103,11 +104,16 @@ def main_iterative_calibration(info):
         iteration_original_flowCurves.update(new_flowCurves)
 
         simForce = list(new_FD_Curves_smooth.values())[0]['force']
-        loss_newIteration = lossFD(targetCurve['displacement'], targetCurve['force'], simForce)
+        simDisplacement = list(new_FD_Curves_smooth.values())[0]['displacement']
+        targetForce = targetCurve['force']
+        targetDisplacement = targetCurve['displacement']
+        interpolated_simForce = interpolatingForce(simDisplacement, simForce, targetDisplacement)
+        
+        loss_newIteration = lossFD(targetDisplacement, targetForce, interpolated_simForce)
         printLog(f"The loss of the new iteration is {round(loss_newIteration, 3)}", logPath)
 
         # Saving the iteration data
-        np.save(f"{resultPath}/iteration/common/FD_Curves_unsmooth.npy", iteration_original_FD_Curves)
-        np.save(f"{resultPath}/iteration/common/FD_Curves.npy", iteration_original_FD_Curves)
+        np.save(f"{resultPath}/iteration/common/FD_Curves_unsmooth.npy", iteration_original_FD_Curves_unsmooth)
+        np.save(f"{resultPath}/iteration/common/FD_Curves_smooth.npy", iteration_original_FD_Curves_smooth)
         np.save(f"{resultPath}/iteration/common/flowCurves.npy", iteration_original_flowCurves)
         

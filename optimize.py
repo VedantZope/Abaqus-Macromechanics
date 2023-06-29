@@ -12,7 +12,8 @@ from optimizers.BO import *
 import stage0_configs 
 import stage1_prepare_targetCurve
 import stage2_run_initialSims 
-import stage3_prepare_simCurves
+import stage3_SOO_prepare_simCurves
+import stage3_MOO_prepare_simCurves
 import stage4_SOO_iterative_calibration
 import stage4_MOO_iterative_calibration
 from math import *
@@ -51,22 +52,25 @@ def main_optimize():
 
     stage2_run_initialSims.main_run_initialSims(info)
 
-    FD_Curves_dict, flowCurves_dict = stage3_prepare_simCurves.main_prepare_simCurves(info) 
-    info["initial_original_FD_Curves"] = FD_Curves_dict['initial_original_FD_Curves']
-    info["iteration_original_FD_Curves"] = FD_Curves_dict['iteration_original_FD_Curves']
-    info["combined_original_FD_Curves"] = FD_Curves_dict['combined_original_FD_Curves']
-    info["initial_interpolated_FD_Curves"] = FD_Curves_dict['initial_interpolated_FD_Curves']
-    info["iteration_interpolated_FD_Curves"] = FD_Curves_dict['iteration_interpolated_FD_Curves']
-    info["combined_interpolated_FD_Curves"] = FD_Curves_dict['combined_interpolated_FD_Curves']
-    info['iteration_original_FD_Curves_unsmooth'] = FD_Curves_dict['iteration_original_FD_Curves_unsmooth'] 
-    info["initial_original_flowCurves"] = flowCurves_dict['initial_original_flowCurves']
-    info["iteration_original_flowCurves"] = flowCurves_dict['iteration_original_flowCurves']
-    info["combined_original_flowCurves"] = flowCurves_dict['combined_original_flowCurves']
-    
     if optimizeStrategy == "SOO":
+        FD_Curves_dict, flowCurves_dict = stage3_SOO_prepare_simCurves.main_prepare_simCurves(info) 
+        info["initial_original_FD_Curves_smooth"] = FD_Curves_dict['initial_original_FD_Curves_smooth']
+        info["iteration_original_FD_Curves_smooth"] = FD_Curves_dict['iteration_original_FD_Curves_smooth']
+        info["combined_original_FD_Curves_smooth"] = FD_Curves_dict['combined_original_FD_Curves_smooth']
+        info["initial_interpolated_FD_Curves_smooth"] = FD_Curves_dict['initial_interpolated_FD_Curves_smooth']
+        info["iteration_interpolated_FD_Curves_smooth"] = FD_Curves_dict['iteration_interpolated_FD_Curves_smooth']
+        info["combined_interpolated_FD_Curves_smooth"] = FD_Curves_dict['combined_interpolated_FD_Curves_smooth']
+        info['iteration_original_FD_Curves_unsmooth'] = FD_Curves_dict['iteration_original_FD_Curves_unsmooth'] 
+        info["initial_original_flowCurves"] = flowCurves_dict['initial_original_flowCurves']
+        info["iteration_original_flowCurves"] = flowCurves_dict['iteration_original_flowCurves']
+        info["combined_original_flowCurves"] = flowCurves_dict['combined_original_flowCurves']
+    
         stage4_SOO_iterative_calibration.main_iterative_calibration(info)
+        
     elif optimizeStrategy == "MOO":
+        FD_Curves_dict, flowCurves_dict = stage3_MOO_prepare_simCurves.main_prepare_simCurves(info) 
         stage4_MOO_iterative_calibration.main_iterative_calibration(info)
+
     printLog("Parameter calibration has successfully completed", logPath)
     printLog(f"Please check simulation results in the folder {resultPath}/iteration", logPath)
 

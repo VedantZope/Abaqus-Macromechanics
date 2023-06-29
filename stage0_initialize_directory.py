@@ -23,8 +23,10 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
         path = f"SOO_results/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
         checkCreate(path)
         checkCreate(f"{path}/initial")
+        checkCreate(f"{path}/initial/data")
         checkCreate(f"{path}/initial/common")
         checkCreate(f"{path}/iteration")
+        checkCreate(f"{path}/iteration/data")
         checkCreate(f"{path}/iteration/common")
 
         # For simulations

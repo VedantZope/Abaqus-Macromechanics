@@ -42,10 +42,10 @@ def smoothing_force(force, startIndex, endIndex, iter=20000):
         smooth_force = np.concatenate((force[0:startIndex], smooth_force, force[endIndex:]))
     return smooth_force
 
-def interpolatingForce(simDisp, simForce, targetDisp):
-    interpolatingFunction = interp1d(simDisp, simForce, fill_value='extrapolate')
+def interpolatingForce(simDisplacement, simForce, targetDisplacement):
+    interpolatingFunction = interp1d(simDisplacement, simForce, fill_value='extrapolate')
     # Interpolate the force
-    interpolatedSimForce = interpolatingFunction(targetDisp)
+    interpolatedSimForce = interpolatingFunction(targetDisplacement)
     return interpolatedSimForce
 
 def interpolating_FD_Curves(FD_Curves, targetCurve):
@@ -64,6 +64,23 @@ def interpolating_FD_Curves(FD_Curves, targetCurve):
         FD_Curves_copy[paramsTuple]["force"] = interpolatingForce(simDisp, simForce, targetDisp)
         FD_Curves_copy[paramsTuple]["displacement"] = targetDisp
     return FD_Curves_copy
+
+def interpolatingStress(simStrain, simStress, targetStrain):
+    interpolatingFunction = interp1d(simStrain, simStress, fill_value='extrapolate')
+    # Interpolate the stress
+    interpolatedSimStress = interpolatingFunction(targetStrain)
+    return interpolatedSimStress
+
+def interpolating_flowCurves(flowCurves, targetCurve):
+    flowCurves_copy = copy.deepcopy(flowCurves)
+    for paramsTuple, strainstress in flowCurves_copy.items():
+        simStrain = strainstress["strain"]
+        simStress = strainstress["stress"]
+        targetStrain = targetCurve["strain"]
+        # Interpolate the force
+        flowCurves_copy[paramsTuple]["stress"] = interpolatingStress(simStrain, simStress, targetStrain)
+        flowCurves_copy[paramsTuple]["strain"] = targetStrain
+    return flowCurves_copy
 
 def SOO_write_BO_json_log(FD_Curves, targetCurve, paramConfig):
     # Write the BO log file
@@ -128,8 +145,9 @@ def read_FD_Curve(filePath):
     # column 3 is force
     columns=['X', 'Displacement', 'Force']
     df = pd.DataFrame(data=output_data, columns=columns)
-    displacement = df.iloc[:, 1].tolist()
-    force = df.iloc[:, 2].tolist()
+    # Converting to numpy array
+    displacement = df.iloc[:, 1].to_numpy()
+    force = df.iloc[:, 2].to_numpy()
     return displacement, force
 
 def create_parameter_file(filePath, paramsDict):
