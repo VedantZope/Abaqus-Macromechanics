@@ -5,6 +5,9 @@ from scipy.integrate import simpson
 # import interp1d
 from scipy.interpolate import interp1d
 
+def lossFlow(targetStrain, targetStress, simStress):
+    return np.sqrt(np.mean((targetStress - simStress)**2))
+
 def dummy_lossFD(targetDisplacement, targetForce, simForce):
     return np.sqrt(np.mean((targetForce - simForce)**2))
 
