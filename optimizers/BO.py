@@ -42,7 +42,7 @@ class BO():
         #self.acquisitionFunction = UtilityFunction(kind='ei', xi=0)
         #self.acquisitionFunction = UtilityFunction(kind='ei', xi=0.1)
         #self.acquisitionFunction = UtilityFunction(kind='poi', xi=0.001)
-        self.acquisitionFunction = UtilityFunction(kind='poi', xi=1)
+        self.acquisitionFunction = UtilityFunction(kind='poi', xi=0.1)
 
         
         # Gaussian process kernel parameters

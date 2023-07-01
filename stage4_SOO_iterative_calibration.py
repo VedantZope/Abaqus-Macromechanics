@@ -74,6 +74,7 @@ def main_iterative_calibration(info):
         next_paramsDict = rescale_paramsDict(next_paramsDict, paramConfig)
         iterationIndex = len(iteration_interpolated_FD_Curves_smooth) + 1
         
+        #print(len(iteration_interpolated_FD_Curves_smooth))
         printLog("\n" + 60 * "#" + "\n", logPath)
         printLog(f"Running iteration {iterationIndex} for {material}_{hardeningLaw}_{geometry}_curve{curveIndex}" , logPath)
         printLog(f"The next candidate {hardeningLaw} parameters predicted by BO", logPath)

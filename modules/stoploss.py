@@ -67,6 +67,153 @@ def lossFD(targetDisplacement, targetForce, simForce):
         return bounded_area
 
 
+def calculate_yielding_index(targetDisplacement, targetForce, r2_threshold=0.998):
+    """
+    This function calculates the end of the elastic (linear) region of the force-displacement curve.
+    """
+    yielding_index = 0
+
+    # Initialize the Linear Regression model
+    linReg = LinearRegression()
+
+    for i in range(2, len(targetDisplacement)):
+        linReg.fit(targetDisplacement[:i].reshape(-1, 1), targetForce[:i]) 
+        simForce = linReg.predict(targetDisplacement[:i].reshape(-1, 1)) 
+        r2 = r2_score(targetForce[:i], simForce) 
+        if r2 < r2_threshold:  # If R^2 is below threshold, mark the end of linear region
+            yielding_index = i - 1
+            break
+    return yielding_index
+
+def loss_elastic(targetDisplacement, targetForce, simForce, w_res=0.95, w_slope=0.05):
+    """
+    This function calculates the loss for the elastic region of the force-displacement curve. 
+    The loss is a weighted sum of the residuals loss and slope loss.
+    """
+    # Calculate residuals and corresponding loss
+    residuals = targetForce - simForce
+    residuals_loss = np.sqrt(np.mean(residuals ** 2))
+    
+    # Calculate slopes and corresponding loss
+    slope_true = np.diff(targetForce) / np.diff(targetDisplacement)
+    slope_pred = np.diff(simForce) / np.diff(targetDisplacement)
+    slope_loss = np.sqrt(np.mean((slope_true - slope_pred) ** 2))
+
+    # Weighted loss calculation
+    loss = w_res * residuals_loss + w_slope * slope_loss
+
+    return loss
+
+def loss_plastic_mono_mono(targetDisplacement, targetForce, simForce, w_res=0.75, w_slope=0.25):
+    """
+    This function calculates the loss for the monotonic plastic region of the force-displacement curve.
+    The loss is a weighted sum of the residuals loss and slope loss.
+    """
+    # Calculate residuals and corresponding loss
+    residuals = targetForce - simForce
+    residuals_loss = np.sqrt(np.mean(residuals ** 2))
+    
+    # Calculate slopes and corresponding loss
+    slope_true = np.diff(targetForce) / np.diff(targetDisplacement)
+    slope_pred = np.diff(simForce) / np.diff(targetDisplacement)
+    slope_loss = np.sqrt(np.mean((slope_true - slope_pred) ** 2))
+
+    # Weighted loss calculation
+    loss = w_res * residuals_loss + w_slope * slope_loss
+
+    return loss
+
+def loss_plastic_peak_peak(targetDisplacement, targetForce, simForce, w_res=0.75, w_slope=0.25, w_peak=0.25 , w_last=0.25):
+    """
+    This function calculates the loss for the non-monotonic plastic region of the force-displacement curve. 
+    The loss is a weighted sum of the residuals loss, slope loss, and peak penalty.
+    """
+    # Calculate residuals and corresponding loss
+    residuals = targetForce - simForce
+    residuals_loss = np.sqrt(np.mean(residuals ** 2))
+
+    # Calculate slopes and corresponding loss
+    slope_true = np.diff(targetForce) / np.diff(targetDisplacement)
+    slope_pred = np.diff(simForce) / np.diff(targetDisplacement)
+    slope_loss = np.sqrt(np.mean((slope_true - slope_pred) ** 2))
+
+    # Calculate peak penalty
+    peak_true = np.argmax(targetForce)
+    peak_pred = np.argmax(simForce)
+    peak_penalty = abs(targetForce[peak_true] - simForce[peak_pred])
+
+    # Calculate last element penalty
+    last_true = targetForce[-1]
+    last_pred = simForce[-1]
+    last_penalty = abs(last_true - last_pred)
+
+    # Weighted loss calculation
+    loss = w_res * residuals_loss + w_slope * slope_loss + w_peak *peak_penalty + w_last * last_penalty
+
+    return loss
+
+def loss_plastic_peak_mono(targetDisplacement, targetForce, simForce, w_res=0.75, w_slope=0.25, w_peak=0.5):
+    # Calculate residuals and corresponding loss
+    residuals = targetForce - simForce
+    residuals_loss = np.sqrt(np.mean(residuals ** 2))
+
+    # Calculate slopes and corresponding loss
+    slope_true = np.diff(targetForce) / np.diff(targetDisplacement)
+    slope_pred = np.diff(simForce) / np.diff(targetDisplacement)
+    slope_loss = np.sqrt(np.mean((slope_true - slope_pred) ** 2))
+
+    # Calculate peak penalty
+    peak_true = np.argmax(targetForce)
+    peak_pred = np.argmax(simForce)
+    peak_penalty = abs(targetForce[peak_true] - simForce[peak_pred])
+
+    # Weighted loss calculation
+    loss = w_res * residuals_loss + w_slope * slope_loss + w_peak *peak_penalty
+
+    return loss
+
+
+def loss_plastic_mono_peak(targetDisplacement, targetForce, simForce, w_res=0.75, w_slope=0.25):
+    # Calculate residuals and corresponding loss
+    residuals = targetForce - simForce
+    residuals_loss = np.sqrt(np.mean(residuals ** 2))
+    
+    # Calculate slopes and corresponding loss
+    slope_true = np.diff(targetForce) / np.diff(targetDisplacement)
+    slope_pred = np.diff(simForce) / np.diff(targetDisplacement)
+    slope_loss = np.sqrt(np.mean((slope_true - slope_pred) ** 2))
+
+    # Weighted loss calculation
+    loss = w_res * residuals_loss + w_slope * slope_loss
+    return loss
+
+# Function to check if a sequence is monotonic
+def is_monotonic(y):
+    return np.all(np.diff(y) >= 0)
+
+def Vedant_lossFD(targetDisplacement, targetForce, simForce):
+    # Calculate the end of the elastic region
+    yielding_index = calculate_yielding_index(targetDisplacement, targetForce)
+
+    # Split simulation data into elastic and plastic parts
+    simForce_elastic = simForce[:yielding_index]
+    simForce_plastic = simForce[yielding_index:]
+
+    # Compute losses
+    elastic_loss = loss_elastic(targetDisplacement[:yielding_index], targetForce[:yielding_index], simForce_elastic)
+
+    if (is_monotonic(targetForce[yielding_index:]) and is_monotonic(simForce_plastic)):
+        plastic_loss = loss_plastic_mono_mono(targetDisplacement[yielding_index:], targetForce[yielding_index:], simForce_plastic)
+    elif (is_monotonic(targetForce[yielding_index:]) and not is_monotonic(simForce_plastic)):
+        plastic_loss = loss_plastic_mono_peak(targetDisplacement[yielding_index:], targetForce[yielding_index:], simForce_plastic)
+    elif (not is_monotonic(targetForce[yielding_index:]) and is_monotonic(simForce_plastic)):
+        plastic_loss = loss_plastic_peak_mono(targetDisplacement[yielding_index:], targetForce[yielding_index:], simForce_plastic)
+    elif (not is_monotonic(targetForce[yielding_index:]) and not is_monotonic(simForce_plastic)):
+        plastic_loss = loss_plastic_peak_peak(targetDisplacement[yielding_index:], targetForce[yielding_index:], simForce_plastic)
+
+    total_loss = elastic_loss + plastic_loss
+    return total_loss
+
 def stopFD(targetForce, simForce, deviationPercent):
     targetForceUpper = targetForce * (1 + 0.01 * deviationPercent)
     targetForceLower = targetForce * (1 - 0.01 * deviationPercent)
