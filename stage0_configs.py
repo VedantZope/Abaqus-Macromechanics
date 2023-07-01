@@ -76,7 +76,9 @@ def main_config():
         strain_range = np.around(strain_range, decimals=6)
         # Append strain_range to strain_array
         truePlasticStrain = np.concatenate((truePlasticStrain, strain_range))
-        
+
+    np.save(f"configs/truePlasticStrain_{hardeningLaw}.npy", truePlasticStrain)
+    #time.slep(60)
     #for i in truePlasticStrain:
     #    print(i)
     #time.sleep(180)

@@ -70,4 +70,4 @@ def lossFD(targetDisplacement, targetForce, simForce):
 def stopFD(targetForce, simForce, deviationPercent):
     targetForceUpper = targetForce * (1 + 0.01 * deviationPercent)
     targetForceLower = targetForce * (1 - 0.01 * deviationPercent)
-    return np.all((simForce >= targetForceLower) & (simForce <= targetForceUpper))
+    return np.all((simForce[5:] >= targetForceLower[5:]) & (simForce[5:] <= targetForceUpper[5:]))
