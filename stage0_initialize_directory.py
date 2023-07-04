@@ -40,44 +40,56 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
         checkCreate(path)
 
         # For templates
-        path = f"templates/{material}_{geometry}"
+        path = f"templates/{material}"
         checkCreate(path)
+        checkCreate(f"{path}/{geometry}")
 
     elif optimizeStrategy == "MOO":
-        geometryList = geometry
+        geometries = geometry
         # For log
         checkCreate("log")
 
-        # For results 
-        path = f"MOO_results/{material}_{hardeningLaw}"
+        # For paramInfo
+        path = f"MOO_paramInfo/{material}_{hardeningLaw}_curve{curveIndex}"
         checkCreate(path)
-        for geometry in geometryList:
+        for geometry in geometries:
+            checkCreate(f"{path}/{geometry}")
+
+        # For results 
+        path = f"MOO_results/{material}_{hardeningLaw}_curve{curveIndex}"
+        checkCreate(path)
+        for geometry in geometries:
+            checkCreate(f"{path}/{geometry}")
             checkCreate(f"{path}/{geometry}/initial")
+            checkCreate(f"{path}/{geometry}/initial/data")
             checkCreate(f"{path}/{geometry}/initial/common")
             checkCreate(f"{path}/{geometry}/iteration")
+            checkCreate(f"{path}/{geometry}/iteration/data")
             checkCreate(f"{path}/{geometry}/iteration/common")
 
         # For simulations
-        path = f"MOO_simulations/{material}_{hardeningLaw}"
+        path = f"MOO_simulations/{material}_{hardeningLaw}_curve{curveIndex}"
         checkCreate(path)
-        for geometry in geometryList:
+        for geometry in geometries:
+            checkCreate(f"{path}/{geometry}")
             checkCreate(f"{path}/{geometry}/initial")
             checkCreate(f"{path}/{geometry}/iteration")
+
+        # For targets
+        path = f"MOO_targets/{material}_{hardeningLaw}_curve{curveIndex}"
+        checkCreate(path)
+        for geometry in geometries:
+            checkCreate(f"{path}/{geometry}")
 
         # For templates
         path = f"templates/{material}"
         checkCreate(path)
-        for geometry in geometryList:
-            checkCreate(f"{path}/{geometry}")
-
-        # For targets
-        path = f"MOO_targets/{material}"
-        checkCreate(path)
-        for geometry in geometryList:
+        for geometry in geometries:
             checkCreate(f"{path}/{geometry}")
 
     # The project path folder
     projectPath = os.getcwd()
+    
     if optimizeStrategy == "SOO":
         # The logging path
         logPath = f"log/SOO_{material}_{hardeningLaw}_{geometry}_curve{curveIndex}.txt"
@@ -90,20 +102,21 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
         # The target path
         targetPath = f"SOO_targets/{material}_{hardeningLaw}_{geometry}_curve{curveIndex}"
         # The templates path
-        templatePath = f"templates/{material}_{geometry}"
+        templatePath = f"templates/{material}/{geometry}"
+    
     elif optimizeStrategy == "MOO":
         # The logging path
-        logPath = f"log/MOO_{material}_{hardeningLaw}.txt"
+        logPath = f"log/MOO_{material}_{hardeningLaw}_curve{curveIndex}.txt"
         # The paramInfo path
-        paramInfoPath = f"MOO_paramInfo/{material}_{hardeningLaw}"
+        paramInfoPath = f"MOO_paramInfo/{material}_{hardeningLaw}_curve{curveIndex}"
         # The results path
-        resultPath = f"MOO_results/{material}"
+        resultPath = f"MOO_results/{material}_{hardeningLaw}_curve{curveIndex}"
         # The simulations path
-        simPath = f"MOO_simulations/{material}"
+        simPath = f"MOO_simulations/{material}_{hardeningLaw}_curve{curveIndex}"
+        # The target path
+        targetPath = f"MOO_targets/{material}_{hardeningLaw}_curve{curveIndex}"
         # The templates path
         templatePath = f"templates/{material}"
-        # The target path
-        targetPath = f"MOO_targets/{material}"
 
     return projectPath, logPath, paramInfoPath, resultPath, simPath, templatePath, targetPath
 
@@ -119,4 +132,11 @@ if __name__ == "__main__":
     curveIndex = globalConfig["curveIndex"]
     numberOfInitialSims = globalConfig["numberOfInitialSims"]
     initialSimsSpacing = globalConfig["initialSimsSpacing"]
-    initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
+    if optimizeStrategy == "SOO":
+        initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
+    elif optimizeStrategy == "MOO":
+        geometries = geometry.split(",")
+        initialize_directory(optimizeStrategy, material, hardeningLaw, geometries, curveIndex)
+    
+
+    

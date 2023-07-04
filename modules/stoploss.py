@@ -4,6 +4,8 @@ import pandas as pd
 from scipy.integrate import simpson
 # import interp1d
 from scipy.interpolate import interp1d
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 
 def lossFlow(targetStrain, targetStress, simStress):
     return np.sqrt(np.mean((targetStress - simStress)**2))
