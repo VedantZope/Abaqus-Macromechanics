@@ -52,9 +52,7 @@ def initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, cur
         # For paramInfo
         path = f"MOO_paramInfo/{material}_{hardeningLaw}_curve{curveIndex}"
         checkCreate(path)
-        for geometry in geometries:
-            checkCreate(f"{path}/{geometry}")
-
+        
         # For results 
         path = f"MOO_results/{material}_{hardeningLaw}_curve{curveIndex}"
         checkCreate(path)

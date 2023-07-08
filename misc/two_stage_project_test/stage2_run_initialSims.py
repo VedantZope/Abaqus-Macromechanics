@@ -11,7 +11,7 @@ from modules.helper import *
 from modules.stoploss import *
 from optimizers.BO import *
 import stage0_configs 
-import stage1_prepare_targetCurve 
+import stage1_SOO_prepare_targetCurve 
 from math import *
 import json
 from datetime import datetime

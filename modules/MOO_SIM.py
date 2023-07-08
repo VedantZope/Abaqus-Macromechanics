@@ -37,13 +37,13 @@ class MOO_SIM():
 
         return points
 
-    def SOO_run_initial_simulations(self):
-        indexParamsDict = self.SOO_preprocess_simulations_initial()
-        self.SOO_write_paths_initial()
-        self.SOO_submit_array_jobs_initial()
-        self.SOO_postprocess_results_initial(indexParamsDict)
+    def run_initial_simulations(self, parameters):
+        indexParamsDict = self.preprocess_simulations_initial(parameters)
+        self.write_paths_initial()
+        self.submit_array_jobs_initial()
+        self.postprocess_results_initial(indexParamsDict)
 
-    def SOO_preprocess_simulations_initial(self):
+    def preprocess_simulations_initial(self, initial_params):
         resultPath = self.info['resultPath']
         simPath = self.info['simPath']
         templatePath = self.info['templatePath'] 
@@ -52,10 +52,10 @@ class MOO_SIM():
         truePlasticStrain = self.info['truePlasticStrain']
         maxTargetDisplacement = self.info['maxTargetDisplacement']
 
-        initial_params = self.latin_hypercube_sampling()
-        #print(initial_params)
-        np.save(f"{resultPath}/initial/common/parameters.npy", initial_params)
-        initial_params = np.load(f"{resultPath}/initial/common/parameters.npy", allow_pickle=True).tolist()
+        # initial_params = self.latin_hypercube_sampling()
+        # #print(initial_params)
+        # np.save(f"{resultPath}/initial/common/parameters.npy", initial_params)
+        # initial_params = np.load(f"{resultPath}/initial/common/parameters.npy", allow_pickle=True).tolist()
         # Initializing the flow curves and force-displacement curves
         # The structure of flow curve: dict of (hardening law params typle) -> {stress: stressArray , strain: strainArray}
         
@@ -76,98 +76,7 @@ class MOO_SIM():
         
         #print(simulationDict)
         # Copying the template folder to the simulation folder for the number of simulations
-        for index in range(1, numberOfInitialSims + 1):
-            # Create the simulation folder if not exists, else delete the folder and create a new one
-            if os.path.exists(f"{simPath}/initial/{index}"):
-                shutil.rmtree(f"{simPath}/initial/{index}")
-            shutil.copytree(templatePath, f"{simPath}/initial/{index}")
-            paramsTuple = indexParamsDict[str(index)]
-            truePlasticStrain = flowCurves[paramsTuple]['strain']
-            trueStress = flowCurves[paramsTuple]['stress']
-            self.replace_flowCurve_material_inp(f"{simPath}/initial/{index}/material.inp", truePlasticStrain, trueStress)
-            self.replace_maxDisp_geometry_inp(f"{simPath}/initial/{index}/geometry.inp", maxTargetDisplacement)
-            self.replace_materialName_geometry_inp(f"{simPath}/initial/{index}/geometry.inp", "material.inp")
-            self.create_parameter_file(f"{simPath}/initial/{index}", dict(paramsTuple))
-            self.create_flowCurve_file(f"{simPath}/initial/{index}", truePlasticStrain, trueStress)
-        return indexParamsDict
-
-   
-    
-    def SOO_write_paths_initial(self):
-        numberOfInitialSims = self.info['numberOfInitialSims']
-        projectPath = self.info['projectPath']
-        simPath = self.info['simPath']
-        with open("linux_slurm/array_initial_file.txt", 'w') as filename:
-            for index in range(1, numberOfInitialSims + 1):
-                filename.write(f"{projectPath}/{simPath}/initial/{index}\n")
-    
-    def SOO_submit_array_jobs_initial(self):
-        logPath = self.info['logPath']        
-        numberOfInitialSims = self.info['numberOfInitialSims']
-        printLog("Initial simulation preprocessing stage starts", logPath)
-        printLog(f"Number of jobs required: {numberOfInitialSims}", logPath)
-        subprocess.run(f"sbatch --wait --array=1-{numberOfInitialSims} linux_slurm/puhti_abaqus_array.sh", shell=True)
-        printLog("Initial simulation postprocessing stage finished", logPath)
-    
-    def SOO_postprocess_results_initial(self, indexParamsDict):
-        numberOfInitialSims = self.info['numberOfInitialSims']
-        simPath = self.info['simPath']
-        resultPath = self.info['resultPath']
-        logPath = self.info['logPath']
-        
-        # The structure of force-displacement curve: dict of (hardening law params typle) -> {force: forceArray , displacement: displacementArray}
-
-        FD_Curves = {}
-        for index in range(1, numberOfInitialSims + 1):
-            if not os.path.exists(f"{resultPath}/initial/{index}"):
-                os.mkdir(f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/FD_Curve.txt", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/FD_Curve_Plot.tif", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/Deformed_Specimen.tif", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/parameters.xlsx", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/parameters.csv", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/flowCurve.xlsx", f"{resultPath}/initial/{index}")
-            shutil.copy(f"{simPath}/initial/{index}/flowCurve.csv", f"{resultPath}/initial/{index}")
-                        
-            paramsTuple = indexParamsDict[str(index)]
-            displacement, force = read_FD_Curve(f"{simPath}/initial/{index}/FD_Curve.txt")
-            FD_Curves[paramsTuple] = {}
-            FD_Curves[paramsTuple]['displacement'] = displacement
-            FD_Curves[paramsTuple]['force'] = force
-            create_FD_Curve_file(f"{resultPath}/initial/{index}", displacement, force)
-            
-        # Returning force-displacement curve data
-        np.save(f"{resultPath}/initial/common/FD_Curves.npy", FD_Curves)
-        printLog("Saving successfully all simulation results", logPath)
-
-    def SOO_run_iteration_simulations(self, paramsDict):
-        self.SOO_preprocess_simulations_iteration(paramsDict)
-        self.SOO_write_paths_iteration()
-        self.SOO_submit_array_jobs_iteration()
-        parameters, FD_Curves, flowCurves = self.SOO_postprocess_results_iteration(paramsDict)
-        return parameters, FD_Curves, flowCurves
-    
-    def SOO_preprocess_simulations_iteration(self, paramsDict):
-        resultPath = self.info['resultPath']
-        simPath = self.info['simPath']
-        templatePath = self.info['templatePath'] 
-        hardeningLaw = self.info['hardeningLaw']
-        numberOfInitialSims = self.info['numberOfInitialSims']
-        truePlasticStrain = self.info['truePlasticStrain']
-        maxTargetDisplacement = self.info['maxTargetDisplacement']
-
-        flowCurves = {}
-        
-        paramsTuple = tuple(paramDict.items())
-        trueStress = calculate_flowCurve(paramDict, hardeningLaw, truePlasticStrain)
-        flowCurves[paramsTuple] = {}
-        flowCurves[paramsTuple]['strain'] = truePlasticStrain
-        flowCurves[paramsTuple]['stress'] = trueStress
-        np.save(f"{resultPath}/initial/common/flowCurves.npy", flowCurves)
-        #print(flowCurves)
-        
-        #print(simulationDict)
-        # Copying the template folder to the simulation folder for the number of simulations
+        print(f"Number of initial simulations: {numberOfInitialSims}")
         for index in range(1, numberOfInitialSims + 1):
             # Create the simulation folder if not exists, else delete the folder and create a new one
             if os.path.exists(f"{simPath}/initial/{index}"):
@@ -183,4 +92,143 @@ class MOO_SIM():
             create_flowCurve_file(f"{simPath}/initial/{index}", truePlasticStrain, trueStress)
         return indexParamsDict
 
+    def write_paths_initial(self):
+        numberOfInitialSims = self.info['numberOfInitialSims']
+        projectPath = self.info['projectPath']
+        simPath = self.info['simPath']
+        with open("linux_slurm/array_file.txt", 'w') as filename:
+            for index in range(1, numberOfInitialSims + 1):
+                filename.write(f"{projectPath}/{simPath}/initial/{index}\n")
+    
+    def submit_array_jobs_initial(self):
+        logPath = self.info['logPath']        
+        numberOfInitialSims = self.info['numberOfInitialSims']
+        printLog("Initial simulation preprocessing stage starts", logPath)
+        printLog(f"Number of jobs required: {numberOfInitialSims}", logPath)
+        subprocess.run(f"sbatch --wait --array=1-{numberOfInitialSims} linux_slurm/puhti_abaqus_array_small.sh", shell=True)
+        printLog("Initial simulation postprocessing stage finished", logPath)
+    
+    def postprocess_results_initial(self, indexParamsDict):
+        numberOfInitialSims = self.info['numberOfInitialSims']
+        simPath = self.info['simPath']
+        resultPath = self.info['resultPath']
+        logPath = self.info['logPath']
+        
+        # The structure of force-displacement curve: dict of (hardening law params typle) -> {force: forceArray , displacement: displacementArray}
 
+        FD_Curves = {}
+        for index in range(1, numberOfInitialSims + 1):
+            if not os.path.exists(f"{resultPath}/initial/data/{index}"):
+                os.mkdir(f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/FD_Curve.txt", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/FD_Curve_Plot.tif", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/Deformed_Specimen.tif", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/parameters.xlsx", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/parameters.csv", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/flowCurve.xlsx", f"{resultPath}/initial/data/{index}")
+            shutil.copy(f"{simPath}/initial/{index}/flowCurve.csv", f"{resultPath}/initial/data/{index}")
+                        
+            paramsTuple = indexParamsDict[str(index)]
+            displacement, force = read_FD_Curve(f"{simPath}/initial/{index}/FD_Curve.txt")
+            FD_Curves[paramsTuple] = {}
+            FD_Curves[paramsTuple]['displacement'] = displacement
+            FD_Curves[paramsTuple]['force'] = force
+            create_FD_Curve_file(f"{resultPath}/initial/data/{index}", displacement, force)
+            
+        # Returning force-displacement curve data
+        np.save(f"{resultPath}/initial/common/FD_Curves_unsmooth.npy", FD_Curves)
+        printLog("Starting to apply Savgol smoothing filter on the FD curves", logPath)
+        smoothing_force(force, startIndex=20, endIndex=90, iter=10000)
+
+        FD_Curves_smooth = {}
+
+        for param in FD_Curves:
+            force = FD_Curves[param]['force']
+            smooth_force = smoothing_force(force, 40, 90, 10000)
+            displacement = FD_Curves[param]['displacement']
+            FD_Curves_smooth[param] = {}
+            FD_Curves_smooth[param]['force'] = smooth_force
+            FD_Curves_smooth[param]['displacement'] = displacement
+
+        np.save(f"{resultPath}/initial/common/FD_Curves_smooth.npy", FD_Curves_smooth)
+        printLog("Savgol smoothing of FD curves has finished", logPath)
+        printLog("Saving successfully all simulation results", logPath)
+
+    def run_iteration_simulations(self, paramsDict, iterationIndex):
+        flowCurves = self.preprocess_simulations_iteration(paramsDict, iterationIndex)
+        self.write_paths_iteration(iterationIndex)
+        #time.sleep(180)
+        self.submit_array_jobs_iteration()
+        FD_Curves = self.postprocess_results_iteration(paramsDict, iterationIndex)
+        return FD_Curves, flowCurves
+    
+    def preprocess_simulations_iteration(self, paramsDict, iterationIndex):
+        resultPath = self.info['resultPath']
+        simPath = self.info['simPath']
+        templatePath = self.info['templatePath'] 
+        hardeningLaw = self.info['hardeningLaw']
+        numberOfInitialSims = self.info['numberOfInitialSims']
+        truePlasticStrain = self.info['truePlasticStrain']
+        maxTargetDisplacement = self.info['maxTargetDisplacement']
+        
+        paramsTuple = tuple(paramsDict.items())
+        trueStress = calculate_flowCurve(paramsDict, hardeningLaw, truePlasticStrain)
+        flowCurves = {}
+        flowCurves[paramsTuple] = {}
+        flowCurves[paramsTuple]['strain'] = truePlasticStrain
+        flowCurves[paramsTuple]['stress'] = trueStress
+        
+        # Create the simulation folder if not exists, else delete the folder and create a new one
+        if os.path.exists(f"{simPath}/iteration/{iterationIndex}"):
+            shutil.rmtree(f"{simPath}/iteration/{iterationIndex}")
+        shutil.copytree(templatePath, f"{simPath}/iteration/{iterationIndex}")
+        truePlasticStrain = flowCurves[paramsTuple]['strain']
+        trueStress = flowCurves[paramsTuple]['stress']
+        replace_flowCurve_material_inp(f"{simPath}/iteration/{iterationIndex}/material.inp", truePlasticStrain, trueStress)
+        replace_maxDisp_geometry_inp(f"{simPath}/iteration/{iterationIndex}/geometry.inp", maxTargetDisplacement)
+        replace_materialName_geometry_inp(f"{simPath}/iteration/{iterationIndex}/geometry.inp", "material.inp")
+        create_parameter_file(f"{simPath}/iteration/{iterationIndex}", dict(paramsTuple))
+        create_flowCurve_file(f"{simPath}/iteration/{iterationIndex}", truePlasticStrain, trueStress)
+        return flowCurves
+
+    def write_paths_iteration(self, iterationIndex):
+        projectPath = self.info['projectPath']
+        simPath = self.info['simPath']
+        with open("linux_slurm/array_file.txt", 'w') as filename:
+            filename.write(f"{projectPath}/{simPath}/iteration/{iterationIndex}\n")
+
+    def submit_array_jobs_iteration(self):
+        logPath = self.info['logPath']       
+        SLURM_iteration = self.info['SLURM_iteration'] 
+        printLog("Iteration simulation preprocessing stage starts", logPath)
+        printLog(f"Number of jobs required: 1", logPath)
+        subprocess.run(f"sbatch --wait linux_slurm/puhti_abaqus_{SLURM_iteration}.sh", shell=True)
+        printLog("Iteration simulation postprocessing stage finished", logPath)
+
+    def postprocess_results_iteration(self, paramsDict, iterationIndex):
+        simPath = self.info['simPath']
+        resultPath = self.info['resultPath']
+        logPath = self.info['logPath']
+        
+        # The structure of force-displacement curve: dict of (hardening law params typle) -> {force: forceArray , displacement: displacementArray}
+
+        if not os.path.exists(f"{resultPath}/iteration/data/{iterationIndex}"):
+            os.mkdir(f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/FD_Curve.txt", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/FD_Curve_Plot.tif", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/Deformed_Specimen.tif", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/parameters.xlsx", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/parameters.csv", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/flowCurve.xlsx", f"{resultPath}/iteration/data/{iterationIndex}")
+        shutil.copy(f"{simPath}/iteration/{iterationIndex}/flowCurve.csv", f"{resultPath}/iteration/data/{iterationIndex}")
+                    
+        paramsTuple = tuple(paramsDict.items())
+        displacement, force = read_FD_Curve(f"{simPath}/iteration/{iterationIndex}/FD_Curve.txt")
+        
+        FD_Curves = {}
+        FD_Curves[paramsTuple] = {}
+        FD_Curves[paramsTuple]['displacement'] = displacement
+        FD_Curves[paramsTuple]['force'] = force
+        create_FD_Curve_file(f"{resultPath}/iteration/data/{iterationIndex}", displacement, force)
+        printLog("Saving successfully iteration simulation results", logPath)
+        return FD_Curves

@@ -24,7 +24,7 @@ CPUS_TOTAL=$(( $SLURM_NTASKS*$SLURM_CPUS_PER_TASK ))
 
 mkdir tmp_$SLURM_JOB_ID
 
-abq2022 job=geometry.inp input=geometry.inp cpus=$CPUS_TOTAL -verbose 2 standard_parallel=all scratch=tmp_$SLURM_JOB_ID interactive
+abq2022 job=geometry input=geometry.inp cpus=$CPUS_TOTAL -verbose 2 standard_parallel=all scratch=tmp_$SLURM_JOB_ID interactive
 
 # run postprocess.py after the simulation completes
 abq2022 cae noGUI=postprocess.py

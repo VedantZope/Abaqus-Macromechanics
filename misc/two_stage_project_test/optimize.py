@@ -10,8 +10,8 @@ from modules.helper import *
 from modules.stoploss import *
 from optimizers.BO import *
 import stage0_configs 
-import stage1_prepare_targetCurve
-import stage2_run_initialSims 
+import stage1_SOO_prepare_targetCurve
+import stage2_SOO_run_initialSims 
 import stage3_SOO_repare_simCurves
 import stage4_SOO_iterative_calibration
 import stage4_MOO_iterative_calibration
@@ -43,11 +43,11 @@ def main_optimize():
     geometry = info['geometry']
     numberOfInitialSims = info['numberOfInitialSims']
     
-    targetCurve, maxTargetDisplacement = stage1_prepare_targetCurve.main_prepare_targetCurve(info)
+    targetCurve, maxTargetDisplacement = stage1_SOO_prepare_targetCurve.main_prepare_targetCurve(info)
     info['targetCurve'] = targetCurve
     info['maxTargetDisplacement'] = maxTargetDisplacement
 
-    stage2_run_initialSims.main_run_initialSims(info)
+    stage2_SOO_run_initialSims.main_run_initialSims(info)
 
     FD_Curves_dict, flowCurves_dict = stage3_SOO_repare_simCurves.main_prepare_simCurves(info) 
     info["initial_original_FD_Curves"] = FD_Curves_dict['initial_original_FD_Curves']

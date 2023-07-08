@@ -40,22 +40,33 @@ def main_config():
     initialSimsSpacing = globalConfig["initialSimsSpacing"]
     SLURM_iteration = globalConfig["SLURM_iteration"]
 
-    projectPath, logPath, paramInfoPath, resultPath, simPath, templatePath, targetPath = initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
+    if optimizeStrategy == "SOO":
+        (
+            projectPath, 
+            logPath, 
+            paramInfoPath, 
+            resultPath, 
+            simPath, 
+            templatePath, 
+            targetPath
+        ) = initialize_directory(optimizeStrategy, material, hardeningLaw, geometry, curveIndex)
+
+    elif optimizeStrategy == "MOO":
+        geometries = geometry.split(",")
+        (
+            projectPath, 
+            logPath, 
+            paramInfoPath, 
+            resultPath, 
+            simPath, 
+            templatePath, 
+            targetPath
+        ) = initialize_directory(optimizeStrategy, material, hardeningLaw, geometries, curveIndex)
     
-    ##################################
-    # Parameter bound configurations #
-    ##################################
-
-    paramConfig = pd.read_excel(f"{paramInfoPath}/paramInfo.xlsx", engine="openpyxl")
-    paramConfig.set_index("parameter", inplace=True)
-    paramConfig = paramConfig.T.to_dict()
-    for param in paramConfig:
-        paramConfig[param]['exponent'] = float(paramConfig[param]['exponent'])
-
-
-    #########################
-    # Abaqus configurations #
-    #########################
+    #################################
+    # Plastic strain configurations #
+    #################################
+    
     truePlasticStrainConfig = pd.read_excel(f"configs/truePlasticStrain_{hardeningLaw}_config.xlsx",engine="openpyxl")
     ranges_and_increments = []
 
@@ -78,11 +89,16 @@ def main_config():
         truePlasticStrain = np.concatenate((truePlasticStrain, strain_range))
 
     np.save(f"configs/truePlasticStrain_{hardeningLaw}.npy", truePlasticStrain)
-    #time.slep(60)
-    #for i in truePlasticStrain:
-    #    print(i)
-    #time.sleep(180)
-    #print(paramConfig)
+
+    ##################################
+    # Parameter bound configurations #
+    ##################################
+
+    paramConfig = pd.read_excel(f"{paramInfoPath}/paramInfo.xlsx", engine="openpyxl")
+    paramConfig.set_index("parameter", inplace=True)
+    paramConfig = paramConfig.T.to_dict()
+    for param in paramConfig:
+        paramConfig[param]['exponent'] = float(paramConfig[param]['exponent'])
 
     ###########################
     # Information declaration #
@@ -102,7 +118,6 @@ def main_config():
         'initialSimsSpacing': initialSimsSpacing,
         'material': material,
         'hardeningLaw': hardeningLaw,
-        'geometry': geometry,
         'curveIndex': curveIndex,
         'optimizerName': optimizerName,
         'paramConfig': paramConfig,
@@ -111,7 +126,11 @@ def main_config():
         'SLURM_iteration': SLURM_iteration
     }
 
-  
+    if optimizeStrategy == "SOO":
+        info['geometry'] = geometry
+    if optimizeStrategy == "MOO":
+        info['geometries'] = geometries
+
     ###############################################
     #  Printing the configurations to the console #
     ###############################################
@@ -124,12 +143,15 @@ def main_config():
     logTable.field_names = ["Global Configs", "User choice"]
     logTable.add_row(["SLURM iteration", SLURM_iteration])
     logTable.add_row(["Number of initial sims", numberOfInitialSims])
-    logTable.add_row(["Initial sims spacing", initialSimsSpacing])
     logTable.add_row(["Optimize strategy", optimizeStrategy])
     logTable.add_row(["Material", material])
     logTable.add_row(["Hardening law", hardeningLaw])
-    logTable.add_row(["Geometry", geometry])
     logTable.add_row(["Curve index", curveIndex])
+    if optimizeStrategy == "SOO":
+        logTable.add_row(["Geometry", geometry])
+    if optimizeStrategy == "MOO":
+        geometryString = ",".join(geometries)
+        logTable.add_row(["Geometries", geometryString])
     logTable.add_row(["Optimizer name", optimizerName])
     logTable.add_row(["Deviation percent", deviationPercent])
 
@@ -141,6 +163,7 @@ def main_config():
 
     #############################
     # Returning the information #
-    # ###########################
+    #############################
 
+    #time.sleep(180)
     return info

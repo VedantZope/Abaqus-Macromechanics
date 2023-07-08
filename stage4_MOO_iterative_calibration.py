@@ -11,8 +11,8 @@ from modules.helper import *
 from modules.stoploss import *
 from optimizers.BO import *
 import stage0_configs 
-import stage1_prepare_targetCurve
-import stage2_run_initialSims 
+import stage1_SOO_prepare_targetCurve
+import stage2_SOO_run_initialSims 
 import stage3_MOO_prepare_simCurves
 from math import *
 import json

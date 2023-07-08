@@ -15,7 +15,7 @@ session.viewports['Viewport: 1'].makeCurrent()
 session.viewports['Viewport: 1'].maximize()
 
 # Define working directory
-working_directory = os.getcwd()
+working_directory = os.getcwd()  
 
 # Execute Abaqus CAE startup
 executeOnCaeStartup()
@@ -61,12 +61,13 @@ session.xyDataListFromField(
     odb=odb, 
     outputPosition=NODAL, 
     variable=(('U', NODAL, ((COMPONENT, 'U2'), )), ), 
-    nodePick=(('MODEL', 1, ('[#0:984 #40 ]', )), )
+    operator=AVERAGE_ALL, 
+    nodeSets=("DISP", )
 )
 
 # Rename xy data objects
 session.xyDataObjects.changeKey(fromName='ADD_RF:RF2', toName='Force')
-session.xyDataObjects.changeKey(fromName='U:U2 PI: MODEL N: 30837', toName='Displacement')
+session.xyDataObjects.changeKey(fromName='AVERAGE_U:U2', toName='Displacement')
 
 # Double the force values
 force = session.xyDataObjects['Force']

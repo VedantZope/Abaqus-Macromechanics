@@ -10,8 +10,10 @@ from modules.helper import *
 from modules.stoploss import *
 from optimizers.BO import *
 import stage0_configs 
-import stage1_prepare_targetCurve
-import stage2_run_initialSims 
+import stage1_SOO_prepare_targetCurve
+import stage1_MOO_prepare_targetCurve
+import stage2_SOO_run_initialSims 
+import stage2_MOO_run_initialSims
 import stage3_SOO_prepare_simCurves
 import stage3_MOO_prepare_simCurves
 import stage4_SOO_iterative_calibration
@@ -41,18 +43,16 @@ def main_optimize():
     optimizerName = info['optimizerName']
     hardeningLaw = info['hardeningLaw']
     paramConfig = info['paramConfig']
-    geometry = info['geometry']
     deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
 
-    
-    targetCurve, maxTargetDisplacement = stage1_prepare_targetCurve.main_prepare_targetCurve(info)
-    info['targetCurve'] = targetCurve
-    info['maxTargetDisplacement'] = maxTargetDisplacement
-
-    stage2_run_initialSims.main_run_initialSims(info)
-
     if optimizeStrategy == "SOO":
+        targetCurve, maxTargetDisplacement = stage1_SOO_prepare_targetCurve.main_prepare_targetCurve(info)
+        info['targetCurve'] = targetCurve
+        info['maxTargetDisplacement'] = maxTargetDisplacement
+
+        stage2_SOO_run_initialSims.main_run_initialSims(info)
+
         FD_Curves_dict, flowCurves_dict = stage3_SOO_prepare_simCurves.main_prepare_simCurves(info) 
         info["initial_original_FD_Curves_smooth"] = FD_Curves_dict['initial_original_FD_Curves_smooth']
         info["iteration_original_FD_Curves_smooth"] = FD_Curves_dict['iteration_original_FD_Curves_smooth']
@@ -68,11 +68,19 @@ def main_optimize():
         stage4_SOO_iterative_calibration.main_iterative_calibration(info)
         
     elif optimizeStrategy == "MOO":
+        targetCurves, maxTargetDisplacements = stage1_MOO_prepare_targetCurve.main_prepare_targetCurve(info)
+        info['targetCurves'] = targetCurves
+        info['maxTargetDisplacements'] = maxTargetDisplacements
+
+        stage2_MOO_run_initialSims.main_run_initialSims(info)
+        
         FD_Curves_dict, flowCurves_dict = stage3_MOO_prepare_simCurves.main_prepare_simCurves(info) 
+        
         stage4_MOO_iterative_calibration.main_iterative_calibration(info)
 
+    printLog(f"The simulations have satisfied the {deviationPercent}% deviation stop condition")
     printLog("Parameter calibration has successfully completed", logPath)
-    printLog(f"Please check simulation results in the folder {resultPath}/iteration", logPath)
+    
 
 if __name__ == "__main__":
     main_optimize()
