@@ -1,2 +1,3 @@
-C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/MOO_simulations/DP1000_400C_SwiftVoce_curve1/NDBR50/initial/1
-C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/MOO_simulations/DP1000_400C_SwiftVoce_curve1/NDBR50/initial/2
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/MOO_simulations/DP1000_400C_SwiftVoce_curve1/NDBR50/iteration/1
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/MOO_simulations/DP1000_400C_SwiftVoce_curve1/NDBR6/iteration/1
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project/MOO_simulations/DP1000_400C_SwiftVoce_curve1/CHD6/iteration/1

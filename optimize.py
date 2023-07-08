@@ -75,6 +75,18 @@ def main_optimize():
         stage2_MOO_run_initialSims.main_run_initialSims(info)
         
         FD_Curves_dict, flowCurves_dict = stage3_MOO_prepare_simCurves.main_prepare_simCurves(info) 
+        info["initial_original_geom_to_param_FD_Curves_smooth"] = FD_Curves_dict['initial_original_geom_to_param_FD_Curves_smooth']
+        info["iteration_original_geom_to_param_FD_Curves_smooth"] = FD_Curves_dict['iteration_original_geom_to_param_FD_Curves_smooth']
+        info["combined_original_geom_to_param_FD_Curves_smooth"] = FD_Curves_dict['combined_original_geom_to_param_FD_Curves_smooth']
+        info["initial_interpolated_geom_to_param_FD_Curves_smooth"] = FD_Curves_dict['initial_interpolated_geom_to_param_FD_Curves_smooth']
+        info["iteration_interpolated_geom_to_param_FD_Curves_smooth"] = FD_Curves_dict['iteration_interpolated_geom_to_param_FD_Curves_smooth']
+        info["combined_interpolated_geom_to_param_FD_Curves_smooth"] = FD_Curves_dict['combined_interpolated_geom_to_param_FD_Curves_smooth']
+        info['iteration_original_geom_to_param_FD_Curves_unsmooth'] = FD_Curves_dict['iteration_original_geom_to_param_FD_Curves_unsmooth'] 
+        info['combined_interpolated_param_to_geom_FD_Curves_smooth'] = FD_Curves_dict['combined_interpolated_param_to_geom_FD_Curves_smooth'] 
+        info['iteration_original_param_to_geom_FD_Curves_smooth'] = FD_Curves_dict['iteration_original_param_to_geom_FD_Curves_smooth']
+        info["initial_original_geom_to_param_flowCurves"] = flowCurves_dict['initial_original_geom_to_param_flowCurves']
+        info["iteration_original_geom_to_param_flowCurves"] = flowCurves_dict['iteration_original_geom_to_param_flowCurves']
+        info["combined_original_geom_to_param_flowCurves"] = flowCurves_dict['combined_original_geom_to_param_flowCurves']
         
         stage4_MOO_iterative_calibration.main_iterative_calibration(info)
 

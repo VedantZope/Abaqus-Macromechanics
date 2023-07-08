@@ -10,6 +10,7 @@ from scipy.signal import savgol_filter
 from scipy.interpolate import interp1d
 from datetime import datetime
 from modules.stoploss import *
+import time
 
 def printLog(message, logPath):
     with open(logPath, 'a+') as logFile:
@@ -115,6 +116,61 @@ def SOO_write_BO_json_log(FD_Curves, targetCurve, paramConfig):
         with open(f"optimizers/logs.json", "a") as file:
             json.dump(line, file)
             file.write("\n")
+
+def MOO_write_BO_json_log(combined_interpolated_params_to_geoms_FD_Curves_smooth, targetCurves, geometries, geometryWeights, paramConfig):
+    
+    # Delete the json file if it exists
+    if os.path.exists(f"optimizers/logs.json"):
+        os.remove(f"optimizers/logs.json")
+
+    for paramsTuple, geometriesToForceDisplacement in combined_interpolated_params_to_geoms_FD_Curves_smooth.items():
+        # Construct the dictionary
+        line = {}
+        # Note: BO in Bayes-Opt tries to maximize, so you should use the negative of the loss function.
+        loss = 0
+        for geometry in geometries:
+            loss += - geometryWeights[geometry] * lossFD(targetCurves[geometry]["displacement"], targetCurves[geometry]["force"], geometriesToForceDisplacement[geometry]["force"])
+        line["target"] = loss
+        line["params"] = dict(paramsTuple)
+        for param in paramConfig:
+            line["params"][param] = line["params"][param]/paramConfig[param]["exponent"] 
+        line["datetime"] = {}
+        line["datetime"]["datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        line["datetime"]["elapsed"] = 0.0
+        line["datetime"]["delta"] = 0.0
+
+        # json file has not exist yet
+        # Write the dictionary to json file
+        with open(f"optimizers/logs.json", "a") as file:
+            json.dump(line, file)
+            file.write("\n")
+
+def MOO_calculate_geometries_weight(targetCurves, geometries):
+    geometryWeights = {}
+    
+    for geometry in geometries:
+        targetDisplacement = targetCurves[geometry]["displacement"]
+        targetForce = targetCurves[geometry]["force"]
+        
+        x_start = min(targetDisplacement)
+        x_end = max(targetDisplacement)
+
+        # Interpolate the force-displacement curve
+        target_FD_func = interp1d(targetDisplacement, targetForce, fill_value="extrapolate")
+
+        # Evaluate the two curves at various points within the x-range boundary
+        x_values = np.linspace(x_start, x_end, num=10000)
+
+        y_values = target_FD_func(x_values)
+
+        area = simpson(y_values, x_values)
+        geometryWeights[geometry] = 1/np.array(area)
+    
+    # normalize the weights
+    sumWeights = np.sum(list(geometryWeights.values()))
+    for geometry in geometryWeights:
+        geometryWeights[geometry] = geometryWeights[geometry]/sumWeights
+    return geometryWeights
 
 def prettyPrint(parameters, paramConfig, logPath):
     logTable = PrettyTable()
@@ -257,3 +313,12 @@ def rescale_paramsDict(paramsDict, paramConfig):
     for param, value in paramsDict.items():
         rescaled_paramsDict[param] = value * paramConfig[param]['exponent']
     return rescaled_paramsDict
+
+def reverseAsParamsToGeometries(curves, geometries):
+    exampleGeometry = geometries[0]
+    reverseCurves = {}
+    for paramsTuple in curves[exampleGeometry]:
+        reverseCurves[paramsTuple] = {}
+        for geometry in geometries:
+            reverseCurves[paramsTuple][geometry] = curves[geometry][paramsTuple]
+    return reverseCurves

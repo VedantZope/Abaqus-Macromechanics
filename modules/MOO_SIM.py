@@ -155,80 +155,92 @@ class MOO_SIM():
         printLog("Saving successfully all simulation results", logPath)
 
     def run_iteration_simulations(self, paramsDict, iterationIndex):
-        flowCurves = self.preprocess_simulations_iteration(paramsDict, iterationIndex)
+        geom_to_params_flowCurves = self.preprocess_simulations_iteration(paramsDict, iterationIndex)
         self.write_paths_iteration(iterationIndex)
         #time.sleep(180)
         self.submit_array_jobs_iteration()
-        FD_Curves = self.postprocess_results_iteration(paramsDict, iterationIndex)
-        return FD_Curves, flowCurves
+        geom_to_params_FD_Curves = self.postprocess_results_iteration(paramsDict, iterationIndex)
+        return geom_to_params_FD_Curves, geom_to_params_flowCurves
     
     def preprocess_simulations_iteration(self, paramsDict, iterationIndex):
         resultPath = self.info['resultPath']
         simPath = self.info['simPath']
+        geometries = self.info['geometries']
         templatePath = self.info['templatePath'] 
         hardeningLaw = self.info['hardeningLaw']
         numberOfInitialSims = self.info['numberOfInitialSims']
         truePlasticStrain = self.info['truePlasticStrain']
-        maxTargetDisplacement = self.info['maxTargetDisplacement']
+        maxTargetDisplacements = self.info['maxTargetDisplacements']
         
         paramsTuple = tuple(paramsDict.items())
         trueStress = calculate_flowCurve(paramsDict, hardeningLaw, truePlasticStrain)
-        flowCurves = {}
-        flowCurves[paramsTuple] = {}
-        flowCurves[paramsTuple]['strain'] = truePlasticStrain
-        flowCurves[paramsTuple]['stress'] = trueStress
+        geom_to_params_flowCurves = {}
+
+        for geometry in geometries:
+            geom_to_params_flowCurves[geometry] = {}
+            geom_to_params_flowCurves[geometry][paramsTuple] = {}
+            geom_to_params_flowCurves[geometry][paramsTuple]['strain'] = truePlasticStrain
+            geom_to_params_flowCurves[geometry][paramsTuple]['stress'] = trueStress
         
         # Create the simulation folder if not exists, else delete the folder and create a new one
-        if os.path.exists(f"{simPath}/iteration/{iterationIndex}"):
-            shutil.rmtree(f"{simPath}/iteration/{iterationIndex}")
-        shutil.copytree(templatePath, f"{simPath}/iteration/{iterationIndex}")
-        truePlasticStrain = flowCurves[paramsTuple]['strain']
-        trueStress = flowCurves[paramsTuple]['stress']
-        replace_flowCurve_material_inp(f"{simPath}/iteration/{iterationIndex}/material.inp", truePlasticStrain, trueStress)
-        replace_maxDisp_geometry_inp(f"{simPath}/iteration/{iterationIndex}/geometry.inp", maxTargetDisplacement)
-        replace_materialName_geometry_inp(f"{simPath}/iteration/{iterationIndex}/geometry.inp", "material.inp")
-        create_parameter_file(f"{simPath}/iteration/{iterationIndex}", dict(paramsTuple))
-        create_flowCurve_file(f"{simPath}/iteration/{iterationIndex}", truePlasticStrain, trueStress)
-        return flowCurves
+        for geometry in geometries:
+            if os.path.exists(f"{simPath}/{geometry}/iteration/{iterationIndex}"):
+                shutil.rmtree(f"{simPath}/{geometry}/iteration/{iterationIndex}")
+            shutil.copytree(f"{templatePath}/{geometry}", f"{simPath}/{geometry}/iteration/{iterationIndex}")
+            truePlasticStrain = geom_to_params_flowCurves[geometry][paramsTuple]['strain']
+            trueStress = geom_to_params_flowCurves[geometry][paramsTuple]['stress']
+            replace_flowCurve_material_inp(f"{simPath}/{geometry}/iteration/{iterationIndex}/material.inp", truePlasticStrain, trueStress)
+            replace_maxDisp_geometry_inp(f"{simPath}/{geometry}/iteration/{iterationIndex}/geometry.inp", maxTargetDisplacements[geometry])
+            replace_materialName_geometry_inp(f"{simPath}/{geometry}/iteration/{iterationIndex}/geometry.inp", "material.inp")
+            create_parameter_file(f"{simPath}/{geometry}/iteration/{iterationIndex}", dict(paramsTuple))
+            create_flowCurve_file(f"{simPath}/{geometry}/iteration/{iterationIndex}", truePlasticStrain, trueStress)
+        
+        return geom_to_params_flowCurves
 
     def write_paths_iteration(self, iterationIndex):
         projectPath = self.info['projectPath']
         simPath = self.info['simPath']
+        geometries = self.info['geometries']
         with open("linux_slurm/array_file.txt", 'w') as filename:
-            filename.write(f"{projectPath}/{simPath}/iteration/{iterationIndex}\n")
+            for geometry in geometries:
+                filename.write(f"{projectPath}/{simPath}/{geometry}/iteration/{iterationIndex}\n")
 
     def submit_array_jobs_iteration(self):
         logPath = self.info['logPath']       
-        SLURM_iteration = self.info['SLURM_iteration'] 
+
+        geometries = self.info['geometries']
         printLog("Iteration simulation preprocessing stage starts", logPath)
-        printLog(f"Number of jobs required: 1", logPath)
-        subprocess.run(f"sbatch --wait linux_slurm/puhti_abaqus_{SLURM_iteration}.sh", shell=True)
+        printLog(f"Number of jobs required: {len(geometries)}", logPath)
+        subprocess.run(f"sbatch --wait linux_slurm/puhti_abaqus_array_small.sh", shell=True)
         printLog("Iteration simulation postprocessing stage finished", logPath)
 
     def postprocess_results_iteration(self, paramsDict, iterationIndex):
         simPath = self.info['simPath']
         resultPath = self.info['resultPath']
         logPath = self.info['logPath']
-        
-        # The structure of force-displacement curve: dict of (hardening law params typle) -> {force: forceArray , displacement: displacementArray}
+        geometries = self.info['geometries']
 
-        if not os.path.exists(f"{resultPath}/iteration/data/{iterationIndex}"):
-            os.mkdir(f"{resultPath}/iteration/data/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/FD_Curve.txt", f"{resultPath}/iteration/data/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/FD_Curve_Plot.tif", f"{resultPath}/iteration/data/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/Deformed_Specimen.tif", f"{resultPath}/iteration/data/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/parameters.xlsx", f"{resultPath}/iteration/data/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/parameters.csv", f"{resultPath}/iteration/data/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/flowCurve.xlsx", f"{resultPath}/iteration/data/{iterationIndex}")
-        shutil.copy(f"{simPath}/iteration/{iterationIndex}/flowCurve.csv", f"{resultPath}/iteration/data/{iterationIndex}")
-                    
         paramsTuple = tuple(paramsDict.items())
-        displacement, force = read_FD_Curve(f"{simPath}/iteration/{iterationIndex}/FD_Curve.txt")
+        geom_to_params_FD_Curves = {}
         
-        FD_Curves = {}
-        FD_Curves[paramsTuple] = {}
-        FD_Curves[paramsTuple]['displacement'] = displacement
-        FD_Curves[paramsTuple]['force'] = force
-        create_FD_Curve_file(f"{resultPath}/iteration/data/{iterationIndex}", displacement, force)
-        printLog("Saving successfully iteration simulation results", logPath)
-        return FD_Curves
+        
+        for geometry in geometries:
+            if not os.path.exists(f"{resultPath}/{geometry}/iteration/data/{iterationIndex}"):
+                os.mkdir(f"{resultPath}/{geometry}/iteration/data/{iterationIndex}")
+            shutil.copy(f"{simPath}/{geometry}/iteration/{iterationIndex}/FD_Curve.txt", f"{resultPath}/{geometry}/iteration/data/{iterationIndex}")
+            shutil.copy(f"{simPath}/{geometry}/iteration/{iterationIndex}/FD_Curve_Plot.tif", f"{resultPath}/{geometry}/iteration/data/{iterationIndex}")
+            shutil.copy(f"{simPath}/{geometry}/iteration/{iterationIndex}/Deformed_Specimen.tif", f"{resultPath}/{geometry}/iteration/data/{iterationIndex}")
+            shutil.copy(f"{simPath}/{geometry}/iteration/{iterationIndex}/parameters.xlsx", f"{resultPath}/{geometry}/iteration/data/{iterationIndex}")
+            shutil.copy(f"{simPath}/{geometry}/iteration/{iterationIndex}/parameters.csv", f"{resultPath}/{geometry}/iteration/data/{iterationIndex}")
+            shutil.copy(f"{simPath}/{geometry}/iteration/{iterationIndex}/flowCurve.xlsx", f"{resultPath}/{geometry}/iteration/data/{iterationIndex}")
+            shutil.copy(f"{simPath}/{geometry}/iteration/{iterationIndex}/flowCurve.csv", f"{resultPath}/{geometry}/iteration/data/{iterationIndex}")
+                        
+            displacement, force = read_FD_Curve(f"{simPath}/{geometry}/iteration/{iterationIndex}/FD_Curve.txt")
+            
+            geom_to_params_FD_Curves[geometry] = {}
+            geom_to_params_FD_Curves[geometry][paramsTuple] = {}
+            geom_to_params_FD_Curves[geometry][paramsTuple]['displacement'] = displacement
+            geom_to_params_FD_Curves[geometry][paramsTuple]['force'] = force
+            create_FD_Curve_file(f"{resultPath}/{geometry}/iteration/data/{iterationIndex}", displacement, force)
+            printLog("Saving successfully iteration simulation results", logPath)
+        return geom_to_params_FD_Curves

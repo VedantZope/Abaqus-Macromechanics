@@ -23,9 +23,8 @@ import prettytable
 def main_iterative_calibration(info):
 
     # ---------------------------------------------------#
-    #  Stage 4: RUn iterative parameter calibration loop #
+    #  Stage 4: Run iterative parameter calibration loop #
     # ---------------------------------------------------#
-
     
     projectPath = info['projectPath']
     logPath = info['logPath']
@@ -44,8 +43,7 @@ def main_iterative_calibration(info):
     numberOfInitialSims = info['numberOfInitialSims']
     
     # Continuous searching space
-    if optimizerName == "BO":
-        param_bounds = parseBoundsBO(info['paramConfig'])
+    param_bounds = parseBoundsBO(info['paramConfig'])
     info['param_bounds'] = param_bounds
 
     targetCurve = info['targetCurve']
@@ -65,7 +63,7 @@ def main_iterative_calibration(info):
     
     sim = SOO_SIM(info)
     
-    while not stopFD(targetCurve['force'], list(combined_interpolated_FD_Curves_smooth.values())[-1]['force'], deviationPercent):
+    while not stopFD_SOO(targetCurve['force'], list(combined_interpolated_FD_Curves_smooth.values())[-1]['force'], deviationPercent):
 
         SOO_write_BO_json_log(combined_interpolated_FD_Curves_smooth, targetCurve, paramConfig)
         BO_instance = BO(info)

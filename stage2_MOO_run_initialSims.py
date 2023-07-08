@@ -43,18 +43,11 @@ def main_run_initialSims(info):
 
     if generateParams == "manual":
         parameters = np.load(f"{resultPath}/parameters.npy", allow_pickle=True).tolist()
-        # parameters is a list of dicts. Choose first params to test workflow
-        parameters = parameters[0:2]
         info['numberOfInitialSims'] = len(parameters)
 
     elif generateParams == "auto":
         parameters = sim.latin_hypercube_sampling(geometry)
 
-    #print(info)
-
-    #print(parameters)
-    #print("Hello")
-    #time.sleep(30)
     for geometry in geometries:
         infoCopy = copy.deepcopy(info)
         resultPathGeometry = f"{resultPath}/{geometry}"
@@ -65,7 +58,7 @@ def main_run_initialSims(info):
         infoCopy['templatePath'] = templatePathGeometry
         infoCopy['maxTargetDisplacement'] = maxTargetDisplacements[geometry]
         sim = MOO_SIM(infoCopy) 
-        #time.sleep(30)
+
         if not os.path.exists(f"{resultPathGeometry}/initial/common/FD_Curves_unsmooth.npy"):
             printLog("=======================================================================", logPath)
             printLog(f"There are no initial simulations for {geometry} geometry", logPath)

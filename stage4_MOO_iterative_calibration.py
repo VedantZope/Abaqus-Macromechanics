@@ -13,7 +13,7 @@ from optimizers.BO import *
 import stage0_configs 
 import stage1_SOO_prepare_targetCurve
 import stage2_SOO_run_initialSims 
-import stage3_MOO_prepare_simCurves
+import stage3_SOO_prepare_simCurves
 from math import *
 import json
 from datetime import datetime
@@ -23,10 +23,9 @@ import prettytable
 def main_iterative_calibration(info):
 
     # ---------------------------------------------------#
-    #  Stage 4: RUn iterative parameter calibration loop #
+    #  Stage 4: Run iterative parameter calibration loop #
     # ---------------------------------------------------#
 
-    
     projectPath = info['projectPath']
     logPath = info['logPath']
     resultPath = info['resultPath']
@@ -38,67 +37,146 @@ def main_iterative_calibration(info):
     optimizerName = info['optimizerName']
     hardeningLaw = info['hardeningLaw']
     paramConfig = info['paramConfig']
-    geometry = info['geometry']
+    geometries = info['geometries']
     curveIndex = info['curveIndex']
     deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
+    targetCurves = info['targetCurves']
     
     # Continuous searching space
     if optimizerName == "BO":
         param_bounds = parseBoundsBO(info['paramConfig'])
     info['param_bounds'] = param_bounds
 
-    targetCurve = info['targetCurve']
-
-    initial_original_FD_Curves = info['initial_original_FD_Curves']
-    iteration_original_FD_Curves = info['iteration_original_FD_Curves']
-    combined_original_FD_Curves = info['combined_original_FD_Curves']
-    initial_interpolated_FD_Curves = info['initial_interpolated_FD_Curves']
-    iteration_interpolated_FD_Curves = info['iteration_interpolated_FD_Curves']
-    combined_interpolated_FD_Curves = info['combined_interpolated_FD_Curves']
-    initial_original_flowCurves = info['initial_original_flowCurves']
-    iteration_original_flowCurves = info['iteration_original_flowCurves']
-    combined_original_flowCurves = info['combined_original_flowCurves']
+    initial_original_geom_to_param_FD_Curves_smooth = info['initial_original_geom_to_param_FD_Curves_smooth']
+    iteration_original_geom_to_param_FD_Curves_smooth = info['iteration_original_geom_to_param_FD_Curves_smooth']
+    combined_original_geom_to_param_FD_Curves_smooth = info['combined_original_geom_to_param_FD_Curves_smooth']
+    initial_interpolated_geom_to_param_FD_Curves_smooth = info['initial_interpolated_geom_to_param_FD_Curves_smooth']
+    iteration_interpolated_geom_to_param_FD_Curves_smooth = info['iteration_interpolated_geom_to_param_FD_Curves_smooth']
+    combined_interpolated_geom_to_param_FD_Curves_smooth = info['combined_interpolated_geom_to_param_FD_Curves_smooth']
+    combined_interpolated_param_to_geom_FD_Curves_smooth = info['combined_interpolated_param_to_geom_FD_Curves_smooth']
+    iteration_original_geom_to_param_FD_Curves_unsmooth = info['iteration_original_geom_to_param_FD_Curves_unsmooth']
+    iteration_original_param_to_geom_FD_Curves_smooth = info['iteration_original_param_to_geom_FD_Curves_smooth']
     
-    if optimizeStrategy == "SOO":
-        sim = SOO_SIM(info)
-    
-    while not stopFD(targetCurve['force'], list(combined_interpolated_FD_Curves.values())[-1]['force'], deviationPercent):
+    initial_original_geom_to_param_flowCurves = info['initial_original_geom_to_param_flowCurves']
+    iteration_original_geom_to_param_flowCurves = info['iteration_original_geom_to_param_flowCurves']
+    combined_original_geom_to_param_flowCurves = info['combined_original_geom_to_param_flowCurves']
 
-        SOO_write_BO_json_log(combined_interpolated_FD_Curves, targetCurve, paramConfig)
-        BO_instance = BO(info)
-        BO_instance.initializeOptimizer(lossFunction=None, param_bounds=param_bounds, loadingProgress=True)
-        next_paramsDict = BO_instance.suggest()
-        next_paramsDict = rescale_paramsDict(next_paramsDict, paramConfig)
-        iterationIndex = len(iteration_interpolated_FD_Curves) + 1
+    sim = MOO_SIM(info)
+    
+    geometryWeights = MOO_calculate_geometries_weight(targetCurves, geometries)
+    printLog("The weights for the geometries are: ", logPath)
+    printLog(str(geometryWeights), logPath)
+    exampleGeometry = geometries[0]
+
+    while not stopFD_MOO(targetCurves, list(combined_interpolated_param_to_geom_FD_Curves_smooth.values())[-1], geometries, deviationPercent):
         
+        # Please refer to this one to implement your own optimizer
+        # Weighted single objective optimization strategy:
+        if optimizerName == "BO":
+            MOO_write_BO_json_log(combined_interpolated_param_to_geom_FD_Curves_smooth, targetCurves, geometries, geometryWeights, paramConfig)
+            BO_instance = BO(info)
+            BO_instance.initializeOptimizer(lossFunction=None, param_bounds=param_bounds, loadingProgress=True)
+            next_paramDict = BO_instance.suggest()
+            next_paramDict = rescale_paramsDict(next_paramDict, paramConfig)
+            iterationIndex = len(iteration_original_param_to_geom_FD_Curves_smooth) + 1
+        
+        # Multiple objective optimization strategy (Vedant's Task)
+
+        # In order to see whats going on, please use the print() plus time.sleep(180) to stop the code to inspect what is inside a variable 
+        # For example, if you want to see what is paramConfig, please use the following code:
+        # print(paramConfig)
+        # print("Hello") -> This print here helps making sure it has stopped at correct place
+        # time.sleep(180) 
+        # Then run python optimize.py
+
+        # Given these informations, you should be able to program the optimizer to return the next_paramDict
+        
+        # parameter bounds, exponents and names are stored in paramConfig. Dictionary (paramName) -> dict of parameter properties
+        
+        # The existing initial and iteration FD curves stored in combined_interpolated_param_to_geom_FD_Curves_smooth
+        # combined_interpolated_param_to_geom_FD_Curves_smooth is of structure
+        # {paramTuples: {geometryName: {force: np.array(), displacement: np.array()}}}
+        
+        # where geometryNames are stored in the variable "geometries" of type list
+        
+        # the targetCurves for storing the experimental FD curves. It is of structure
+        # {geometryName: {force: np.array(), displacement: np.array()}}
+
+        # You can also use geometryWeights to weight the geometries in the optimization process if your algorithm needs weights
+        # geometryWeights is of structure
+        # {geometryName: weight}, where sum of the weight equals to 1
+
+        # Given these information, you should program the optimizer to return the next_paramDict
+        # The next_paramDict should be a dictionary with the Swift Voce parameters as keys and 
+        # the values are the next predicted parameter values for the next iteration
+        # Apart from these, you dont need to care much about anything else
+        
+        # Please pay attention to the param bounds, where it has not have the exponents. 
+        # If your optimizer returns parameters within the bounds, you need to rescale the parameters to the correct scale by multiplying it with the exponents
+        
+        if optimizerName == "BOTORCH":
+            # paramConfig
+            # geometries
+            # combined_interpolated_param_to_geom_FD_Curves_smooth
+            # targetCurves
+            # geometryWeights
+            pass
+        
+        #print(len(iteration_interpolated_FD_Curves_smooth))
         printLog("\n" + 60 * "#" + "\n", logPath)
-        printLog(f"Running iteration {iterationIndex} for {material}_{hardeningLaw}_{geometry}_curve{curveIndex}" , logPath)
-        printLog(f"The next candidate {hardeningLaw} parameters predicted by BO", logPath)
-        prettyPrint(next_paramsDict, paramConfig, logPath)
+        printLog(f"Running iteration {iterationIndex} for {material}_{hardeningLaw}_curve{curveIndex}" , logPath)
+        printLog(f"The next candidate {hardeningLaw} parameters predicted by {optimizerName}", logPath)
+        prettyPrint(next_paramDict, paramConfig, logPath)
 
         time.sleep(30)
         printLog("Start running iteration simulation", logPath)
         
-        new_FD_Curves, new_flowCurves = sim.run_iteration_simulations(next_paramsDict, iterationIndex)
+        geom_to_param_new_FD_Curves, geom_to_param_new_flowCurves = sim.run_iteration_simulations(next_paramDict, iterationIndex)
         
-        # Updating the combined FD curves
-        combined_original_FD_Curves.update(new_FD_Curves)
-        combined_interpolated_FD_Curves = interpolating_FD_Curves(combined_original_FD_Curves, targetCurve)
+        geom_to_param_new_FD_Curves_unsmooth = copy.deepcopy(geom_to_param_new_FD_Curves)
+        geom_to_param_new_FD_Curves_smooth = copy.deepcopy(geom_to_param_new_FD_Curves)
+        new_param = list(geom_to_param_new_FD_Curves[exampleGeometry].keys())[0]
         
-        # Updating the iteration FD curves
-        iteration_original_FD_Curves.update(new_FD_Curves)
-        iteration_interpolated_FD_Curves = interpolating_FD_Curves(iteration_original_FD_Curves, targetCurve)
+        for geometry in geometries:
+            geom_to_param_new_FD_Curves_smooth[geometry][new_param]['force'] = smoothing_force(geom_to_param_new_FD_Curves_unsmooth[geometry][new_param]['force'], startIndex=20, endIndex=90, iter=20000)
+        
+        # Updating the combined FD curves smooth
+        for geometry in geometries:
+            combined_original_geom_to_param_FD_Curves_smooth[geometry].update(geom_to_param_new_FD_Curves_smooth)
+            combined_interpolated_geom_to_param_FD_Curves_smooth[geometry] = interpolating_FD_Curves(combined_original_geom_to_param_FD_Curves_smooth, targetCurves[geometry])
+        
+        # Updating the iteration FD curves smooth
+        for geometry in geometries:
+            iteration_original_geom_to_param_FD_Curves_smooth[geometry].update(geom_to_param_new_FD_Curves_smooth)
+            iteration_interpolated_geom_to_param_FD_Curves_smooth[geometry] = interpolating_FD_Curves(iteration_original_geom_to_param_FD_Curves_smooth, targetCurves[geometry])
+        
+        # Updating the iteration FD curves unsmooth
+        for geometry in geometries:
+            iteration_original_geom_to_param_FD_Curves_unsmooth[geometry].update(geom_to_param_new_FD_Curves_unsmooth)
         
         # Updating the original flow curves
-        combined_original_flowCurves.update(new_flowCurves)
-        iteration_original_flowCurves.update(new_flowCurves)
-
-        simForce = list(new_FD_Curves.values())[0]['force']
-        loss_newIteration = lossFD(targetCurve['displacement'], targetCurve['force'], simForce)
-        printLog(f"The loss of the new iteration is {round(loss_newIteration, 3)}", logPath)
-
-        # Saving the iteration data
-        np.save(f"{resultPath}/iteration/common/FD_Curves.npy", iteration_original_FD_Curves)
-        np.save(f"{resultPath}/iteration/common/flowCurves.npy", iteration_original_flowCurves)
+        for geometry in geometries:
+            combined_original_geom_to_param_flowCurves.update(geom_to_param_new_flowCurves)
+            iteration_original_geom_to_param_flowCurves.update(geom_to_param_new_flowCurves)
         
+        # Updating the param_to_geom data
+        combined_interpolated_param_to_geom_FD_Curves_smooth = reverseAsParamsToGeometries(combined_interpolated_geom_to_param_FD_Curves_smooth, geometries)
+        iteration_original_param_to_geom_FD_Curves_smooth = reverseAsParamsToGeometries(iteration_original_geom_to_param_FD_Curves_smooth, geometries)
+
+        loss_newIteration = {}
+        for geometry in geometries:
+            simForce = list(geom_to_param_new_FD_Curves_smooth[exampleGeometry].values())[0]['force']
+            simDisplacement = list(geom_to_param_new_FD_Curves_smooth[exampleGeometry].values())[0]['displacement']
+            targetForce = targetCurves[geometry]['force']
+            targetDisplacement = targetCurves[geometry]['displacement']
+            interpolated_simForce = interpolatingForce(simDisplacement, simForce, targetDisplacement)
+            loss_newIteration['geometry'] = round(lossFD(targetDisplacement, targetForce, interpolated_simForce), 3)
+        printLog(f"The loss of the new iteration is: ", logPath)
+        printLog(str(loss_newIteration), logPath)
+
+        for geometry in geometries:
+            # Saving the iteration data
+            np.save(f"{resultPath}/{geometry}/iteration/common/FD_Curves_unsmooth.npy", iteration_original_geom_to_param_FD_Curves_unsmooth[geometry])
+            np.save(f"{resultPath}/{geometry}/iteration/common/FD_Curves_smooth.npy", iteration_original_geom_to_param_FD_Curves_smooth[geometry])
+            np.save(f"{resultPath}/{geometry}/iteration/common/flowCurves.npy", iteration_original_geom_to_param_flowCurves[geometry])
