@@ -211,7 +211,7 @@ class MOO_SIM():
         geometries = self.info['geometries']
         printLog("Iteration simulation preprocessing stage starts", logPath)
         printLog(f"Number of jobs required: {len(geometries)}", logPath)
-        subprocess.run(f"sbatch --wait linux_slurm/puhti_abaqus_array_small.sh", shell=True)
+        subprocess.run(f"sbatch --wait --array=1-{len(geometries)} linux_slurm/puhti_abaqus_array_small.sh", shell=True)
         printLog("Iteration simulation postprocessing stage finished", logPath)
 
     def postprocess_results_iteration(self, paramsDict, iterationIndex):
@@ -242,5 +242,5 @@ class MOO_SIM():
             geom_to_params_FD_Curves[geometry][paramsTuple]['displacement'] = displacement
             geom_to_params_FD_Curves[geometry][paramsTuple]['force'] = force
             create_FD_Curve_file(f"{resultPath}/{geometry}/iteration/data/{iterationIndex}", displacement, force)
-            printLog("Saving successfully iteration simulation results", logPath)
+        printLog("Saving successfully iteration simulation results", logPath)
         return geom_to_params_FD_Curves

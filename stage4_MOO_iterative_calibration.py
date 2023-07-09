@@ -143,22 +143,22 @@ def main_iterative_calibration(info):
         
         # Updating the combined FD curves smooth
         for geometry in geometries:
-            combined_original_geom_to_param_FD_Curves_smooth[geometry].update(geom_to_param_new_FD_Curves_smooth)
-            combined_interpolated_geom_to_param_FD_Curves_smooth[geometry] = interpolating_FD_Curves(combined_original_geom_to_param_FD_Curves_smooth, targetCurves[geometry])
+            combined_original_geom_to_param_FD_Curves_smooth[geometry].update(geom_to_param_new_FD_Curves_smooth[geometry])
+            combined_interpolated_geom_to_param_FD_Curves_smooth[geometry] = interpolating_FD_Curves(combined_original_geom_to_param_FD_Curves_smooth[geometry], targetCurves[geometry])
         
         # Updating the iteration FD curves smooth
         for geometry in geometries:
-            iteration_original_geom_to_param_FD_Curves_smooth[geometry].update(geom_to_param_new_FD_Curves_smooth)
-            iteration_interpolated_geom_to_param_FD_Curves_smooth[geometry] = interpolating_FD_Curves(iteration_original_geom_to_param_FD_Curves_smooth, targetCurves[geometry])
+            iteration_original_geom_to_param_FD_Curves_smooth[geometry].update(geom_to_param_new_FD_Curves_smooth[geometry])
+            iteration_interpolated_geom_to_param_FD_Curves_smooth[geometry] = interpolating_FD_Curves(iteration_original_geom_to_param_FD_Curves_smooth[geometry], targetCurves[geometry])
         
         # Updating the iteration FD curves unsmooth
         for geometry in geometries:
-            iteration_original_geom_to_param_FD_Curves_unsmooth[geometry].update(geom_to_param_new_FD_Curves_unsmooth)
+            iteration_original_geom_to_param_FD_Curves_unsmooth[geometry].update(geom_to_param_new_FD_Curves_unsmooth[geometry])
         
         # Updating the original flow curves
         for geometry in geometries:
-            combined_original_geom_to_param_flowCurves.update(geom_to_param_new_flowCurves)
-            iteration_original_geom_to_param_flowCurves.update(geom_to_param_new_flowCurves)
+            combined_original_geom_to_param_flowCurves[geometry].update(geom_to_param_new_flowCurves[geometry])
+            iteration_original_geom_to_param_flowCurves[geometry].update(geom_to_param_new_flowCurves[geometry])
         
         # Updating the param_to_geom data
         combined_interpolated_param_to_geom_FD_Curves_smooth = reverseAsParamsToGeometries(combined_interpolated_geom_to_param_FD_Curves_smooth, geometries)
@@ -171,7 +171,8 @@ def main_iterative_calibration(info):
             targetForce = targetCurves[geometry]['force']
             targetDisplacement = targetCurves[geometry]['displacement']
             interpolated_simForce = interpolatingForce(simDisplacement, simForce, targetDisplacement)
-            loss_newIteration['geometry'] = round(lossFD(targetDisplacement, targetForce, interpolated_simForce), 3)
+            loss_newIteration[geometry] = round(lossFD(targetDisplacement, targetForce, interpolated_simForce), 3)
+        
         printLog(f"The loss of the new iteration is: ", logPath)
         printLog(str(loss_newIteration), logPath)
 
