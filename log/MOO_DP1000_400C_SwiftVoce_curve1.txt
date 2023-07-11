@@ -2450,3 +2450,79 @@ The next candidate SwiftVoce parameters predicted by BO
 |     b     |   459.68300691172004  |
 +-----------+-----------------------+
 
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++------------------------+-------------------+
+|     Global Configs     |    User choice    |
++------------------------+-------------------+
+|    SLURM iteration     |   one_node_small  |
+| Number of initial sims |        200        |
+|   Optimize strategy    |        MOO        |
+|        Material        |    DP1000_400C    |
+|     Hardening law      |     SwiftVoce     |
+|      Curve index       |         1         |
+|       Geometries       | NDBR50,NDBR6,CHD6 |
+|     Optimizer name     |         BO        |
+|   Deviation percent    |         2         |
++------------------------+-------------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+=======================================================================
+Initial simulations for NDBR50 geometry already exist
+Number of initial simulations for NDBR50 geometry: 200 FD curves
+=======================================================================
+Initial simulations for NDBR6 geometry already exist
+Number of initial simulations for NDBR6 geometry: 200 FD curves
+=======================================================================
+Initial simulations for CHD6 geometry already exist
+Number of initial simulations for CHD6 geometry: 200 FD curves
+There are no iteration simulations. Program starts running the iteration simulations
+The weights for the geometries are: 
+{'NDBR50': 0.2558034065511181, 'NDBR6': 0.46540835857782836, 'CHD6': 0.2787882348710536}
+
+Welcome to the Abaqus parameter calibration project
+
+
+The configurations you have chosen: 
+
++------------------------+-------------------+
+|     Global Configs     |    User choice    |
++------------------------+-------------------+
+|    SLURM iteration     |   one_node_small  |
+| Number of initial sims |        200        |
+|   Optimize strategy    |        MOO        |
+|        Material        |    DP1000_400C    |
+|     Hardening law      |     SwiftVoce     |
+|      Curve index       |         1         |
+|       Geometries       | NDBR50,NDBR6,CHD6 |
+|     Optimizer name     |         BO        |
+|   Deviation percent    |         2         |
++------------------------+-------------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+C:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+
+=======================================================================
+Initial simulations for NDBR50 geometry already exist
+Number of initial simulations for NDBR50 geometry: 200 FD curves
+=======================================================================
+Initial simulations for NDBR6 geometry already exist
+Number of initial simulations for NDBR6 geometry: 200 FD curves
+=======================================================================
+Initial simulations for CHD6 geometry already exist
+Number of initial simulations for CHD6 geometry: 200 FD curves
+There are no iteration simulations. Program starts running the iteration simulations
+The weights for the geometries are: 
+{'NDBR50': 0.2558034065511181, 'NDBR6': 0.46540835857782836, 'CHD6': 0.2787882348710536}

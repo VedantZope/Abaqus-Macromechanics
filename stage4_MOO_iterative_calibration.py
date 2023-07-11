@@ -68,7 +68,14 @@ def main_iterative_calibration(info):
     printLog("The weights for the geometries are: ", logPath)
     printLog(str(geometryWeights), logPath)
     exampleGeometry = geometries[0]
+    
+    #np.save("combined_interpolated_param_to_geom_FD_Curves_smooth.npy", combined_interpolated_param_to_geom_FD_Curves_smooth)
+    #print("Hello")
+    #time.sleep(180)
 
+    # np.save("targetCurves.npy", targetCurves)
+    # print("Hello")
+    # time.sleep(180)
     while not stopFD_MOO(targetCurves, list(combined_interpolated_param_to_geom_FD_Curves_smooth.values())[-1], geometries, deviationPercent):
         
         # Please refer to this one to implement your own optimizer
