@@ -68,9 +68,9 @@ def main_prepare_simCurves(info):
         numberOfIterationSims = len(np.load(f"{resultPath}/{exampleGeometry}/iteration/common/FD_Curves_unsmooth.npy", allow_pickle=True).tolist())
         printLog(f"Number of iteration simulations: {numberOfIterationSims} FD curves", logPath)
         for geometry in geometries:
-            iteration_original_geom_to_param_FD_Curves_smooth = np.load(f"{resultPath}/{geometry}/iteration/common/FD_Curves_smooth.npy", allow_pickle=True).tolist()
-            iteration_original_geom_to_param_FD_Curves_unsmooth = np.load(f"{resultPath}/{geometry}/iteration/common/FD_Curves_unsmooth.npy", allow_pickle=True).tolist()
-            iteration_original_geom_to_param_flowCurves = np.load(f"{resultPath}/{geometry}/iteration/common/flowCurves.npy", allow_pickle=True).tolist()
+            iteration_original_geom_to_param_FD_Curves_smooth[geometry] = np.load(f"{resultPath}/{geometry}/iteration/common/FD_Curves_smooth.npy", allow_pickle=True).tolist()
+            iteration_original_geom_to_param_FD_Curves_unsmooth[geometry] = np.load(f"{resultPath}/{geometry}/iteration/common/FD_Curves_unsmooth.npy", allow_pickle=True).tolist()
+            iteration_original_geom_to_param_flowCurves[geometry] = np.load(f"{resultPath}/{geometry}/iteration/common/flowCurves.npy", allow_pickle=True).tolist()
     
     #print(initial_original_geom_to_param_FD_Curves_unsmooth)
     combined_original_geom_to_param_FD_Curves_smooth = copy.deepcopy(initial_original_geom_to_param_FD_Curves_smooth)

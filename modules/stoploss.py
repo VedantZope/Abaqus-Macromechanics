@@ -216,13 +216,14 @@ def Vedant_lossFD(targetDisplacement, targetForce, simForce):
     total_loss = elastic_loss + plastic_loss
     return total_loss
 
-def stopFD_SOO(targetForce, simForce, deviationPercent):
+def stopFD_SOO(targetForce, simForce, yieldingIndex, deviationPercent):
     targetForceUpper = targetForce * (1 + 0.01 * deviationPercent)
     targetForceLower = targetForce * (1 - 0.01 * deviationPercent)
-    return np.all((simForce[5:] >= targetForceLower[5:]) & (simForce[5:] <= targetForceUpper[5:]))
+    return np.all((simForce[yieldingIndex:] >= targetForceLower[yieldingIndex:]) & (simForce[yieldingIndex:] <= targetForceUpper[yieldingIndex:]))
 
-def stopFD_MOO(targetCurves, simCurves, geometries, deviationPercent):
+def stopFD_MOO(targetCurves, simCurves, geometries, yieldingIndices, deviationPercent):
     stopAllCurvesCheck = True
     for geometry in geometries:
-        stopAllCurvesCheck = stopAllCurvesCheck & stopFD_SOO(targetCurves[geometry]['force'], simCurves[geometry]['force'], deviationPercent)
+        yieldingIndex = yieldingIndices[geometry]
+        stopAllCurvesCheck = stopAllCurvesCheck & stopFD_SOO(targetCurves[geometry]['force'][yieldingIndex:], simCurves[geometry]['force'][yieldingIndex:], deviationPercent)
     return stopAllCurvesCheck

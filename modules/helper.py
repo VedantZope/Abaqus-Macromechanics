@@ -12,6 +12,20 @@ from datetime import datetime
 from modules.stoploss import *
 import time
 
+import torch
+import numpy as np
+from botorch.models import SingleTaskGP
+from gpytorch.mlls import ExactMarginalLogLikelihood
+from botorch.fit import fit_gpytorch_model
+from botorch.acquisition.multi_objective import qExpectedHypervolumeImprovement
+from botorch.optim import optimize_acqf
+from botorch.utils.multi_objective.box_decompositions import NondominatedPartitioning
+from botorch.utils.multi_objective.pareto import is_non_dominated
+from botorch.utils import standardize
+from botorch.acquisition.multi_objective.objective import IdentityMCMultiOutputObjective
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
+
 def printLog(message, logPath):
     with open(logPath, 'a+') as logFile:
         logFile.writelines(message + "\n")
@@ -83,7 +97,7 @@ def interpolating_flowCurves(flowCurves, targetCurve):
         flowCurves_copy[paramsTuple]["strain"] = targetStrain
     return flowCurves_copy
 
-def SOO_write_BO_json_log(FD_Curves, targetCurve, paramConfig):
+def SOO_write_BO_json_log(FD_Curves, targetCurve, yieldingIndex, paramConfig):
     # Write the BO log file
     # Each line of BO logging json file looks like this
     # {"target": <loss value>, "params": {"params1": <value1>, ..., "paramsN": <valueN>}, "datetime": {"datetime": "2023-06-02 18:26:46", "elapsed": 0.0, "delta": 0.0}}
@@ -102,7 +116,7 @@ def SOO_write_BO_json_log(FD_Curves, targetCurve, paramConfig):
         # Construct the dictionary
         line = {}
         # Note: BO in Bayes-Opt tries to maximize, so you should use the negative of the loss function.
-        line["target"] = -lossFD(targetCurve["displacement"], targetCurve["force"], dispforce["force"])
+        line["target"] = -lossFD(targetCurve["displacement"][yieldingIndex:], targetCurve["force"][yieldingIndex:], dispforce["force"][yieldingIndex:])
         line["params"] = dict(paramsTuple)
         for param in paramConfig:
             line["params"][param] = line["params"][param]/paramConfig[param]["exponent"] 
@@ -117,7 +131,7 @@ def SOO_write_BO_json_log(FD_Curves, targetCurve, paramConfig):
             json.dump(line, file)
             file.write("\n")
 
-def MOO_write_BO_json_log(combined_interpolated_params_to_geoms_FD_Curves_smooth, targetCurves, geometries, geometryWeights, paramConfig):
+def MOO_write_BO_json_log(combined_interpolated_params_to_geoms_FD_Curves_smooth, targetCurves, geometries, geometryWeights, yieldingIndices, paramConfig):
     
     # Delete the json file if it exists
     if os.path.exists(f"optimizers/logs.json"):
@@ -129,7 +143,8 @@ def MOO_write_BO_json_log(combined_interpolated_params_to_geoms_FD_Curves_smooth
         # Note: BO in Bayes-Opt tries to maximize, so you should use the negative of the loss function.
         loss = 0
         for geometry in geometries:
-            loss += - geometryWeights[geometry] * lossFD(targetCurves[geometry]["displacement"], targetCurves[geometry]["force"], geometriesToForceDisplacement[geometry]["force"])
+            yieldingIndex = yieldingIndices[geometry]
+            loss += - geometryWeights[geometry] * lossFD(targetCurves[geometry]["displacement"][yieldingIndex:], targetCurves[geometry]["force"][yieldingIndex:], geometriesToForceDisplacement[geometry]["force"][yieldingIndex:])
         line["target"] = loss
         line["params"] = dict(paramsTuple)
         for param in paramConfig:
@@ -144,6 +159,86 @@ def MOO_write_BO_json_log(combined_interpolated_params_to_geoms_FD_Curves_smooth
         with open(f"optimizers/logs.json", "a") as file:
             json.dump(line, file)
             file.write("\n")
+
+def MOO_suggest_BOTORCH(combined_interpolated_params_to_geoms_FD_Curves_smooth, targetCurves, geometries, yieldingIndices, paramConfig):
+    # Calculate losses and prepare data for model
+    params = []
+    losses = []
+    for param_tuple, geom_to_simCurves in combined_interpolated_params_to_geoms_FD_Curves_smooth.items():
+        #print(param_tuple)
+        params.append([value for param, value in param_tuple])
+        # The minus sign is because BOTORCH tries to maximize objectives, but we want to minimize the loss
+        loss_iter = []
+        for geometry in geometries:
+            yieldingIndex = yieldingIndices[geometry]
+            loss_iter.append(- lossFD(
+                torch.tensor(targetCurves[geometry]["displacement"][yieldingIndex:]), 
+                torch.tensor(targetCurves[geometry]["force"][yieldingIndex:]), 
+                torch.tensor(geom_to_simCurves[geometry]["force"][yieldingIndex:])
+            ))
+        losses.append(loss_iter)
+
+    # Convert your data to the tensor(float 64)
+    X = torch.tensor(params, dtype=torch.float64)
+    Y = torch.stack([torch.tensor(loss, dtype=torch.float64) for loss in losses])
+
+    # Normalize X to have range of [0, 1]
+    minmax_scaler = MinMaxScaler()
+    X_normalized = torch.tensor(minmax_scaler.fit_transform(X.numpy()), dtype=torch.float64)
+
+    # Standardize Y to have zero mean and unit variance
+    standard_scaler = StandardScaler()
+    Y_standardized = torch.tensor(standard_scaler.fit_transform(Y.numpy()), dtype=torch.float64)
+
+    # Define the bounds of the search space
+    lower_bounds = torch.tensor([paramConfig[param]['lowerBound'] * paramConfig[param]['exponent'] for param in paramConfig.keys()]).float()
+    upper_bounds = torch.tensor([paramConfig[param]['upperBound'] * paramConfig[param]['exponent'] for param in paramConfig.keys()]).float()
+
+    lower_bounds = minmax_scaler.transform(lower_bounds.reshape(1, -1)).squeeze()
+    upper_bounds = minmax_scaler.transform(upper_bounds.reshape(1, -1)).squeeze()
+
+    bounds = torch.tensor(np.array([lower_bounds, upper_bounds])).float()
+
+    # Initialize model
+    model = SingleTaskGP(X_normalized, Y_standardized)
+    mll = ExactMarginalLogLikelihood(model.likelihood, model)
+    fit_gpytorch_model(mll)
+
+    # **Reference Point**
+
+    # qEHVI requires specifying a reference point, which is the lower bound on the objectives used for computing hypervolume. 
+    # In this tutorial, we assume the reference point is known. In practice the reference point can be set 
+    # 1) using domain knowledge to be slightly worse than the lower bound of objective values, 
+    # where the lower bound is the minimum acceptable value of interest for each objective, or 
+    # 2) using a dynamic reference point selection strategy.
+
+    ref_point = Y_standardized.min(dim=0).values - 0.01
+
+    partitioning = NondominatedPartitioning(ref_point=ref_point, Y=Y_standardized)
+    acq_func = qExpectedHypervolumeImprovement(
+        model=model,
+        partitioning=partitioning,
+        ref_point=ref_point,
+        objective=IdentityMCMultiOutputObjective(),
+    )
+
+
+    # Optimize the acquisition function
+    candidates, _ = optimize_acqf(
+        acq_function=acq_func,
+        bounds=bounds,
+        q=1, #q: This is the number of points to sample in each step. 
+        num_restarts=10, # num_restarts: This is the number of starting points for the optimization.
+        raw_samples=1000, # raw_samples: This is the number of samples to draw when initializing the optimization
+    )
+
+    # Unnormalize the candidates
+    candidates = minmax_scaler.inverse_transform(candidates.detach().numpy())
+
+    #converting to dictionary
+    pareto_front = [{param: value.item() for param, value in zip(paramConfig.keys(), next_param)} for next_param in candidates]
+
+    return pareto_front
 
 def MOO_calculate_geometries_weight(targetCurves, geometries):
     geometryWeights = {}
@@ -322,3 +417,22 @@ def reverseAsParamsToGeometries(curves, geometries):
         for geometry in geometries:
             reverseCurves[paramsTuple][geometry] = curves[geometry][paramsTuple]
     return reverseCurves
+
+def calculate_yielding_index(targetDisplacement, targetForce, r2_threshold=0.998):
+    """
+    This function calculates the end of the elastic (linear) region of the force-displacement curve.
+    """
+    yielding_index = 0
+
+    # Initialize the Linear Regression model
+    linReg = LinearRegression()
+    targetDisplacement = np.array(targetDisplacement)
+    targetForce = np.array(targetForce)
+    for i in range(2, len(targetDisplacement)):
+        linReg.fit(targetDisplacement[:i].reshape(-1, 1), targetForce[:i]) 
+        simForce = linReg.predict(targetDisplacement[:i].reshape(-1, 1)) 
+        r2 = r2_score(targetForce[:i], simForce) 
+        if r2 < r2_threshold:  # If R^2 is below threshold, mark the end of linear region
+            yielding_index = i - 1
+            break
+    return yielding_index

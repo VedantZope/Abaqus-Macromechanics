@@ -34,6 +34,7 @@ def main_config():
     hardeningLaw = globalConfig["hardeningLaw"]
     deviationPercent = globalConfig["deviationPercent"]
     geometry = globalConfig["geometry"]
+    yieldingIndex = globalConfig["yieldingIndex"]
     curveIndex = globalConfig["curveIndex"]
     generateParams = globalConfig["generateParams"]
     numberOfInitialSims = globalConfig["numberOfInitialSims"]
@@ -62,6 +63,13 @@ def main_config():
             templatePath, 
             targetPath
         ) = initialize_directory(optimizeStrategy, material, hardeningLaw, geometries, curveIndex)
+        yieldingIndices = yieldingIndex.split(".")
+        yieldingIndices = [int(i) for i in yieldingIndices]
+        # zip with the geometries, where geometry is key and yieldingIndex is value
+        yieldingIndices = dict(zip(geometries, yieldingIndices))
+        #print(yieldingIndices)
+        #time.sleep(60)
+
     
     #################################
     # Plastic strain configurations #
@@ -128,8 +136,10 @@ def main_config():
 
     if optimizeStrategy == "SOO":
         info['geometry'] = geometry
+        info['yieldingIndex'] = yieldingIndex
     if optimizeStrategy == "MOO":
         info['geometries'] = geometries
+        info['yieldingIndices'] = yieldingIndices
 
     ###############################################
     #  Printing the configurations to the console #

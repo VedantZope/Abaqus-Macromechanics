@@ -41,6 +41,7 @@ def main_iterative_calibration(info):
     curveIndex = info['curveIndex']
     deviationPercent = info['deviationPercent']
     numberOfInitialSims = info['numberOfInitialSims']
+    yieldingIndex = info['yieldingIndex']
     
     # Continuous searching space
     param_bounds = parseBoundsBO(info['paramConfig'])
@@ -61,11 +62,12 @@ def main_iterative_calibration(info):
     iteration_original_flowCurves = info['iteration_original_flowCurves']
     combined_original_flowCurves = info['combined_original_flowCurves']
     
+    
     sim = SOO_SIM(info)
     
-    while not stopFD_SOO(targetCurve['force'], list(combined_interpolated_FD_Curves_smooth.values())[-1]['force'], deviationPercent):
+    while not stopFD_SOO(targetCurve['force'], list(combined_interpolated_FD_Curves_smooth.values())[-1]['force'], yieldingIndex, deviationPercent):
 
-        SOO_write_BO_json_log(combined_interpolated_FD_Curves_smooth, targetCurve, paramConfig)
+        SOO_write_BO_json_log(combined_interpolated_FD_Curves_smooth, targetCurve, yieldingIndex, paramConfig)
         BO_instance = BO(info)
         BO_instance.initializeOptimizer(lossFunction=None, param_bounds=param_bounds, loadingProgress=True)
         next_paramsDict = BO_instance.suggest()
@@ -102,10 +104,10 @@ def main_iterative_calibration(info):
         combined_original_flowCurves.update(new_flowCurves)
         iteration_original_flowCurves.update(new_flowCurves)
 
-        simForce = list(new_FD_Curves_smooth.values())[0]['force']
-        simDisplacement = list(new_FD_Curves_smooth.values())[0]['displacement']
-        targetForce = targetCurve['force']
-        targetDisplacement = targetCurve['displacement']
+        simForce = list(new_FD_Curves_smooth.values())[0]['force'][yieldingIndex:]
+        simDisplacement = list(new_FD_Curves_smooth.values())[0]['displacement'][yieldingIndex:]
+        targetForce = targetCurve['force'][yieldingIndex:]
+        targetDisplacement = targetCurve['displacement'][yieldingIndex:]
         interpolated_simForce = interpolatingForce(simDisplacement, simForce, targetDisplacement)
         
         loss_newIteration = lossFD(targetDisplacement, targetForce, interpolated_simForce)
