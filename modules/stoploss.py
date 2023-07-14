@@ -139,5 +139,5 @@ def stopFD_MOO(targetCurves, simCurves, geometries, yieldingIndices, deviationPe
     stopAllCurvesCheck = True
     for geometry in geometries:
         yieldingIndex = yieldingIndices[geometry]
-        stopAllCurvesCheck = stopAllCurvesCheck & stopFD_SOO(targetCurves[geometry]['force'][yieldingIndex:], simCurves[geometry]['force'][yieldingIndex:], yieldingIndex, deviationPercent)
+        stopAllCurvesCheck = stopAllCurvesCheck & stopFD_SOO(targetCurves[geometry]['force'], simCurves[geometry]['force'], yieldingIndex, deviationPercent)
     return stopAllCurvesCheck
