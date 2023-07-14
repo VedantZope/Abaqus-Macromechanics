@@ -131,7 +131,7 @@ def SOO_write_BO_json_log(FD_Curves, targetCurve, yieldingIndex, paramConfig):
             json.dump(line, file)
             file.write("\n")
 
-def MOO_write_BO_json_log(combined_interpolated_params_to_geoms_FD_Curves_smooth, targetCurves, geometries, geometryWeights, yieldingIndices, paramConfig):
+def MOO_write_BO_json_log(combined_interpolated_params_to_geoms_FD_Curves_smooth, targetCurves, geometries, geometryWeights, yieldingIndices, paramConfig,iteration):
     
     # Delete the json file if it exists
     if os.path.exists(f"optimizers/logs.json"):
@@ -144,7 +144,7 @@ def MOO_write_BO_json_log(combined_interpolated_params_to_geoms_FD_Curves_smooth
         loss = 0
         for geometry in geometries:
             yieldingIndex = yieldingIndices[geometry]
-            loss += - geometryWeights[geometry] * lossFD(targetCurves[geometry]["displacement"][yieldingIndex:], targetCurves[geometry]["force"][yieldingIndex:], geometriesToForceDisplacement[geometry]["force"][yieldingIndex:])
+            loss += - geometryWeights[geometry] * lossFD(targetCurves[geometry]["displacement"][yieldingIndex:], targetCurves[geometry]["force"][yieldingIndex:], geometriesToForceDisplacement[geometry]["force"][yieldingIndex:],iteration)
         line["target"] = loss
         line["params"] = dict(paramsTuple)
         for param in paramConfig:
@@ -160,7 +160,7 @@ def MOO_write_BO_json_log(combined_interpolated_params_to_geoms_FD_Curves_smooth
             json.dump(line, file)
             file.write("\n")
 
-def MOO_suggest_BOTORCH(combined_interpolated_params_to_geoms_FD_Curves_smooth, targetCurves, geometries, yieldingIndices, paramConfig):
+def MOO_suggest_BOTORCH(combined_interpolated_params_to_geoms_FD_Curves_smooth, targetCurves, geometries, yieldingIndices, paramConfig,iteration):
     # Calculate losses and prepare data for model
     params = []
     losses = []
@@ -172,9 +172,10 @@ def MOO_suggest_BOTORCH(combined_interpolated_params_to_geoms_FD_Curves_smooth, 
         for geometry in geometries:
             yieldingIndex = yieldingIndices[geometry]
             loss_iter.append(- lossFD(
-                torch.tensor(targetCurves[geometry]["displacement"][yieldingIndex:]), 
-                torch.tensor(targetCurves[geometry]["force"][yieldingIndex:]), 
-                torch.tensor(geom_to_simCurves[geometry]["force"][yieldingIndex:])
+                targetCurves[geometry]["displacement"][yieldingIndex:], 
+                targetCurves[geometry]["force"][yieldingIndex:], 
+                geom_to_simCurves[geometry]["force"][yieldingIndex:],
+                iteration
             ))
         losses.append(loss_iter)
 

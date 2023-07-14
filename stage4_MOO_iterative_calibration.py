@@ -75,7 +75,9 @@ def main_iterative_calibration(info):
     # print("Hello")
     # time.sleep(180)
     while not stopFD_MOO(targetCurves, list(combined_interpolated_param_to_geom_FD_Curves_smooth.values())[-1], geometries, yieldingIndices, deviationPercent):
-        
+
+        iterationIndex = len(iteration_original_param_to_geom_FD_Curves_smooth) + 1
+
         # Please refer to this one to implement your own optimizer
         # Weighted single objective optimization strategy:
         if optimizerName == "BO":
@@ -84,7 +86,7 @@ def main_iterative_calibration(info):
             printLog(str(geometryWeights), logPath)
             exampleGeometry = geometries[0]
 
-            MOO_write_BO_json_log(combined_interpolated_param_to_geom_FD_Curves_smooth, targetCurves, geometries, geometryWeights, yieldingIndices, paramConfig)
+            MOO_write_BO_json_log(combined_interpolated_param_to_geom_FD_Curves_smooth, targetCurves, geometries, geometryWeights, yieldingIndices, paramConfig,iterationIndex)
             BO_instance = BO(info)
             BO_instance.initializeOptimizer(lossFunction=None, param_bounds=param_bounds, loadingProgress=True)
             next_paramDict = BO_instance.suggest()
@@ -125,11 +127,11 @@ def main_iterative_calibration(info):
         # If your optimizer returns parameters within the bounds, you need to rescale the parameters to the correct scale by multiplying it with the exponents
         
         if optimizerName == "BOTORCH":
-            pareto_front = MOO_suggest_BOTORCH(combined_interpolated_param_to_geom_FD_Curves_smooth, targetCurves, geometries, yieldingIndices, paramConfig)
+            pareto_front = MOO_suggest_BOTORCH(combined_interpolated_param_to_geom_FD_Curves_smooth, targetCurves, geometries, yieldingIndices, paramConfig,iterationIndex)
             # Select a random point from the pareto front
             next_paramDict = pareto_front[0]
         
-        iterationIndex = len(iteration_original_param_to_geom_FD_Curves_smooth) + 1
+
         #print(len(iteration_interpolated_FD_Curves_smooth))
         printLog("\n" + 60 * "#" + "\n", logPath)
         printLog(f"Running iteration {iterationIndex} for {material}_{hardeningLaw}_curve{curveIndex}" , logPath)
@@ -179,7 +181,7 @@ def main_iterative_calibration(info):
             targetForce = targetCurves[geometry]['force'][yieldingIndex:]
             targetDisplacement = targetCurves[geometry]['displacement'][yieldingIndex:]
             interpolated_simForce = interpolatingForce(simDisplacement, simForce, targetDisplacement)
-            loss_newIteration[geometry] = round(lossFD(targetDisplacement, targetForce, interpolated_simForce), 3)
+            loss_newIteration[geometry] = round(lossFD(targetDisplacement, targetForce, interpolated_simForce,iterationIndex), 3)
         
         printLog(f"The loss of the new iteration is: ", logPath)
         printLog(str(loss_newIteration), logPath)
