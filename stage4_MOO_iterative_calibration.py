@@ -77,14 +77,14 @@ def main_iterative_calibration(info):
     while not stopFD_MOO(targetCurves, list(combined_interpolated_param_to_geom_FD_Curves_smooth.values())[-1], geometries, yieldingIndices, deviationPercent):
 
         iterationIndex = len(iteration_original_param_to_geom_FD_Curves_smooth) + 1
-
+        exampleGeometry = geometries[0]
         # Please refer to this one to implement your own optimizer
         # Weighted single objective optimization strategy:
         if optimizerName == "BO":
             geometryWeights = MOO_calculate_geometries_weight(targetCurves, geometries)
             printLog("The weights for the geometries are: ", logPath)
             printLog(str(geometryWeights), logPath)
-            exampleGeometry = geometries[0]
+            
 
             MOO_write_BO_json_log(combined_interpolated_param_to_geom_FD_Curves_smooth, targetCurves, geometries, geometryWeights, yieldingIndices, paramConfig,iterationIndex)
             BO_instance = BO(info)
@@ -176,8 +176,8 @@ def main_iterative_calibration(info):
         loss_newIteration = {}
         for geometry in geometries:
             yieldingIndex = yieldingIndices[geometry]
-            simForce = list(geom_to_param_new_FD_Curves_smooth[geometry].values())[0]['force'][yieldingIndex:]
-            simDisplacement = list(geom_to_param_new_FD_Curves_smooth[geometry].values())[0]['displacement'][yieldingIndex:]
+            simForce = list(iteration_interpolated_geom_to_param_FD_Curves_smooth[geometry].values())[0]['force'][yieldingIndex:]
+            simDisplacement = list(iteration_interpolated_geom_to_param_FD_Curves_smooth[geometry].values())[0]['displacement'][yieldingIndex:]
             targetForce = targetCurves[geometry]['force'][yieldingIndex:]
             targetDisplacement = targetCurves[geometry]['displacement'][yieldingIndex:]
             interpolated_simForce = interpolatingForce(simDisplacement, simForce, targetDisplacement)

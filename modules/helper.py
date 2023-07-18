@@ -192,13 +192,7 @@ def MOO_suggest_BOTORCH(combined_interpolated_params_to_geoms_FD_Curves_smooth, 
     Y_standardized = torch.tensor(standard_scaler.fit_transform(Y.numpy()), dtype=torch.float64)
 
     # Define the bounds of the search space
-    lower_bounds = torch.tensor([paramConfig[param]['lowerBound'] * paramConfig[param]['exponent'] for param in paramConfig.keys()]).float()
-    upper_bounds = torch.tensor([paramConfig[param]['upperBound'] * paramConfig[param]['exponent'] for param in paramConfig.keys()]).float()
-
-    lower_bounds = minmax_scaler.transform(lower_bounds.reshape(1, -1)).squeeze()
-    upper_bounds = minmax_scaler.transform(upper_bounds.reshape(1, -1)).squeeze()
-
-    bounds = torch.tensor(np.array([lower_bounds, upper_bounds])).float()
+    bounds = torch.tensor([[0.0]*X_normalized.shape[1], [1.0]*X_normalized.shape[1]])
 
     # Initialize model
     model = SingleTaskGP(X_normalized, Y_standardized)
