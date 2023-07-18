@@ -176,6 +176,7 @@ def main_iterative_calibration(info):
         loss_newIteration = {}
         for geometry in geometries:
             yieldingIndex = yieldingIndices[geometry]
+            
             simForce = list(iteration_interpolated_geom_to_param_FD_Curves_smooth[geometry].values())[0]['force'][yieldingIndex:]
             simDisplacement = list(iteration_interpolated_geom_to_param_FD_Curves_smooth[geometry].values())[0]['displacement'][yieldingIndex:]
             targetForce = targetCurves[geometry]['force'][yieldingIndex:]
