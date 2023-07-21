@@ -183,22 +183,30 @@ def MOO_suggest_BOTORCH(combined_interpolated_params_to_geoms_FD_Curves_smooth, 
     X = torch.tensor(params, dtype=torch.float64)
     Y = torch.stack([torch.tensor(loss, dtype=torch.float64) for loss in losses])
 
-    # Normalize X to have range of [0, 1]
-    minmax_scaler = MinMaxScaler()
-    X_normalized = torch.tensor(minmax_scaler.fit_transform(X.numpy()), dtype=torch.float64)
+    # Define the bounds of the search space
+    lower_bounds = torch.tensor([paramConfig[param]['lowerBound'] * paramConfig[param]['exponent'] for param in paramConfig.keys()]).float()
+    upper_bounds = torch.tensor([paramConfig[param]['upperBound'] * paramConfig[param]['exponent'] for param in paramConfig.keys()]).float()
+
+    bounds = np.vstack([lower_bounds, upper_bounds])
+
+    # Create the MinMaxScaler and fit it to the bounds
+    scaler = MinMaxScaler().fit(bounds)
+
+    # Transform the parameters using the fitted scaler
+    X_normalized = torch.tensor(scaler.transform(X.numpy()), dtype=torch.float64)
 
     # Standardize Y to have zero mean and unit variance
-    standard_scaler = StandardScaler()
-    Y_standardized = torch.tensor(standard_scaler.fit_transform(Y.numpy()), dtype=torch.float64)
+    Y_standardized = standardize(Y)
 
-    # Define the bounds of the search space
-    bounds = torch.tensor([[0.0]*X_normalized.shape[1], [1.0]*X_normalized.shape[1]])
+    # Normalise the bounds in accordance to the normalised params
+    bounds_normalized = torch.tensor([[0.0]*X_normalized.shape[1], [1.0]*X_normalized.shape[1]])
 
     # Initialize model
     model = SingleTaskGP(X_normalized, Y_standardized)
     mll = ExactMarginalLogLikelihood(model.likelihood, model)
     fit_gpytorch_model(mll)
 
+    # Define the acquisition function
     # **Reference Point**
 
     # qEHVI requires specifying a reference point, which is the lower bound on the objectives used for computing hypervolume. 
@@ -206,8 +214,7 @@ def MOO_suggest_BOTORCH(combined_interpolated_params_to_geoms_FD_Curves_smooth, 
     # 1) using domain knowledge to be slightly worse than the lower bound of objective values, 
     # where the lower bound is the minimum acceptable value of interest for each objective, or 
     # 2) using a dynamic reference point selection strategy.
-
-    ref_point = Y_standardized.min(dim=0).values - 0.01
+    ref_point = Y_standardized.max(dim=0).values - 0.01
 
     partitioning = NondominatedPartitioning(ref_point=ref_point, Y=Y_standardized)
     acq_func = qExpectedHypervolumeImprovement(
@@ -217,22 +224,20 @@ def MOO_suggest_BOTORCH(combined_interpolated_params_to_geoms_FD_Curves_smooth, 
         objective=IdentityMCMultiOutputObjective(),
     )
 
-
     # Optimize the acquisition function
     candidates, _ = optimize_acqf(
         acq_function=acq_func,
-        bounds=bounds,
-        q=1, #q: This is the number of points to sample in each step. 
-        num_restarts=10, # num_restarts: This is the number of starting points for the optimization.
-        raw_samples=1000, # raw_samples: This is the number of samples to draw when initializing the optimization
+        bounds=bounds_normalized,
+        q=1,#q: This is the number of points to sample in each step
+        num_restarts=10,#num_restarts: This is the number of starting points for the optimization.
+        raw_samples=1000,#raw_samples: This is the number of samples to draw when initializing the optimization
     )
 
     # Unnormalize the candidates
-    candidates = minmax_scaler.inverse_transform(candidates.detach().numpy())
+    candidates = torch.tensor(scaler.inverse_transform(candidates.detach().numpy()), dtype=torch.float64)
 
     #converting to dictionary
     pareto_front = [{param: value.item() for param, value in zip(paramConfig.keys(), next_param)} for next_param in candidates]
-
     return pareto_front
 
 def MOO_calculate_geometries_weight(targetCurves, geometries):
