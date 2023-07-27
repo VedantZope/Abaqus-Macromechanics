@@ -91,10 +91,6 @@ Abaqus-Macromechanics-Project
 ├───stage4_SOO_iterative_calibration.py (Same as MOO)
 ```
 
-
-The only command you would need to run the project code is 
-python optimize.py
-
 - Stage 1: Fixing the configs/global_configs.xlsx for your desire problem
 
 - Stage 2: Running python stage0_initialize_directory.py. This is for folders generation
@@ -105,11 +101,12 @@ python optimize.py
          This csv file should have N columns depending on the number of parameters in hardening law. Other columns like lowerBound, upperBound, exponent, name and unit should also be defined
 
 - Stage 5: Drag the whole project code onto CSC and run
-         cd projectDirectory
-         module load python-data
-         pip install --user requirements.txt
-         python optimize.py
-  
+  ```bash
+  $ cd projectDirectory
+  $ module load python-data
+  $ pip install --user requirements.txt # Run only once
+  $ python optimize.py # The only command you would need to run the project code
+  ```
 - Stage 6: The results will be output to the directory SOO_results\{material}_{hardeningLaw}_{geometry}_curve{curveIndex}\iteration
          Under this directory are iteration simulation result with index 1,2,3,... and a folder called common, which stores FD_Curves.npy and flowCurves.npy. 
          The data structure of FD_Curves.npy is as follows:
