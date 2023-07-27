@@ -3050,3 +3050,29 @@ Initial simulations for CHD6 geometry already exist
 Number of initial simulations for CHD6 geometry: 200 FD curves
 Iteration simulations exist
 Number of iteration simulations: 1 FD curves
+
+Welcome to Abaqus hardening parameter calibration project
+
+
+The configurations you have chosen: 
+
++------------------------+-------------------+
+|     Global Configs     |    User choice    |
++------------------------+-------------------+
+|    SLURM iteration     |   one_node_small  |
+| Number of initial sims |        200        |
+|   Optimize strategy    |        MOO        |
+|        Material        |    DP1000_400C    |
+|     Hardening law      |     SwiftVoce     |
+|      Curve index       |         1         |
+|       Geometries       | NDBR50,NDBR6,CHD6 |
+|     Optimizer name     |      BOTORCH      |
+|   Deviation percent    |         2         |
++------------------------+-------------------+
+
+Generating necessary directories
+
+The path to your main project folder is
+
+c:\Users\springnuance\Desktop\Abaqus-Macromechanics-Project
+

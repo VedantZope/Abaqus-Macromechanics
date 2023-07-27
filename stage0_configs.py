@@ -145,7 +145,7 @@ def main_config():
     #  Printing the configurations to the console #
     ###############################################
 
-    printLog(f"\nWelcome to the Abaqus parameter calibration project\n\n", logPath)
+    printLog(f"\nWelcome to Abaqus hardening parameter calibration project\n\n", logPath)
     printLog(f"The configurations you have chosen: \n", logPath)
     
     logTable = PrettyTable()
