@@ -21,7 +21,7 @@ This project code is used to optimize the parameters in the Swift and Swift-Voce
 
 ## Authors
 
-- [@VedantZope](https://www.github.com/VedantZope). Tasks: Problem formulation, writing Abaqus scripts, preparing simulation templates, running simulations and fine tuning results
+- [@VedantZope](https://www.github.com/VedantZope). Tasks: Problem formulation, Optimization strategy, writing Abaqus scripts, preparing simulation templates, running simulations and fine tuning results
 - [@SpringNuance](https://www.github.com/springnuance) (Xuan Binh). Tasks: Optimization strategy, workflow design and programming project code. 
 
 ## Acknowledgements
