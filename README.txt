@@ -3,7 +3,7 @@ python optimize.py
 
 Stage 1: Fixing the configs/global_configs.xlsx for your desire problem
 Stage 2: Running python stage0_initialize_directory.py. This is for folders generation
-Stage 3: You need to create FD_curve.csv under directory SOO_targets\{material}_{hardeningLaw}_{geometry}_curve{curveIndex}
+Stage 3: If you use SOO, You need to create FD_curve.csv under directory SOO_targets\{material}_{hardeningLaw}_{geometry}_curve{curveIndex}
          This csv file should have 3 columns name displacement,mm force,kN and force,N
 Stage 4: You need to create paramInfo.xlsx under directory SOO_paramInfo\{material}_{hardeningLaw}_{geometry}_curve{curveIndex}
          This csv file should have N columns depending on the number of parameters in hardening law. Other columns like lowerBound, upperBound, exponent, name and unit should also be defined
