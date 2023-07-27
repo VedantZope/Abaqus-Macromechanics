@@ -97,7 +97,7 @@ def interpolating_flowCurves(flowCurves, targetCurve):
         flowCurves_copy[paramsTuple]["strain"] = targetStrain
     return flowCurves_copy
 
-def SOO_write_BO_json_log(FD_Curves, targetCurve, yieldingIndex, paramConfig):
+def SOO_write_BO_json_log(FD_Curves, targetCurve, yieldingIndex, paramConfig,iteration):
     # Write the BO log file
     # Each line of BO logging json file looks like this
     # {"target": <loss value>, "params": {"params1": <value1>, ..., "paramsN": <valueN>}, "datetime": {"datetime": "2023-06-02 18:26:46", "elapsed": 0.0, "delta": 0.0}}
@@ -116,7 +116,7 @@ def SOO_write_BO_json_log(FD_Curves, targetCurve, yieldingIndex, paramConfig):
         # Construct the dictionary
         line = {}
         # Note: BO in Bayes-Opt tries to maximize, so you should use the negative of the loss function.
-        line["target"] = -lossFD(targetCurve["displacement"][yieldingIndex:], targetCurve["force"][yieldingIndex:], dispforce["force"][yieldingIndex:])
+        line["target"] = -lossFD(targetCurve["displacement"][yieldingIndex:], targetCurve["force"][yieldingIndex:], dispforce["force"][yieldingIndex:],iteration)
         line["params"] = dict(paramsTuple)
         for param in paramConfig:
             line["params"][param] = line["params"][param]/paramConfig[param]["exponent"] 
@@ -265,6 +265,7 @@ def MOO_calculate_geometries_weight(targetCurves, geometries):
     sumWeights = np.sum(list(geometryWeights.values()))
     for geometry in geometryWeights:
         geometryWeights[geometry] = geometryWeights[geometry]/sumWeights
+
     return geometryWeights
 
 def prettyPrint(parameters, paramConfig, logPath):

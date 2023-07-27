@@ -66,13 +66,13 @@ def main_iterative_calibration(info):
     sim = SOO_SIM(info)
     
     while not stopFD_SOO(targetCurve['force'], list(combined_interpolated_FD_Curves_smooth.values())[-1]['force'], yieldingIndex, deviationPercent):
-
-        SOO_write_BO_json_log(combined_interpolated_FD_Curves_smooth, targetCurve, yieldingIndex, paramConfig)
+        iterationIndex = len(iteration_interpolated_FD_Curves_smooth) + 1
+        SOO_write_BO_json_log(combined_interpolated_FD_Curves_smooth, targetCurve, yieldingIndex, paramConfig,iterationIndex)
         BO_instance = BO(info)
         BO_instance.initializeOptimizer(lossFunction=None, param_bounds=param_bounds, loadingProgress=True)
         next_paramsDict = BO_instance.suggest()
         next_paramsDict = rescale_paramsDict(next_paramsDict, paramConfig)
-        iterationIndex = len(iteration_interpolated_FD_Curves_smooth) + 1
+        
         
         #print(len(iteration_interpolated_FD_Curves_smooth))
         printLog("\n" + 60 * "#" + "\n", logPath)
@@ -110,7 +110,7 @@ def main_iterative_calibration(info):
         targetDisplacement = targetCurve['displacement'][yieldingIndex:]
         interpolated_simForce = interpolatingForce(simDisplacement, simForce, targetDisplacement)
         
-        loss_newIteration = lossFD(targetDisplacement, targetForce, interpolated_simForce)
+        loss_newIteration = lossFD(targetDisplacement, targetForce, interpolated_simForce,iterationIndex)
         printLog(f"The loss of the new iteration is {round(loss_newIteration, 3)}", logPath)
 
         # Saving the iteration data
