@@ -1,5 +1,5 @@
 
-# Swift Voce Hardening Parameter Calibration Project with Abaqus
+# Swift Voce Hardening Parameter Calibration with Abaqus
 
 This project code is used to optimize the parameters in the Swift and Swift-Voce hardening laws.
 
