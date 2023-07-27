@@ -1,3 +1,30 @@
+
+# Swift Voce Hardening Parameter Calibration Project with Abaqus
+
+A brief description of what this project does and who it's for
+
+
+## Authors
+
+- [@VedantZope](https://www.github.com/VedantZope). Tasks: Problem formulation, writing Abaqus scripts, preparing simulation templates, running simulations and fine tuning results
+- [@SpringNuance](https://www.github.com/springnuance) (Xuan Binh). Tasks: Optimization strategy, workflow design and programming project code. 
+
+
+
+## Acknowledgements
+
+ - [Professor Junhe Lian](https://scholar.google.com/citations?user=HO6x8pkAAAAJ&hl=en) for supervising this project
+ - [Doctor Li Zinan](https://www.researchgate.net/profile/Zinan-Li-2) for providing experimental input data
+ - [Doctor Rongfei Juan](https://www.researchgate.net/profile/Rongfei-Juan) for providing tips on presentation details
+
+
+## Status
+
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
+![Contributors](https://img.shields.io/github/contributors/springnuance/Abaqus-Macromechanics-Project.svg)
+![Number of Commits](https://img.shields.io/github/commit-activity/y/springnuance/Abaqus-Macromechanics-Project.svg)
+
+
 The only command you would need to run the project code is 
 python optimize.py
 
