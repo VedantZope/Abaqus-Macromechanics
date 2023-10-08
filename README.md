@@ -16,8 +16,8 @@ This project code is used to optimize the parameters in the Swift and Swift-Voce
 ## Status
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
-![Contributors](https://img.shields.io/github/contributors/springnuance/Abaqus-Macromechanics-Project.svg)
-![Number of Commits](https://img.shields.io/github/commit-activity/y/springnuance/Abaqus-Macromechanics-Project.svg)
+![Contributors](https://img.shields.io/github/contributors/VedantZope/Abaqus-Macromechanics.svg)
+![Number of Commits](https://img.shields.io/github/commit-activity/y/VedantZope/Abaqus-Macromechanics.svg)
 
 ## Authors
 
@@ -121,3 +121,10 @@ Note: The workflow is resistant to interruption. When you interrupted at iterati
          
 - Stage 7: The workflow assumed that the initial guesses are wavy/jagged force-displacement curve.
          If FD curve produced by Abaqus is wavy, the code will use Savgol filter to smoothen the FD curves
+
+### Extension Project
+For accurate prediction of fracture parameters and precise identification of fracture initiation points, you can explore the extension project available at this repository:
+
+[![Extension Project Repository](https://img.shields.io/badge/GitHub-Project-blue?logo=github)](https://github.com/VedantZope/Abaqus-Fracture-Mechanics)
+
+Feel free to visit the repository for more details.
